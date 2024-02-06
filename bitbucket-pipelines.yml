@@ -1,0 +1,70 @@
+image: node:20
+
+options:
+  max-time: 15 # mins
+
+definitions:
+  services:
+    docker:
+      memory: 2048
+
+  steps:
+    - step: &sonar
+        name: Sonar
+        script:
+          - pipe: sonarsource/sonarcloud-scan:2.0.0
+
+    - step: &lint
+        name: Lint
+        caches:
+          - node
+        script:
+          - npm ci
+          - npm run lint
+
+    - step: &build
+        name: Build
+        caches:
+          - node
+        script:
+          - npm ci
+          - npm run build
+
+    - step: &test
+        name: Run tests
+        caches:
+          - node
+        script:
+          - npm ci
+          - npm run test
+
+pipelines:
+  pull-requests:
+    '**':
+      - parallel:
+          steps:
+            - step: *lint
+            - step: *build
+            - step: *test
+            - step: *sonar
+
+  branches:
+    develop:
+      - step: *build
+      # - step:
+      #     name: Deploy to develop
+      #     deployment: develop
+      #     <<: *deploy
+
+    # master:
+    #   - step: *build
+    #   - step:
+    #       name: Deploy to staging
+    #       deployment: staging
+    #       <<: *deploy
+    #   - step:
+    #       name: Deploy to production
+    #       deployment: production
+    #       trigger: manual
+    #       <<: *deploy
+
