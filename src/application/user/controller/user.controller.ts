@@ -11,6 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 
 import { User } from 'database/entities/user.entity';
 import { CreateUserDTO } from '../dto/create-user.dto';
@@ -29,6 +30,7 @@ export class UserController {
   }
 
   @Get('/:id')
+  @ApiResponse({ status: 404, description: 'User not found' })
   public async findBy(@Param('id', ParseUUIDPipe) id: string) {
     const user = await this.em.findOne(User, { id });
     if (!user) throw new NotFoundException();
@@ -38,6 +40,7 @@ export class UserController {
 
   @Post('/')
   @UsePipes(ValidationPipe)
+  @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
   public async create(@Body() createUserForm: CreateUserDTO) {
     const newUser = CreateUserDTO.toEntity(new User(), createUserForm);
 
@@ -48,6 +51,8 @@ export class UserController {
 
   @Put('/:id')
   @UsePipes(ValidationPipe)
+  @ApiResponse({ status: 201, description: 'The record has been successfully created.'})
+  @ApiResponse({ status: 404, description: 'Record not found.'})
   public async patch(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserForm: UpdateUserDTO,

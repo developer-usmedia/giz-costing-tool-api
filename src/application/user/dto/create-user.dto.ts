@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
 import { User } from 'database/entities/user.entity';
@@ -6,9 +7,11 @@ import { User } from 'database/entities/user.entity';
  * Application layer DTO used in the creation of a user
  */
 export class CreateUserDTO {
+  @ApiProperty({ example: 'John', required: true })
   @IsString()
   firstName: string;
 
+  @ApiProperty({ example: 'Doe', required: true })
   @IsString()
   lastName: string;
 
