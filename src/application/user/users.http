@@ -1,0 +1,33 @@
+@host=localhost
+@port=3000
+@endpoint=users
+@userId=266583e7-027a-4dc8-a596-c546ff6e7576
+@bearer=
+
+### Get all users
+GET http://{{host}}:{{port}}/api/{{endpoint}}
+Authorization: Bearer {{bearer}}
+
+### Get user by id
+GET http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
+Authorization: Bearer {{bearer}}
+
+### Create a new user
+POST http://{{host}}:{{port}}/api/{{endpoint}}
+Authorization: Bearer {{bearer}}
+Content-Type: application/json
+
+{
+    "firstName": "John",
+    "lastName": "Doe"
+}
+
+### Update user by id
+PUT http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
+Authorization: Bearer {{bearer}}
+Content-Type: application/json
+
+{
+    "firstName": "Jane"
+}
+
