@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
+import { environment } from '@common/environment/environment';
 import { AppModule } from './app.module';
 
 const setupSwagger = (app: INestApplication<any>) => {
@@ -28,6 +29,10 @@ async function bootstrap() {
   });
 
   setupSwagger(app);
+
+  if(!environment.isValid()) {
+    throw new Error('Missing environment variables, see environment.ts');
+  }
 
   await app.listen(3000);
 }

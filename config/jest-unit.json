@@ -1,0 +1,17 @@
+{
+    "moduleFileExtensions": ["js", "json", "ts"],
+    "rootDir": "../",
+    "testEnvironment": "node",
+    "testMatch": ["**/?(*.)+(spec).[jt]s?(x)"],
+    "transform": {
+        "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "moduleNameMapper": {
+        "^@database/(.*)$": "<rootDir>/src/database/$1",
+        "^@common/(.*)$": "<rootDir>/src/common/$1",
+        "^@domain/(.*)$": "<rootDir>/src/domain/$1",
+        "^@api/(.*)$": "<rootDir>/src/api/$1",
+        "^@app$": "<rootDir>/src",
+        "^@app/(.*)$": "<rootDir>/src/$1"
+    }
+}

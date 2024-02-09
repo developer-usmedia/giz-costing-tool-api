@@ -1,26 +1,29 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "outDir": "./dist",
-    "sourceMap": true,
-    "baseUrl": "./src",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2022",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@database/*": [
-        "./src/database/*"
-      ],
+    "compilerOptions": {
+        "module": "CommonJS",
+        "outDir": "./dist",
+        "sourceMap": true,
+        "baseUrl": "./",
+        "declaration": true,
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "ES2022",
+        "incremental": true,
+        "skipLibCheck": true,
+        "strictNullChecks": false,
+        "noImplicitAny": false,
+        "strictBindCallApply": false,
+        "forceConsistentCasingInFileNames": false,
+        "noFallthroughCasesInSwitch": false,
+        "paths": {
+            "@database/*": ["src/database/*"],
+            "@common/*": ["src/common/*"],
+            "@domain/*": ["src/domain/*"],
+            "@api/*": ["src/api/*"],
+            "@app": ["src"],
+            "@app/*": ["src/*"]
+        }
     }
-  }
 }

@@ -10,4 +10,4 @@ import { UserModule } from './user/user.module';
     UserModule,
   ],
 })
-export class ApplicationModule {}
+export class ApiModule {}
