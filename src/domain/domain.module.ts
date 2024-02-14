@@ -2,11 +2,12 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 
 import { entities } from '@database/mikro-orm.config';
+import { EmailService } from './services/email.service';
 import { UserService } from './services/user.service';
 
 Module({
     imports: [MikroOrmModule.forFeature(entities)],
-    exports: [UserService],
+    exports: [UserService, EmailService],
     providers: [],
 });
 export class DomainModule {}

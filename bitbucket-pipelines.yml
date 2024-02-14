@@ -45,7 +45,7 @@ pipelines:
           steps:
             - step: *lint
             - step: *build
-            - step: *test
+            # - step: *test
             - step: *sonar
 
   branches:

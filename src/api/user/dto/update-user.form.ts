@@ -16,7 +16,7 @@ export class UpdateUserDTO {
   lastName: string;
 
   // Convert to database entity from DTO specified above
-  public static toEntity(user: User = new User(), form: UpdateUserDTO): User {
+  public static toEntity(user: User, form: UpdateUserDTO): User {
     user.firstName = form.firstName;
     user.lastName = form.lastName;
 

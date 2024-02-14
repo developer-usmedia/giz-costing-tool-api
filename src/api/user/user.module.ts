@@ -9,6 +9,7 @@ import { UserController } from './controller/user.controller';
 @Module({
     imports: [DomainModule, MikroOrmModule.forFeature([User])],
     providers: [UserService],
+    exports: [UserService],
     controllers: [UserController],
 })
 export class UserModule {}

@@ -1,0 +1,44 @@
+@host=localhost
+@port=3000
+@endpoint=auth
+@bearer=
+
+### Register
+POST http://{{host}}:{{port}}/api/{{endpoint}}/register
+Content-Type: application/json
+
+{
+    "email": "info@usmedia.nl",
+    "password": "HASHME"
+}
+
+### Login
+POST http://{{host}}:{{port}}/api/{{endpoint}}/login
+Content-Type: application/json
+
+{
+    "email": "info@usmedia.nl",
+    "password": "HASHME"
+}
+
+### Protected route
+GET http://{{host}}:{{port}}/api/users
+Authorization: Bearer {{bearer}}
+
+### Start forgot-password flow
+POST http://{{host}}:{{port}}/api/{{endpoint}}/forgot-password
+Content-Type: application/json
+
+{
+    "email": "info@usmedia.nl"
+}
+
+### Reset password using resetToken
+POST http://{{host}}:{{port}}/api/{{endpoint}}/reset-password
+Content-Type: application/json
+
+{
+    "email": "info@usmedia.nl",
+    "resetToken": "K5LHC",
+    "newPassword": "CHANGEME"
+}

@@ -8,6 +8,7 @@ import { User } from '@database/entities/user.entity';
  * API layer DTO used in the request response
  */
 export interface UserDTO {
+    email: string;
     firstName: string;
     lastName: string;
 }
@@ -19,6 +20,7 @@ export class UserDTOFactory {
     public static fromEntity(entity: User): { data: UserDTO } {
         return {
             data: {
+                email: entity.email,
                 firstName: entity.firstName,
                 lastName: entity.lastName,
             },
@@ -32,6 +34,7 @@ export class UserDTOFactory {
         return {
             data: collection.map((user) => {
                 return {
+                    email: user.email,
                     firstName: user.firstName,
                     lastName: user.lastName,
                 };
