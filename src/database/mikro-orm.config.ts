@@ -4,10 +4,16 @@ import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { SeedManager } from '@mikro-orm/seeder';
 import { join } from 'path';
 
+import { Benchmark } from './embeddables/benchmark.embeddable';
+import { Facility } from './embeddables/facility.embeddable';
+import { Simulation } from './entities/simulation.entity';
 import { User } from './entities/user.entity';
 
 export const entities = [
     User,
+    Simulation,
+    Facility,
+    Benchmark,
 ];
 
 export const mikroOrmOpts: MikroOrmModuleSyncOptions = {

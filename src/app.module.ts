@@ -4,8 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 
 import { ApiModule } from '@api/api.module';
 import mikroOrmOpts from '@database/mikro-orm.config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -13,11 +11,7 @@ import { AppService } from './app.service';
     ApiModule,
     ConfigModule.forRoot({ isGlobal: true }),
   ],
-  controllers: [
-    AppController,
-  ],
-  providers: [
-    AppService,
-  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

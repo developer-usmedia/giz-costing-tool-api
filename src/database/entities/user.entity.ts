@@ -1,9 +1,10 @@
-import { Entity, Property } from '@mikro-orm/core';
+import { Collection, Entity, OneToMany, Property } from '@mikro-orm/core';
 import * as bcrypt from 'bcrypt';
 
 import { generateBasicToken } from '@common/utils/generateBasicToken';
 import { IsOptional } from 'class-validator';
 import { AbstractEntity } from './base/abstract.entity';
+import { Simulation } from './simulation.entity';
 
 @Entity()
 export class User extends AbstractEntity<User> {
@@ -31,7 +32,10 @@ export class User extends AbstractEntity<User> {
 
     @Property({ nullable: true })
     @IsOptional()
-    resetTokenExpire?: Date;
+    resetTokenExpire?: Date; // TODO: Think about which date type the column will get
+
+    @OneToMany({ entity: () => Simulation, mappedBy: (simulation) => simulation.user, nullable: true })
+    simulations? = new Collection<Simulation>(this);
 
     // TODO: Think of doing salt & hasing using hooks?
     // https://mikro-orm.io/docs/guide/relationships#:~:text=()%0A%20%20async-,hashPassword,-(args%3A
@@ -43,6 +47,8 @@ export class User extends AbstractEntity<User> {
         this.firstName = props.lastName;
         this.salt = this.generateSalt();
         this.password = this.hashPassword(props.password, this.salt);
+
+        this.simulations = null;
     }
 
     public comparePasswords(password: string): boolean {

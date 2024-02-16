@@ -1,0 +1,13 @@
+@host=localhost
+@port=3000
+@endpoint=simulations
+@simulationId=
+@bearer=
+
+### Get all simulations
+GET http://{{host}}:{{port}}/api/{{endpoint}}
+Authorization: Bearer {{bearer}}
+
+### Get a simulation
+GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
+Authorization: Bearer {{bearer}}

@@ -8,8 +8,7 @@ import { AppModule } from './app.module';
 const setupSwagger = (app: INestApplication<any>) => {
   const config = new DocumentBuilder()
     .setTitle('GIZ Costing Tool API')
-    .setDescription('API for the GIZ Living Wage Costing Too')
-    .addTag('giz-costing-tool-api')
+    .setDescription('API for the GIZ Living Wage Costing Tool')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

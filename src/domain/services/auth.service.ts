@@ -3,6 +3,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { CreateUserDTO } from '@api/auth/dto/create-user.dto';
+import { LoginResponse } from '@api/auth/types/login-response';
 import { JwtPayload } from '@common/types/jwt.payload.type';
 import { User } from '@database/entities/user.entity';
 import { MailDataRequired } from '@sendgrid/mail';
@@ -26,7 +27,7 @@ export class AuthService {
         return await this.usersService.persist(user);
     }
 
-    public async login(email: string, password: string): Promise<any> {
+    public async login(email: string, password: string): Promise<LoginResponse> {
         const user = await this.usersService.findOne({ email }, { populate: ['password'] });
         const isMatch = user?.comparePasswords(password);
 
