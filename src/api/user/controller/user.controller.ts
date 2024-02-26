@@ -38,6 +38,7 @@ export class UserController {
     @Get('/:id')
     @ApiResponse({ status: 200, description: 'The requested record' })
     @ApiResponse({ status: 404, description: 'The record cannot be found' })
+    @UseGuards(JwtAuthGuard)
     public async findBy(@Param('id', ParseUUIDPipe) id: string): Promise<UserResponse> {
         const user = await this.userService.findOne({ id });
         if (!user) throw new NotFoundException();
@@ -49,6 +50,7 @@ export class UserController {
     @UsePipes(ValidationPipe)
     @ApiResponse({ status: 201, description: 'The record has been successfully updated' })
     @ApiResponse({ status: 404, description: 'The record cannot be found' })
+    @UseGuards(JwtAuthGuard)
     public async patch(
         @Param('id', ParseUUIDPipe) id: string,
         @Body() updateUserForm: UpdateUserDTO,

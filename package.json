@@ -16,7 +16,8 @@
     "test:pre-clear": "npx mikro-orm migration:fresh && npm run test",
     "test:watch": "jest --watch",
     "test:e2e": "jest --config ./config/jest-e2e.json",
-    "db:seed": "npx mikro-orm seeder:run"
+    "db:seed": "npx mikro-orm seeder:run",
+    "db:fresh": "npx mikro-orm migration:fresh"
   },
   "dependencies": {
     "@mikro-orm/core": "6.1.0",

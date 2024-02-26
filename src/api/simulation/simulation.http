@@ -11,3 +11,7 @@ Authorization: Bearer {{bearer}}
 ### Get a simulation
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
 Authorization: Bearer {{bearer}}
+
+### Get workers from simulation
+GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}/workers
+Authorization: Bearer {{bearer}}

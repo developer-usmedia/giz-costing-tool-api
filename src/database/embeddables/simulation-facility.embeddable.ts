@@ -3,7 +3,7 @@ import { Embeddable, Property } from '@mikro-orm/core';
 // TODO: think again on the database types and limitation
 
 @Embeddable()
-export class Facility {
+export class SimulationFacility {
     @Property({ length: 100 })
     name!: string;
 

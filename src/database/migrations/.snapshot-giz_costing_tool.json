@@ -48,6 +48,181 @@
           "default": "1",
           "mappedType": "integer"
         },
+        "year": {
+          "name": "year",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 4,
+          "mappedType": "integer"
+        },
+        "source": {
+          "name": "source",
+          "type": "varchar(100)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 100,
+          "mappedType": "string"
+        },
+        "country_code": {
+          "name": "country_code",
+          "type": "varchar(3)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 3,
+          "mappedType": "string"
+        },
+        "country_name": {
+          "name": "country_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
+        "country_locality": {
+          "name": "country_locality",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "country_region": {
+          "name": "country_region",
+          "type": "varchar(100)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 100,
+          "mappedType": "string"
+        },
+        "currency_code": {
+          "name": "currency_code",
+          "type": "varchar(3)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 3,
+          "mappedType": "string"
+        },
+        "currency_name": {
+          "name": "currency_name",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "local_value": {
+          "name": "local_value",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 19,
+          "scale": 4,
+          "mappedType": "decimal"
+        },
+        "eur_value": {
+          "name": "eur_value",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "mappedType": "decimal"
+        },
+        "usd_value": {
+          "name": "usd_value",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "mappedType": "decimal"
+        }
+      },
+      "name": "benchmark",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "benchmark_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {},
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "mappedType": "uuid"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "version": {
+          "name": "version",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "1",
+          "mappedType": "integer"
+        },
         "first_name": {
           "name": "first_name",
           "type": "varchar(255)",
@@ -305,16 +480,6 @@
           "nullable": true,
           "mappedType": "integer"
         },
-        "benchmark_name": {
-          "name": "benchmark_name",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 100,
-          "mappedType": "string"
-        },
         "benchmark_year": {
           "name": "benchmark_year",
           "type": "int",
@@ -355,13 +520,35 @@
           "length": 50,
           "mappedType": "string"
         },
-        "benchmark_lcu_value": {
-          "name": "benchmark_lcu_value",
-          "type": "numeric",
+        "benchmark_currency_code": {
+          "name": "benchmark_currency_code",
+          "type": "varchar(3)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
+          "length": 3,
+          "mappedType": "string"
+        },
+        "benchmark_currency_name": {
+          "name": "benchmark_currency_name",
+          "type": "varchar(50)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 50,
+          "mappedType": "string"
+        },
+        "benchmark_local_value": {
+          "name": "benchmark_local_value",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
           "mappedType": "decimal"
         }
       },
@@ -391,6 +578,232 @@
             "id"
           ],
           "referencedTableName": "public.user",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "mappedType": "uuid"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "version": {
+          "name": "version",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "1",
+          "mappedType": "integer"
+        },
+        "simulation_id": {
+          "name": "simulation_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 100,
+          "mappedType": "string"
+        },
+        "gender": {
+          "name": "gender",
+          "type": "text",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "enumItems": [
+            "men",
+            "women"
+          ],
+          "mappedType": "enum"
+        },
+        "number_of_workers": {
+          "name": "number_of_workers",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "1",
+          "mappedType": "integer"
+        },
+        "monthly_wage": {
+          "name": "monthly_wage",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "monthly_bonus": {
+          "name": "monthly_bonus",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "integer"
+        },
+        "percentage_of_year_worked": {
+          "name": "percentage_of_year_worked",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 3,
+          "mappedType": "integer"
+        },
+        "employee_tax": {
+          "name": "employee_tax",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 3,
+          "mappedType": "integer"
+        },
+        "employer_tax": {
+          "name": "employer_tax",
+          "type": "int",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 3,
+          "mappedType": "integer"
+        },
+        "ikb_food": {
+          "name": "ikb_food",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "default": "0",
+          "mappedType": "decimal"
+        },
+        "ikb_transportation": {
+          "name": "ikb_transportation",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "default": "0",
+          "mappedType": "decimal"
+        },
+        "ikb_housing": {
+          "name": "ikb_housing",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "default": "0",
+          "mappedType": "decimal"
+        },
+        "ikb_healthcare": {
+          "name": "ikb_healthcare",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "default": "0",
+          "mappedType": "decimal"
+        },
+        "ikb_childcare": {
+          "name": "ikb_childcare",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "default": "0",
+          "mappedType": "decimal"
+        }
+      },
+      "name": "worker",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "worker_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "worker_simulation_id_foreign": {
+          "constraintName": "worker_simulation_id_foreign",
+          "columnNames": [
+            "simulation_id"
+          ],
+          "localTableName": "public.worker",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.simulation",
           "updateRule": "cascade"
         }
       },
