@@ -15,6 +15,7 @@ class Environment {
 
     public jwt: {
         secret: string;
+        expiresIn: string;
     };
 
     public mail: {
@@ -25,9 +26,10 @@ class Environment {
     constructor() {
         config();
 
-        const { MIKRO_ORM_HOST, MIKRO_ORM_DB_NAME, MIKRO_ORM_PORT, MIKRO_ORM_USER, MIKRO_ORM_PASSWORD } = process.env;
         const { API_URL } = process.env;
+        const { MIKRO_ORM_HOST, MIKRO_ORM_DB_NAME, MIKRO_ORM_PORT, MIKRO_ORM_USER, MIKRO_ORM_PASSWORD } = process.env;
         const { SENDGRID_API_KEY, EMAIL_FROM } = process.env;
+        const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
 
         this.db = {
             host: MIKRO_ORM_HOST,
@@ -42,7 +44,8 @@ class Environment {
         };
 
         this.jwt = {
-            secret: this.getJWTSecret(),
+            secret: JWT_SECRET,
+            expiresIn: JWT_EXPIRES_IN ?? '30m',
         };
 
         this.mail = {
@@ -50,16 +53,6 @@ class Environment {
             from: EMAIL_FROM,
         };
     }
-
-    public getJWTSecret = () => {
-        const { NODE_ENV, JWT_SECRET } = process.env;
-
-        if (NODE_ENV === 'test' && !JWT_SECRET) {
-            return 'superverysecret';
-        } else {
-            return JWT_SECRET;
-        }
-    };
 
     public isValid = (): boolean => {
         return (
@@ -70,6 +63,7 @@ class Environment {
             !!this.db.password &&
             !!this.api.url &&
             !!this.jwt.secret &&
+            !!this.jwt.expiresIn &&
             !!this.mail.apiKey &&
             !!this.mail.from
         );

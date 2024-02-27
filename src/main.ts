@@ -18,6 +18,10 @@ const setupSwagger = (app: INestApplication<any>) => {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+   if(!environment.isValid()) {
+    throw new Error('Missing environment variables, see environment.ts');
+  }
+
   app.setGlobalPrefix('api');
 
   app.enableCors({
@@ -26,12 +30,10 @@ async function bootstrap() {
     ],
     credentials: true,
   });
+  // app.use(rateLimiter)
 
   setupSwagger(app);
 
-  if(!environment.isValid()) {
-    throw new Error('Missing environment variables, see environment.ts');
-  }
 
   await app.listen(3000);
 }

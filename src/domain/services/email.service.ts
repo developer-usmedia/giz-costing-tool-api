@@ -1,4 +1,5 @@
 import { environment } from '@common/environment/environment';
+import { User } from '@database/entities';
 import { Injectable } from '@nestjs/common';
 import * as SendGrid from '@sendgrid/mail';
 import { MailDataRequired } from '@sendgrid/mail';
@@ -12,6 +13,17 @@ export class EmailService {
     constructor() {
         SendGrid.setApiKey(environment.mail.apiKey);
     }
+
+    public sendPasswordResetEmail = async (user: User) => {
+        const email: MailDataRequired = {
+            ...EmailService.BASE_EMAIL,
+            to: user.email,
+            subject: 'GIZ Costing Tool Password Reset Code',
+            content: [{ type: 'text/plain', value: `Reset code: ${user.resetToken}` }],
+        };
+
+        return await this.send(email);
+    };
 
     public async send(mail: MailDataRequired): Promise<boolean> {
         try {

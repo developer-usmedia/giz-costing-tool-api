@@ -3,10 +3,8 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { CreateUserDTO } from '@api/auth/dto/create-user.dto';
-import { LoginResponse } from '@api/auth/types/login-response';
 import { JwtPayload } from '@common/types/jwt.payload.type';
 import { User } from '@database/entities/user.entity';
-import { MailDataRequired } from '@sendgrid/mail';
 import { EmailService } from './email.service';
 import { UserService } from './user.service';
 
@@ -27,15 +25,16 @@ export class AuthService {
         return await this.usersService.persist(user);
     }
 
-    public async login(email: string, password: string): Promise<LoginResponse> {
+    public async login(email: string, password: string): Promise<string> {
         const user = await this.usersService.findOne({ email }, { populate: ['password'] });
         const isMatch = user?.comparePasswords(password);
 
+        // TODO: This is a api layer exception in a domain service
+        // Salary matrix introduces a Result.ok that is caught on controller level
+        // Create custom error?
         if (!user || !isMatch) throw new UnauthorizedException('Invalid credentials');
 
-        return {
-            token: this.signJwt(user),
-        };
+        return this.signJwt(user);
     }
 
     public async startPasswordReset(user: User): Promise<boolean> {
@@ -58,18 +57,14 @@ export class AuthService {
     }
 
     public async sendPasswordResetEmail(user: User): Promise<boolean> {
-        const email: MailDataRequired = {
-            ...EmailService.BASE_EMAIL,
-            to: user.email,
-            subject: 'GIZ Costing Tool Password Reset Code',
-            content: [{ type: 'text/plain', value: `Reset code: ${user.resetToken}` }],
-        };
-
-        return await this.emailService.send(email);
+        return await this.emailService.sendPasswordResetEmail(user);
     }
 
     private signJwt(user: User): string {
-        const payload: JwtPayload = { userId: user.id, email: user.email };
+        const payload: JwtPayload = {
+            sub: user.id,
+            iss: 'GIZ Costing Tool',
+        };
 
         return this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
     }

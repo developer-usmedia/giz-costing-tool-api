@@ -31,8 +31,8 @@ describe('/auth', () => {
                 .send(userCredentials)
                 .expect(201);
 
-            expect(response.body.data).toHaveProperty('email');
-            expect(response.body.data).not.toHaveProperty('password');
+            expect(response.body.user).toHaveProperty('email');
+            expect(response.body.user).not.toHaveProperty('password');
 
             await request(app.getHttpServer())
               .post('/auth/register')
@@ -70,7 +70,7 @@ describe('/auth', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .expect(200);
 
-            expect(response.body).toHaveProperty('data');
+            expect(response.body).toHaveProperty('users');
         });
     });
 
@@ -90,7 +90,7 @@ describe('/auth', () => {
             const response = await request(app.getHttpServer())
                 .post('/auth/forgot-password')
                 .send({ email: userCredentials.email })
-                .expect(201);
+                .expect(200);
 
             expect(response.body.resetEmailSent).toBeTruthy();
 

@@ -13,6 +13,7 @@ import { User } from '@database/entities/user.entity';
  */
 
 export interface UserDTO {
+    id: string;
     email: string;
     firstName: string;
     lastName: string;
@@ -40,6 +41,7 @@ export class UserDTOFactory {
 
 const mapEntityToDTO = (entity: User): UserDTO => {
     return {
+        id: entity.id,
         email: entity.email,
         firstName: entity.firstName,
         lastName: entity.lastName,

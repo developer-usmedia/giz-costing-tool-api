@@ -18,6 +18,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         // Possible to do extra validation to the jwt provided by the user
         // JWT Payload taken via ExtractJwt.fromAuthHeaderAsBearerToken()
 
+        /**
+         * possible extra validations
+         * - Do db check for user? (causes db check on easy request)
+         * - Do expired check? 
+         * - Do blacklist check?
+         */
+
         // For now return the same payload as no extra validation is required
         return jwtPayload;
     }

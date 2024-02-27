@@ -1,4 +1,6 @@
 export type JwtPayload = {
-    userId: string;
-    email: string;
+    sub: string;
+    iss: 'GIZ Costing Tool';
+    // iat: number; // - Added by Passport
+    // exp: number; // - Added by Passport
 };
