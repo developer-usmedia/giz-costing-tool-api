@@ -1,0 +1,20 @@
+@host=localhost
+@port=3000
+@endpoint=users
+@userId=b14d0674-ddbe-4b0a-8234-eaa450a2cb96
+@token=ME7XG
+
+### Get all users
+GET http://{{host}}:{{port}}/api/{{endpoint}}
+
+### Get all users from page 2
+GET http://{{host}}:{{port}}/api/{{endpoint}}?size=2&index=3
+
+### Get user by id
+GET http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
+
+### Send email verification code
+POST http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}/send-email-verification
+
+### Verify email verification code
+POST http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}/verify-email/{{token}}

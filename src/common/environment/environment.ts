@@ -15,7 +15,7 @@ class Environment {
 
     public session: {
         secret: string;
-        expiresIn: string;
+        expiresIn: number;
     };
 
     public mail: {
@@ -51,7 +51,7 @@ class Environment {
 
         this.session = {
             secret: SESSION_SECRET,
-            expiresIn: SESSION_EXPIRES_IN,
+            expiresIn: +SESSION_EXPIRES_IN,
         };
 
         this.mail = {
@@ -64,6 +64,10 @@ class Environment {
             port: +REDIS_PORT,
         };
     }
+
+    public isLocal = (): boolean => {
+        return ['development', 'test'].includes(process.env.NODE_ENV);
+    };
 
     public isValid = (): boolean => {
         return (

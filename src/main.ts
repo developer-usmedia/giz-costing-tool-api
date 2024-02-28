@@ -11,6 +11,8 @@ import * as passport from 'passport';
 import { environment } from '@common/environment/environment';
 import { AppModule } from './app.module';
 
+let redisClient: Redis;
+
 const setupSwagger = (app: INestApplication<any>) => {
     const config = new DocumentBuilder()
         .setTitle('GIZ Costing Tool API')
@@ -23,10 +25,19 @@ const setupSwagger = (app: INestApplication<any>) => {
 
 const setupAuth = (app: INestApplication<any>) => {
     const RedisStore = connectRedis(session);
-    const redisClient = new Redis({
+    redisClient = new Redis({
         host: environment.redis.host,
         port: environment.redis.port,
     });
+
+    redisClient.on('ready', () => {
+        console.log('[main.ts] Redis connection established');
+    });
+
+    redisClient.on('error', () => {
+        console.log('[main.ts] Redis failed to connect');
+    });
+
     app.use(
         session({
             store: new RedisStore({ client: redisClient }),
@@ -36,9 +47,9 @@ const setupAuth = (app: INestApplication<any>) => {
             saveUninitialized: false,
             genid: () => randomUUID(),
             cookie: {
-                maxAge: +environment.session.expiresIn,
-                secure: process.env.NODE_ENV !== 'development',
-                httpOnly: process.env.NODE_ENV !== 'development',
+                maxAge: environment.session.expiresIn,
+                secure: !environment.isLocal(),
+                httpOnly: !environment.isLocal(),
             },
         }),
     );

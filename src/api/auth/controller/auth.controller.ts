@@ -10,7 +10,6 @@ import { ForgotPasswordForm } from '../dto/forgot-password.dto';
 import { PasswordResetForm } from '../dto/password-reset-form.dto';
 import { RegisterForm } from '../dto/register-form.dto';
 import { LoginAuthGuard } from '../local/login.guard';
-import { ForgotPasswordResponse } from '../types/forgot-password-response';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -42,30 +41,36 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 200, description: 'Successfull login' })
     @UsePipes(ValidationPipe)
     @UseGuards(LoginAuthGuard)
-    public login(@Res() res: Response): Response<{ success: boolean }> {
+    public login(@Res() res: Response): { success: boolean } {
         return this.ok(res, { success: true });
     }
 
     @Post('/logout')
     @HttpCode(200)
+    @ApiOperation({ summary: 'Logout from current session' })
     @ApiResponse({ status: 200, description: 'Successfull logout' })
-    public logout(@Request() req, @Res() res: Response): Response<{ success: boolean }> {
+    public logout(@Request() req, @Res() res: Response): { success: boolean } {
         req.session.destroy();
         return this.ok(res, { success: true });
     }
 
     @Post('/forgot-password')
-    @HttpCode(200)
     @ApiOperation({ summary: 'Start a password reset for a user' })
     @ApiResponse({ status: 201, description: 'Password reset started' })
     @ApiResponse({ status: 400, description: 'Password reset failed' })
     @UsePipes(ValidationPipe)
-    public async forgotPassword(@Body() { email }: ForgotPasswordForm): Promise<ForgotPasswordResponse> {
+    public async forgotPassword(
+        @Body() { email }: ForgotPasswordForm,
+        @Res() res: Response,
+    ): Promise<{ resetEmailSent: boolean }> {
         // TODO: rate limit this endpoint
         const user = await this.userService.findOne({ email });
         if (!user) this.clientError('Forgot password failed');
 
-        return { resetEmailSent: await this.authService.startPasswordReset(user) };
+        // Q: Does this endpoint require a validated email? Or send anyway?
+        const sent = await this.authService.startPasswordReset(user);
+
+        return this.ok(res, { resetEmailSent: sent });
     }
 
     @Post('/reset-password')
@@ -74,7 +79,10 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 201, description: 'Password reset successful' })
     @ApiResponse({ status: 400, description: 'Invalid or expired token or user not found' })
     @UsePipes(ValidationPipe)
-    public async resetPassword(@Body() resetPasswordForm: PasswordResetForm): Promise<UserResponse> {
+    public async resetPassword(
+        @Body() resetPasswordForm: PasswordResetForm,
+        @Res() res: Response,
+    ): Promise<{ passwordReset: boolean }> {
         const { email, newPassword, resetToken } = resetPasswordForm;
 
         const user = await this.userService.findOne({ email: email });
@@ -83,6 +91,6 @@ export class AuthController extends BaseController {
         const saved = await this.authService.resetPassword(user, resetToken, newPassword);
         if (!saved) return this.clientError('Invalid or expired token');
 
-        return UserDTOFactory.fromEntity(saved);
+        return this.ok(res, { passwordReset: saved });
     }
 }

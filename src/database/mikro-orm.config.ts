@@ -5,10 +5,12 @@ import { SeedManager } from '@mikro-orm/seeder';
 import { join } from 'path';
 
 import { SimulationBenchmark, SimulationFacility, WorkerIKB } from './embeddables';
+import { VerificationCode } from './embeddables/verification-code.embeddable';
 import { Benchmark, Simulation, User, Worker } from './entities';
 
 export const entities = [
     User,
+    VerificationCode,
     Simulation,
     SimulationBenchmark,
     SimulationFacility,

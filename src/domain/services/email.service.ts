@@ -14,12 +14,23 @@ export class EmailService {
         SendGrid.setApiKey(environment.mail.apiKey);
     }
 
+    public sendEmailVerificationEmail = async (user: User) => {
+        const email: MailDataRequired = {
+            ...EmailService.BASE_EMAIL,
+            to: user.email,
+            subject: 'GIZ Costing Tool Email Verification Code',
+            content: [{ type: 'text/plain', value: `Verification code: ${user.verificationCode.code}` }],
+        };
+
+        return await this.send(email);
+    };
+
     public sendPasswordResetEmail = async (user: User) => {
         const email: MailDataRequired = {
             ...EmailService.BASE_EMAIL,
             to: user.email,
             subject: 'GIZ Costing Tool Password Reset Code',
-            content: [{ type: 'text/plain', value: `Reset code: ${user.resetToken}` }],
+            content: [{ type: 'text/plain', value: `Reset code: ${user.verificationCode.code}` }],
         };
 
         return await this.send(email);
@@ -28,6 +39,11 @@ export class EmailService {
     public async send(mail: MailDataRequired): Promise<boolean> {
         try {
             console.info(`Sending email to ${mail.to as string}`);
+
+            if (environment.isLocal()) {
+                console.info(mail);
+                return true;
+            }
 
             await SendGrid.send(mail);
             return true; // Any error will be caught below

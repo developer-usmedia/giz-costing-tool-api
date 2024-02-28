@@ -223,6 +223,15 @@
           "default": "1",
           "mappedType": "integer"
         },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "string"
+        },
         "first_name": {
           "name": "first_name",
           "type": "varchar(255)",
@@ -239,15 +248,6 @@
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "mappedType": "string"
-        },
-        "email": {
-          "name": "email",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
           "mappedType": "string"
         },
         "password": {
@@ -268,17 +268,28 @@
           "nullable": false,
           "mappedType": "string"
         },
-        "reset_token": {
-          "name": "reset_token",
-          "type": "varchar(255)",
+        "email_verfied": {
+          "name": "email_verfied",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "false",
+          "mappedType": "boolean"
+        },
+        "verification_code": {
+          "name": "verification_code",
+          "type": "varchar(6)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
+          "length": 6,
           "mappedType": "string"
         },
-        "reset_token_expire": {
-          "name": "reset_token_expire",
+        "verification_expires_at": {
+          "name": "verification_expires_at",
           "type": "timestamptz",
           "unsigned": false,
           "autoincrement": false,
@@ -297,6 +308,16 @@
           ],
           "composite": false,
           "keyName": "user_email_unique",
+          "constraint": true,
+          "primary": false,
+          "unique": true
+        },
+        {
+          "keyName": "user_email_unique",
+          "columnNames": [
+            "email"
+          ],
+          "composite": false,
           "constraint": true,
           "primary": false,
           "unique": true

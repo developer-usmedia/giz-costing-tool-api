@@ -2,12 +2,9 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Response } from 'express';
 
 export abstract class BaseController {
-    public ok<T = void>(res: Response, dto?: T) {
-        if (dto !== undefined) {
-            return res.status(200).json(dto);
-        } else {
-            return res.sendStatus(200);
-        }
+    public ok<T>(res: Response, dto?: T): T {
+        res.status(200).json(dto);
+        return dto;
     }
 
     public clientError(message?: string): null {

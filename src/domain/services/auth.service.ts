@@ -19,6 +19,8 @@ export class AuthService {
     public async register(email: string, password: string): Promise<User> {
         const user = CreateUserDTO.toEntity({ email, password });
 
+        await this.sendVerificationEmail(user, false); // Move this to user entity lifecycle
+
         return await this.usersService.persist(user);
     }
 
@@ -34,25 +36,48 @@ export class AuthService {
     }
 
     public async startPasswordReset(user: User): Promise<boolean> {
-        // TODO: check if email has been verified?
-        user.generateAndSetResetToken();
+        user.refreshVerificationCode();
 
         const updatedUser = await this.usersService.persist(user);
 
         return await this.sendPasswordResetEmail(updatedUser);
     }
 
-    public async resetPassword(user: User, token: string, newPassword: string): Promise<User | null> {
-        const validToken = user.compareResetToken(token);
+    public async resetPassword(user: User, token: string, newPassword: string): Promise<boolean> {
+        const validToken = user.verifyCode(token);
 
         if (!validToken) return null;
 
         user.resetPassword(newPassword);
+        const saved = await this.usersService.persist(user);
 
-        return await this.usersService.persist(user);
+        return !!saved;
     }
 
     public async sendPasswordResetEmail(user: User): Promise<boolean> {
         return await this.emailService.sendPasswordResetEmail(user);
+    }
+
+    public async sendVerificationEmail(user: User, refresh = true): Promise<boolean> {
+        if (refresh) user.refreshVerificationCode();
+
+        const saved = await this.usersService.persist(user);
+        const sent = await this.emailService.sendEmailVerificationEmail(user);
+        return saved && sent;
+    }
+
+    public async verifyEmailCode(user: User, code: string): Promise<boolean> {
+        if (user.emailVerfied) return true;
+
+        const validToken = user.verifyCode(code);
+
+        if (!validToken) return false;
+
+        user.verificationCode.reset();
+        user.emailVerfied = true;
+
+        await this.usersService.persist(user);
+
+        return true;
     }
 }
