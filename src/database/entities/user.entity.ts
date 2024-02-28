@@ -52,6 +52,10 @@ export class User extends AbstractEntity<User> {
     }
 
     public comparePasswords(password: string): boolean {
+        if (!this.password) {
+            throw new Error('Please remember to populate the password field when fetching the user from the database');
+        }
+
         return bcrypt.compareSync(password, this.password);
     }
 

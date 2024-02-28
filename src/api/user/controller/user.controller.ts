@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpCode, Param, ParseUUIDPipe, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
+import { AuthGuard } from '@api/auth/local/auth.guard';
 import { BaseController } from '@api/base.controller';
 import { Paging } from '@common/decorators/paging.decorator';
 import { PagingParams } from '@common/paging/paging-params';
@@ -21,7 +21,7 @@ export class UserController extends BaseController {
     @Get('/')
     @ApiOperation({ summary: 'Get a paginated list of users' })
     @ApiResponse({ status: 200, description: 'Paged list of users' })
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthGuard)
     public async index(@Paging('User', PagingValidationPipe) paging: PagingParams<User>): Promise<UserListResponse> {
         const [users, count] = await this.userService.findManyPaged(paging);
 
@@ -32,7 +32,7 @@ export class UserController extends BaseController {
     @ApiOperation({ summary: 'Get a single user' })
     @ApiResponse({ status: 200, description: 'The requested user' })
     @ApiResponse({ status: 404, description: 'The user cannot be found' })
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthGuard)
     public async findBy(@Param('id', ParseUUIDPipe) id: string): Promise<UserResponse> {
         const user = await this.userService.findOne({ id });
         if (!user) return this.notFound('User not found');
@@ -46,7 +46,7 @@ export class UserController extends BaseController {
     @ApiResponse({ status: 201, description: 'The user has been successfully updated' })
     @ApiResponse({ status: 404, description: 'The user cannot be found' })
     @UsePipes(ValidationPipe)
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthGuard)
     public async patch(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserForm: UpdateUserDTO): Promise<UserResponse> {
         const user = await this.userService.findOne({ id });
         if (!user) return this.notFound('User not found');

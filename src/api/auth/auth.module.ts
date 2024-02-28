@@ -7,17 +7,21 @@ import { User } from '@database/entities/user.entity';
 import { AuthService } from '@domain/services/auth.service';
 import { EmailService } from '@domain/services/email.service';
 import { AuthController } from './controller/auth.controller';
-import { registerJWT } from './jwt/jwt.module';
-import { JwtStrategy } from './jwt/jwt.strategy';
+import { LocalStrategy } from './local/local.strategy';
+import { SessionSerializer } from './local/session.serializer';
 
 @Module({
     imports: [
         MikroOrmModule.forFeature([User]),
-        PassportModule,
+        PassportModule.register({ session: true }),
         UserModule,
-        registerJWT(),
     ],
-    providers: [JwtStrategy, AuthService, EmailService],
+    providers: [
+        AuthService,
+        EmailService,
+        LocalStrategy,
+        SessionSerializer,
+    ],
     controllers: [AuthController],
 })
 export class AuthModule {}

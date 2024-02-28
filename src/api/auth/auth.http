@@ -1,7 +1,6 @@
 @host=localhost
 @port=3000
 @endpoint=auth
-@bearer=
 
 ### Register
 POST http://{{host}}:{{port}}/api/{{endpoint}}/register
@@ -21,9 +20,11 @@ Content-Type: application/json
     "password": "HASHME"
 }
 
+### Logout
+POST http://{{host}}:{{port}}/api/{{endpoint}}/logout
+
 ### Protected route
 GET http://{{host}}:{{port}}/api/users
-Authorization: Bearer {{bearer}}
 
 ### Start forgot-password flow
 POST http://{{host}}:{{port}}/api/{{endpoint}}/forgot-password

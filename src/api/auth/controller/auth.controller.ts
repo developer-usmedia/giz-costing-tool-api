@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Request, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { BaseController } from '@api/base.controller';
@@ -7,11 +7,10 @@ import { AuthService } from '@domain/services/auth.service';
 import { UserService } from '@domain/services/user.service';
 import { Response } from 'express';
 import { ForgotPasswordForm } from '../dto/forgot-password.dto';
-import { LoginForm } from '../dto/login-form.dto';
 import { PasswordResetForm } from '../dto/password-reset-form.dto';
 import { RegisterForm } from '../dto/register-form.dto';
+import { LoginAuthGuard } from '../local/login.guard';
 import { ForgotPasswordResponse } from '../types/forgot-password-response';
-import { LoginResponse } from '../types/login-response';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -38,15 +37,21 @@ export class AuthController extends BaseController {
     }
 
     @Post('/login')
-    @HttpCode(200)
     @ApiOperation({ summary: 'Login using user credentials' })
     @ApiResponse({ status: 401, description: 'Invalid credentials' })
     @ApiResponse({ status: 200, description: 'Successfull login' })
     @UsePipes(ValidationPipe)
-    public async login(@Body() loginForm: LoginForm, @Res() res: Response): Promise<Response<LoginResponse>> {
-        const token = await this.authService.login(loginForm.email, loginForm.password);
+    @UseGuards(LoginAuthGuard)
+    public login(@Res() res: Response): Response<{ success: boolean }> {
+        return this.ok(res, { success: true });
+    }
 
-        return res.cookie('token', token, { httpOnly: true }).send({ token: token });
+    @Post('/logout')
+    @HttpCode(200)
+    @ApiResponse({ status: 200, description: 'Successfull logout' })
+    public logout(@Request() req, @Res() res: Response): Response<{ success: boolean }> {
+        req.session.destroy();
+        return this.ok(res, { success: true });
     }
 
     @Post('/forgot-password')
@@ -56,6 +61,7 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 400, description: 'Password reset failed' })
     @UsePipes(ValidationPipe)
     public async forgotPassword(@Body() { email }: ForgotPasswordForm): Promise<ForgotPasswordResponse> {
+        // TODO: rate limit this endpoint
         const user = await this.userService.findOne({ email });
         if (!user) this.clientError('Forgot password failed');
 
@@ -79,7 +85,4 @@ export class AuthController extends BaseController {
 
         return UserDTOFactory.fromEntity(saved);
     }
-
-    // TODO: Token refresh endpoint
-    // TODO: token blacklisting?
 }

@@ -13,7 +13,7 @@ class Environment {
         url: string;
     };
 
-    public jwt: {
+    public session: {
         secret: string;
         expiresIn: string;
     };
@@ -23,13 +23,19 @@ class Environment {
         from: string;
     };
 
+    public redis: {
+        host: string;
+        port: number;
+    };
+
     constructor() {
         config();
 
         const { API_URL } = process.env;
         const { MIKRO_ORM_HOST, MIKRO_ORM_DB_NAME, MIKRO_ORM_PORT, MIKRO_ORM_USER, MIKRO_ORM_PASSWORD } = process.env;
         const { SENDGRID_API_KEY, EMAIL_FROM } = process.env;
-        const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
+        const { SESSION_SECRET, SESSION_EXPIRES_IN } = process.env;
+        const { REDIS_HOST, REDIS_PORT } = process.env;
 
         this.db = {
             host: MIKRO_ORM_HOST,
@@ -43,14 +49,19 @@ class Environment {
             url: API_URL,
         };
 
-        this.jwt = {
-            secret: JWT_SECRET,
-            expiresIn: JWT_EXPIRES_IN ?? '30m',
+        this.session = {
+            secret: SESSION_SECRET,
+            expiresIn: SESSION_EXPIRES_IN,
         };
 
         this.mail = {
             apiKey: SENDGRID_API_KEY,
             from: EMAIL_FROM,
+        };
+
+        this.redis = {
+            host: REDIS_HOST,
+            port: +REDIS_PORT,
         };
     }
 
@@ -62,8 +73,10 @@ class Environment {
             !!this.db.user &&
             !!this.db.password &&
             !!this.api.url &&
-            !!this.jwt.secret &&
-            !!this.jwt.expiresIn &&
+            !!this.session.secret &&
+            !!this.session.expiresIn &&
+            !!this.redis.host &&
+            !!this.redis.port &&
             !!this.mail.apiKey &&
             !!this.mail.from
         );

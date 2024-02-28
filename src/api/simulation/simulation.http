@@ -1,16 +1,13 @@
 @host=localhost
 @port=3000
 @endpoint=simulations
-@simulationId=
-@bearer=
+@simulationId=641f4bc6-9392-44a1-b3eb-141e284a1c42
 
 ### Get all simulations
 GET http://{{host}}:{{port}}/api/{{endpoint}}
-Authorization: Bearer {{bearer}}
 
 ### Create simulation
 POST http://{{host}}:{{port}}/api/{{endpoint}}
-Authorization: Bearer {{bearer}}
 Content-Type: application/json
 
 {
@@ -21,8 +18,6 @@ Content-Type: application/json
 
 ### Get a simulation
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
-Authorization: Bearer {{bearer}}
 
 ### Get workers from simulation
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}/workers
-Authorization: Bearer {{bearer}}

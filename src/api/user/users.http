@@ -1,27 +1,13 @@
 @host=localhost
 @port=3000
 @endpoint=users
-@userId=
-@bearer=
+@userId=641f4bc6-9392-44a1-b3eb-141e284a1c42
 
 ### Get all users
 GET http://{{host}}:{{port}}/api/{{endpoint}}
-Authorization: Bearer {{bearer}}
 
 ### Get all users from page 2
 GET http://{{host}}:{{port}}/api/{{endpoint}}?size=2&index=3
-Authorization: Bearer {{bearer}}
 
 ### Get user by id
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
-Authorization: Bearer {{bearer}}
-
-### Update user by id
-PUT http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
-Authorization: Bearer {{bearer}}
-Content-Type: application/json
-
-{
-    "firstName": "Jane"
-}
-
