@@ -7,7 +7,7 @@ import { Simulation } from './simulation.entity';
 
 @Entity()
 export class Worker extends AbstractEntity<Worker> {
-    @ManyToOne(() => Simulation)
+    @ManyToOne(() => Simulation, { deleteRule: 'cascade' })
     simulation!: Simulation;
 
     @Property({ length: 100 })

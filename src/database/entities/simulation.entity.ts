@@ -15,7 +15,7 @@ export class Simulation extends AbstractEntity<Simulation> {
     @Property()
     year!: number;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { deleteRule: 'cascade' })
     user!: User;
 
     @Enum({ items: () => SimulationStatus, default: SimulationStatus.OPEN })

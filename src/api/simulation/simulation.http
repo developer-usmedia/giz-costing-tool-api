@@ -3,10 +3,10 @@
 @endpoint=simulations
 @simulationId=641f4bc6-9392-44a1-b3eb-141e284a1c42
 
-### Get all simulations
+### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}
 
-### Create simulation
+### Create
 POST http://{{host}}:{{port}}/api/{{endpoint}}
 Content-Type: application/json
 
@@ -15,9 +15,11 @@ Content-Type: application/json
     "year": 2024
 }
 
-
-### Get a simulation
+### Get
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
 
-### Get workers from simulation
+### Delete 
+DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
+
+### Get workers
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}/workers

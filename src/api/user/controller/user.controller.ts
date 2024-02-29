@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     HttpCode,
     Param,
@@ -63,8 +64,8 @@ export class UserController extends BaseController {
     @ApiOperation({ summary: 'Update a user' })
     @ApiResponse({ status: 201, description: 'The user has been successfully updated' })
     @ApiResponse({ status: 404, description: 'The user cannot be found' })
-    @UsePipes(ValidationPipe)
     @UseGuards(AuthGuard)
+    @UsePipes(ValidationPipe)
     public async patch(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserForm: UpdateUserDTO): Promise<UserResponse> {
         const user = await this.userService.findOne({ id });
         if (!user) return this.notFound('User not found');
@@ -73,6 +74,21 @@ export class UserController extends BaseController {
         const savedUser = await this.userService.persist(updatedUser);
 
         return UserDTOFactory.fromEntity(savedUser);
+    }
+
+    @Delete('/:id')
+    @ApiOperation({ summary: 'Delete a user' })
+    @ApiResponse({ status: 200, description: 'Deleted user' })
+    @ApiResponse({ status: 404, description: 'User not found' })
+    @UseGuards(AuthGuard)
+    @UsePipes(ValidationPipe)
+    public async destroy(@Param('id', ParseUUIDPipe) id: string): Promise<UserResponse> {
+        const user = await this.userService.findOneByUid(id);
+        if (!user) this.notFound('User not found');
+
+        const deleted = await this.userService.remove(user);
+
+        return UserDTOFactory.fromEntity(deleted);
     }
 
     @Post('/verify-email')

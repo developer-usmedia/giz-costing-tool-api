@@ -22,7 +22,7 @@ export abstract class BaseController {
 
     public notFound(message?: string): null {
         throw new NotFoundException({
-            statusCode: 400,
+            statusCode: 404,
             message: message ?? 'Not found',
             error: 'Not Found',
         });

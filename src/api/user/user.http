@@ -3,14 +3,17 @@
 @endpoint=users
 @userId=b587063f-7676-4419-aec5-37626ae41856
 
-### Get all users
+### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}
 
-### Get all users from page 2
+### Get all page 2
 GET http://{{host}}:{{port}}/api/{{endpoint}}?size=2&index=3
 
-### Get user by id
+### Get by id
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
+
+### Delete
+DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
 
 ### Send email verification code
 POST http://{{host}}:{{port}}/api/{{endpoint}}/send-email-verification

@@ -1,4 +1,16 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Req, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseUUIDPipe,
+    Post,
+    Req,
+    UseGuards,
+    UsePipes,
+    ValidationPipe,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthGuard } from '@api/auth/local/auth.guard';
@@ -29,7 +41,7 @@ export class SimulationController extends BaseController {
     @UseGuards(AuthGuard)
     public async index(
         @Paging('Simulation', PagingValidationPipe) paging: PagingParams<Simulation>,
-        @Req() req
+        @Req() req,
     ): Promise<SimulationListResponse> {
         paging.filter = { ...paging.filter, user: req.user.id };
         const [simulations, count] = await this.simulationService.findManyPaged(paging);
@@ -60,6 +72,21 @@ export class SimulationController extends BaseController {
         const savedSimulation = await this.simulationService.persist(newSimulation);
 
         return SimulationDTOFactory.fromEntity(savedSimulation);
+    }
+
+    @Delete('/:id')
+    @ApiOperation({ summary: 'Delete a simulation' })
+    @ApiResponse({ status: 200, description: 'Deleted simulation' })
+    @ApiResponse({ status: 404, description: 'Simulation not found' })
+    @UseGuards(AuthGuard)
+    @UsePipes(ValidationPipe)
+    public async destroy(@Param('id', ParseUUIDPipe) id: string): Promise<SimulationResponse> {
+        const simulation = await this.simulationService.findOneByUid(id);
+        if(!simulation) this.notFound();
+
+        const deleted = await this.simulationService.remove(simulation);
+
+        return SimulationDTOFactory.fromEntity(deleted);
     }
 
     @Get('/:id/workers')

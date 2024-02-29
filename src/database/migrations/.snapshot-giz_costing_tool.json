@@ -618,6 +618,7 @@
             "id"
           ],
           "referencedTableName": "public.user",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },
@@ -844,6 +845,7 @@
             "id"
           ],
           "referencedTableName": "public.simulation",
+          "deleteRule": "cascade",
           "updateRule": "cascade"
         }
       },

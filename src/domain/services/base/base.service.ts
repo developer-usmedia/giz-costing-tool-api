@@ -46,8 +46,14 @@ export abstract class BaseService<T extends AbstractEntity<T>> {
         return entity;
     }
 
-    public remove(entity: T): void {
+    public async remove(entity: T, andFlush = true): Promise<T> {
         this.em.remove(entity);
+
+        if (andFlush) {
+            await this.em.flush();
+        }
+
+        return entity;
     }
 
     public flush(): Promise<void> {
