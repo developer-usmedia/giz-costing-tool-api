@@ -76,8 +76,24 @@ export class AuthService {
         user.verificationCode.reset();
         user.emailVerfied = true;
 
-        await this.usersService.persist(user);
+        return !!(await this.usersService.persist(user));
+    }
 
-        return true;
+    public async save2FASecret(user: User, secret: string): Promise<boolean> {
+        user.set2FASecret(secret);
+
+        return !!(await this.usersService.persist(user));
+    }
+
+    public async enable2FA(user: User): Promise<boolean> {
+        user.enable2FA();
+
+        return !!(await this.usersService.persist(user));
+    }
+
+    public async disable2FA(user: User): Promise<boolean> {
+        user.disable2FA();
+
+        return !!(await this.usersService.persist(user));
     }
 }

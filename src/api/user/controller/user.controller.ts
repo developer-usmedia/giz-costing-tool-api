@@ -9,7 +9,6 @@ import {
     Put,
     Req,
     Res,
-    UnauthorizedException,
     UseGuards,
     UsePipes,
     ValidationPipe,
@@ -23,8 +22,7 @@ import { Paging } from '@common/decorators/paging.decorator';
 import { PagingParams } from '@common/paging/paging-params';
 import { PagingValidationPipe } from '@common/pipes/paging-params';
 import { User } from '@database/entities/user.entity';
-import { AuthService } from '@domain/services/auth.service';
-import { UserService } from '@domain/services/user.service';
+import { AuthService, UserService } from '@domain/services';
 import { UpdateUserDTO } from '../dto/update-user.form';
 import { UserDTOFactory, UserListResponse, UserResponse } from '../dto/user.dto';
 
@@ -77,48 +75,31 @@ export class UserController extends BaseController {
         return UserDTOFactory.fromEntity(savedUser);
     }
 
-    @Post('/:id/send-email-verification')
+    @Post('/verify-email')
     @ApiOperation({ summary: 'Send the user an email with a verification code' })
     @ApiResponse({ status: 200, description: 'The email has been successfully sent' })
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
-    @ApiResponse({ status: 401, description: 'Cannot send verification email for other users ' })
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
-    public async sendEmailVerification(
-        @Param('id', ParseUUIDPipe) id: string, // Q: remove id from this request and base it on the session user.id?
-        @Req() req,
-        @Res() res: Response,
-    ): Promise<{ success: boolean }> {
-        if (id !== req.user.id) throw new UnauthorizedException('Cannot send email for other users');
+    public async sendEmailVerification(@Req() req, @Res() res: Response): Promise<{ success: boolean }> {
+        if (req.user.emailVerfied) this.clientError('User email already verified');
 
-        const user = await this.userService.findOne({ id });
-        if (user.emailVerfied) this.clientError('User email already verified'); 
-        // Find way to throw this 'error' in domain layer and therefore moving the check to the domain
-
+        const user = await this.userService.findOne({ id: req.user.id });
         const sent = await this.authService.sendVerificationEmail(user);
 
         return this.ok(res, { success: sent });
     }
 
-    @Post('/:id/verify-email/:code')
+    @Post('/verify-email/:code')
     @ApiOperation({ summary: 'Verify the code from the verification email' })
     @ApiResponse({ status: 200, description: 'The code has been successfully verified' })
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
-    @ApiResponse({ status: 401, description: 'Cannot send verification email for other users ' })
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
-    public async verifyEmail(
-        @Param('id', ParseUUIDPipe) id: string, // Q: remove id from this request and base it on the session user.id?
-        @Param('code') code: string,
-        @Req() req,
-        @Res() res: Response,
-    ): Promise<{ success: boolean }> {
-        if (id !== req.user.id) throw new UnauthorizedException('Cannot verify email for other users');
+    public async verifyEmail(@Param('code') code: string, @Req() req, @Res() res: Response): Promise<{ success: boolean }> {
+        if (req.user.emailVerfied) this.clientError('User email already verified');
 
-        const user = await this.userService.findOne({ id });
-        if (user.emailVerfied) this.clientError('User email already verified');
-        // Find way to throw this 'error' in domain layer and therefore moving the check to the domain
-
+        const user = await this.userService.findOneByUid(req.user.id as string);
         const verified = await this.authService.verifyEmailCode(user, code);
 
         return this.ok(res, { success: verified });

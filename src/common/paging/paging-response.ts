@@ -1,4 +1,4 @@
-// Q: This is not really part of the paging (!) response. Is there a better place?
+// Q for J: This is not really part of the paging (!) response. Is there a better place?
 export type EntityResponse<I extends string, T> = {
     [key in I]: T;
 };

@@ -1,14 +1,14 @@
-import { Body, Controller, HttpCode, Post, Request, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post, Req, Request, Res, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { BaseController } from '@api/base.controller';
 import { UserDTOFactory, UserResponse } from '@api/user/dto/user.dto';
-import { AuthService } from '@domain/services/auth.service';
-import { UserService } from '@domain/services/user.service';
+import { AuthService, OTPService, UserService } from '@domain/services';
 import { Response } from 'express';
 import { ForgotPasswordForm } from '../dto/forgot-password.dto';
 import { PasswordResetForm } from '../dto/password-reset-form.dto';
 import { RegisterForm } from '../dto/register-form.dto';
+import { AuthGuard } from '../local/auth.guard';
 import { LoginAuthGuard } from '../local/login.guard';
 
 @ApiTags('auth')
@@ -17,6 +17,7 @@ export class AuthController extends BaseController {
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UserService,
+        private readonly otpService: OTPService,
     ) {
         super();
     }
@@ -67,7 +68,7 @@ export class AuthController extends BaseController {
         const user = await this.userService.findOne({ email });
         if (!user) this.clientError('Forgot password failed');
 
-        // Q: Does this endpoint require a validated email? Or send anyway?
+        // Q for J: Does this endpoint require a validated email? Or send anyway?
         const sent = await this.authService.startPasswordReset(user);
 
         return this.ok(res, { resetEmailSent: sent });
@@ -92,5 +93,56 @@ export class AuthController extends BaseController {
         if (!saved) return this.clientError('Invalid or expired token');
 
         return this.ok(res, { passwordReset: saved });
+    }
+
+    @Post('/2fa/enable')
+    @ApiOperation({ summary: 'Enable 2FA' })
+    @ApiResponse({ status: 201, description: '2FA registration started. Requires verification' })
+    @ApiResponse({ status: 400, description: 'Email verification required or 2FA already enabled' })
+    @UseGuards(AuthGuard)
+    public async register2FA(@Req() req, @Res() res: Response): Promise<{ qrcode: string }> {
+        const { emailVerfied, twoFactor } = req.user;
+        if (!emailVerfied) this.clientError('Email verification required before enabling 2FA');
+        if (twoFactor.enabled) this.clientError('2FA already enabled');
+
+        const user = await this.userService.findOneByUid(req.user.id as string);
+        const { secret, qrcode } = await this.otpService.generate2FASecret();
+        await this.authService.save2FASecret(user, secret.base32);
+
+        // Q for J: Send secret to frontend for manual entry in authenticator?
+        return this.created(res, { qrcode: qrcode });
+    }
+
+    @Post('/2fa/verify/:code')
+    @ApiOperation({ summary: 'Verify/enable a 2FA authenticator' })
+    @ApiResponse({ status: 200, description: '2FA enabled' })
+    @ApiResponse({ status: 400, description: '2FA not setup or invalid verification code' })
+    @UseGuards(AuthGuard)
+    @UsePipes(ValidationPipe)
+    public async verify2FA(@Param('code') code: string, @Req() req, @Res() res: Response): Promise<{ verified: boolean }> {
+        const { enabled, secret } = req.user.twoFactor;
+        if (!secret) this.clientError('2FA is disabled');
+
+        const verified = this.otpService.verify2FACode(req.user.twoFactor.secret as string, code);
+        if (!verified) this.clientError('Invalid verfication code');
+
+        if (!enabled) {
+            const user = await this.userService.findOneByUid(req.user.id as string);
+            this.authService.enable2FA(user);
+        }
+
+        return this.ok(res, { verified: verified });
+    }
+
+    @Post('/2fa/disable')
+    @UseGuards(AuthGuard)
+    @UsePipes(ValidationPipe)
+    @ApiOperation({ summary: 'Disable 2FA' })
+    @ApiResponse({ status: 200, description: '2FA disabled or 2FA was never enabled' })
+    public async disable2FA(@Req() req, @Res() res: Response): Promise<{ disabled: boolean }> {
+        const user = await this.userService.findOneByUid(req.user.id as string);
+        const disabled = await this.authService.disable2FA(user);
+
+        return this.ok(res, { disabled: disabled });
     }
 }

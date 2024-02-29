@@ -1,6 +1,7 @@
 import { Collection, Embedded, Entity, OneToMany, Property, Unique } from '@mikro-orm/core';
 import * as bcrypt from 'bcrypt';
 
+import { TwoFactor } from '@database/embeddables/two-factor.embeddable';
 import { VerificationCode } from '@database/embeddables/verification-code.embeddable';
 import { AbstractEntity } from './base/abstract.entity';
 import { Simulation } from './simulation.entity';
@@ -30,7 +31,10 @@ export class User extends AbstractEntity<User> {
     emailVerfied!: boolean;
 
     @Embedded({ entity: () => VerificationCode, prefix: 'verification_', nullable: true })
-    verificationCode!: VerificationCode;
+    verificationCode!: VerificationCode; // Use OTP table for this? That will support sms verification as wel
+
+    @Embedded({ entity: () => TwoFactor, prefix: 'two-factor_', nullable: true })
+    twoFactor!: TwoFactor;
 
     @OneToMany({ entity: () => Simulation, mappedBy: (simulation) => simulation.user, nullable: true })
     simulations? = new Collection<Simulation>(this);
@@ -71,6 +75,18 @@ export class User extends AbstractEntity<User> {
         this.verificationCode.reset();
 
         return true;
+    }
+
+    public enable2FA() {
+        this.twoFactor.enabled = true;
+    }
+
+    public disable2FA() {
+        this.twoFactor.enabled = false;
+    }
+
+    public set2FASecret(secret: string) {
+        this.twoFactor.secret = secret;
     }
 
     private hashPassword(password: string, salt: string): string {

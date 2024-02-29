@@ -4,8 +4,7 @@ import { PassportModule } from '@nestjs/passport';
 
 import { UserModule } from '@api/user/user.module';
 import { User } from '@database/entities/user.entity';
-import { AuthService } from '@domain/services/auth.service';
-import { EmailService } from '@domain/services/email.service';
+import { AuthService, EmailService, OTPService } from '@domain/services';
 import { AuthController } from './controller/auth.controller';
 import { LocalStrategy } from './local/local.strategy';
 import { SessionSerializer } from './local/session.serializer';
@@ -19,6 +18,7 @@ import { SessionSerializer } from './local/session.serializer';
     providers: [
         AuthService,
         EmailService,
+        OTPService,
         LocalStrategy,
         SessionSerializer,
     ],

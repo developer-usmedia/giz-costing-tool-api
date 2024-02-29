@@ -119,12 +119,12 @@
         },
         "currency_name": {
           "name": "currency_name",
-          "type": "varchar(50)",
+          "type": "varchar(100)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 50,
+          "length": 100,
           "mappedType": "string"
         },
         "local_value": {
@@ -297,6 +297,25 @@
           "nullable": true,
           "length": 6,
           "mappedType": "datetime"
+        },
+        "two-factor_enabled": {
+          "name": "two-factor_enabled",
+          "type": "boolean",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "default": "false",
+          "mappedType": "boolean"
+        },
+        "two-factor_secret": {
+          "name": "two-factor_secret",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "string"
         }
       },
       "name": "user",
@@ -553,12 +572,12 @@
         },
         "benchmark_currency_name": {
           "name": "benchmark_currency_name",
-          "type": "varchar(50)",
+          "type": "varchar(100)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "length": 50,
+          "length": 100,
           "mappedType": "string"
         },
         "benchmark_local_value": {

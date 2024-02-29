@@ -9,9 +9,7 @@ import { PagingParams } from '@common/paging/paging-params';
 import { PagingValidationPipe } from '@common/pipes/paging-params';
 import { User, Worker } from '@database/entities';
 import { Simulation } from '@database/entities/simulation.entity';
-import { SimulationService } from '@domain/services/simulation.service';
-import { UserService } from '@domain/services/user.service';
-import { WorkerService } from '@domain/services/worker.service';
+import { SimulationService, WorkerService } from '@domain/services';
 import { CreateSimulationDTO } from '../dto/create-simulation.dto';
 import { SimulationDTOFactory, SimulationListResponse, SimulationResponse } from '../dto/simulation.dto';
 
@@ -19,7 +17,6 @@ import { SimulationDTOFactory, SimulationListResponse, SimulationResponse } from
 @Controller('simulations')
 export class SimulationController extends BaseController {
     constructor(
-        private readonly userService: UserService,
         private readonly simulationService: SimulationService,
         private readonly workerService: WorkerService,
     ) {

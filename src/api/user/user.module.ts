@@ -3,9 +3,7 @@ import { Module } from '@nestjs/common';
 
 import { User } from '@database/entities/user.entity';
 import { DomainModule } from '@domain/domain.module';
-import { AuthService } from '@domain/services/auth.service';
-import { EmailService } from '@domain/services/email.service';
-import { UserService } from '@domain/services/user.service';
+import { AuthService, EmailService, UserService } from '@domain/services';
 import { UserController } from './controller/user.controller';
 
 @Module({

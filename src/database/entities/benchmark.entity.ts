@@ -25,7 +25,7 @@ export class Benchmark extends AbstractEntity<Benchmark> {
     @Property({ length: 3 }) 
     currencyCode!: string; // ARS / EUR
 
-    @Property({ length: 50 })
+    @Property({ length: 100 })
     currencyName!: string;  // Bangladeshi Taki / Argentine Peso
 
     @Property({ columnType: 'numeric(19,4)' })

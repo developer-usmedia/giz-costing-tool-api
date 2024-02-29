@@ -43,3 +43,10 @@ Content-Type: application/json
     "resetToken": "K5LHC",
     "newPassword": "CHANGEME"
 }
+
+### Register a new 2 factor authenticator
+POST http://{{host}}:{{port}}/api/{{endpoint}}/2fa/enable
+
+@2faToken=035863
+### Verify a 2fa code from authenticator
+POST http://{{host}}:{{port}}/api/{{endpoint}}/2fa/verify/{{2faToken}}

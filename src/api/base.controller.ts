@@ -7,6 +7,11 @@ export abstract class BaseController {
         return dto;
     }
 
+    public created<T>(res: Response, dto?: T): T {
+        res.status(201).json(dto);
+        return dto;
+    }
+
     public clientError(message?: string): null {
         throw new BadRequestException({
             statusCode: 400,
