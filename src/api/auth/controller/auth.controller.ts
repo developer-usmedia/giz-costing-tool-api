@@ -28,7 +28,7 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 400, description: 'User already registered' })
     @UsePipes(ValidationPipe)
     public async register(@Body() registerForm: RegisterForm): Promise<UserResponse> {
-        const existingUser = await this.userService.findOne({ email: registerForm.email });
+        const existingUser = await this.userService.findOne({ email: registerForm.email }, {}, false);
         if (existingUser) return this.clientError('User already registered');
 
         const user = await this.authService.register(registerForm.email, registerForm.password);

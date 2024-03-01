@@ -54,7 +54,6 @@ export class UserController extends BaseController {
     @UseGuards(AuthGuard)
     public async findBy(@Param('id', ParseUUIDPipe) id: string): Promise<UserResponse> {
         const user = await this.userService.findOne({ id });
-        if (!user) return this.notFound('User not found');
 
         return UserDTOFactory.fromEntity(user);
     }
@@ -68,8 +67,6 @@ export class UserController extends BaseController {
     @UsePipes(ValidationPipe)
     public async patch(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserForm: UpdateUserDTO): Promise<UserResponse> {
         const user = await this.userService.findOne({ id });
-        if (!user) return this.notFound('User not found');
-
         const updatedUser = UpdateUserDTO.toEntity(user, updateUserForm);
         const savedUser = await this.userService.persist(updatedUser);
 
@@ -84,8 +81,6 @@ export class UserController extends BaseController {
     @UsePipes(ValidationPipe)
     public async destroy(@Param('id', ParseUUIDPipe) id: string): Promise<UserResponse> {
         const user = await this.userService.findOneByUid(id);
-        if (!user) this.notFound('User not found');
-
         const deleted = await this.userService.remove(user);
 
         return UserDTOFactory.fromEntity(deleted);

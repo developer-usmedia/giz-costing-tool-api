@@ -161,11 +161,11 @@
           "mappedType": "decimal"
         }
       },
-      "name": "benchmark",
+      "name": "giz_benchmark",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "benchmark_pkey",
+          "keyName": "giz_benchmark_pkey",
           "columnNames": [
             "id"
           ],
@@ -318,7 +318,7 @@
           "mappedType": "string"
         }
       },
-      "name": "user",
+      "name": "giz_user",
       "schema": "public",
       "indexes": [
         {
@@ -326,13 +326,13 @@
             "email"
           ],
           "composite": false,
-          "keyName": "user_email_unique",
+          "keyName": "giz_user_email_unique",
           "constraint": true,
           "primary": false,
           "unique": true
         },
         {
-          "keyName": "user_email_unique",
+          "keyName": "giz_user_email_unique",
           "columnNames": [
             "email"
           ],
@@ -342,7 +342,7 @@
           "unique": true
         },
         {
-          "keyName": "user_pkey",
+          "keyName": "giz_user_pkey",
           "columnNames": [
             "id"
           ],
@@ -592,11 +592,11 @@
           "mappedType": "decimal"
         }
       },
-      "name": "simulation",
+      "name": "giz_simulation",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "simulation_pkey",
+          "keyName": "giz_simulation_pkey",
           "columnNames": [
             "id"
           ],
@@ -608,16 +608,16 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "simulation_user_id_foreign": {
-          "constraintName": "simulation_user_id_foreign",
+        "giz_simulation_user_id_foreign": {
+          "constraintName": "giz_simulation_user_id_foreign",
           "columnNames": [
             "user_id"
           ],
-          "localTableName": "public.simulation",
+          "localTableName": "public.giz_simulation",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.user",
+          "referencedTableName": "public.giz_user",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         }
@@ -819,11 +819,11 @@
           "mappedType": "decimal"
         }
       },
-      "name": "worker",
+      "name": "giz_worker",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "worker_pkey",
+          "keyName": "giz_worker_pkey",
           "columnNames": [
             "id"
           ],
@@ -835,16 +835,16 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "worker_simulation_id_foreign": {
-          "constraintName": "worker_simulation_id_foreign",
+        "giz_worker_simulation_id_foreign": {
+          "constraintName": "giz_worker_simulation_id_foreign",
           "columnNames": [
             "simulation_id"
           ],
-          "localTableName": "public.worker",
+          "localTableName": "public.giz_worker",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.simulation",
+          "referencedTableName": "public.giz_simulation",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         }

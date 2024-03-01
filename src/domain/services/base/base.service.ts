@@ -24,12 +24,20 @@ export abstract class BaseService<T extends AbstractEntity<T>> {
         return this.repo.findAndCount(where, find);
     }
 
-    public findOne<P extends string = never>(where?: FilterQuery<T>, options?: FindOptions<T, P>): Promise<T> {
-        return this.repo.findOne<P>(where, options);
+    public findOne<P extends string = never>(where?: FilterQuery<T>, options?: FindOptions<T, P>, findOrFail = true): Promise<T> {
+        if(findOrFail) {
+            return this.repo.findOneOrFail<P>(where, options);
+        } else {
+            return this.repo.findOne<P>(where, options);
+        }
     }
 
-    public findOneByUid<P extends string = never>(id: string, options: FindOptions<T, P> = {}): Promise<T> {
-        return this.repo.findOne<P>({ id } as FilterQuery<T>, options);
+    public findOneByUid<P extends string = never>(id: string, options: FindOptions<T, P> = {}, findOrFail = true): Promise<T> {
+        if (findOrFail) {
+            return this.repo.findOneOrFail<P>({ id } as FilterQuery<T>, options);
+        } else {
+            return this.repo.findOne<P>({ id } as FilterQuery<T>, options);
+        }
     }
 
     public count(where: FilterQuery<T>): Promise<number> {

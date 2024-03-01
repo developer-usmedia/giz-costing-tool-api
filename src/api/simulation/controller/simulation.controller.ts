@@ -56,7 +56,6 @@ export class SimulationController extends BaseController {
     @UseGuards(AuthGuard)
     public async findBy(@Param('id', ParseUUIDPipe) id: string, @Req() req): Promise<SimulationResponse> {
         const simulation = await this.simulationService.findOne({ id: id, user: req.user.id });
-        if (!simulation) return this.notFound('Simulation not found');
 
         return SimulationDTOFactory.fromEntity(simulation);
     }
@@ -82,8 +81,6 @@ export class SimulationController extends BaseController {
     @UsePipes(ValidationPipe)
     public async destroy(@Param('id', ParseUUIDPipe) id: string): Promise<SimulationResponse> {
         const simulation = await this.simulationService.findOneByUid(id);
-        if(!simulation) this.notFound();
-
         const deleted = await this.simulationService.remove(simulation);
 
         return SimulationDTOFactory.fromEntity(deleted);
@@ -100,9 +97,7 @@ export class SimulationController extends BaseController {
         @Req() req,
     ): Promise<WorkerListResponse> {
         const simulation = await this.simulationService.findOne({ id: simulationId, user: req.user.id });
-        if (!simulation) return this.notFound('Simulation not found');
-
-        paging.filter = { ...paging.filter, simulation: simulationId };
+        paging.filter = { ...paging.filter, simulation: simulation.id };
         const [workers, count] = await this.workerService.findManyPaged(paging);
 
         // TODO: check hateaos links on this endpoint
