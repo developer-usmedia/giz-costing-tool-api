@@ -2,7 +2,8 @@ import { Body, Controller, HttpCode, Param, Post, Req, Request, Res, UseGuards, 
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { BaseController } from '@api/base.controller';
-import { UserDTOFactory, UserResponse } from '@api/user/dto/user.dto';
+import { UserDTO, UserDTOFactory, UserResponse } from '@api/user/dto/user.dto';
+import { User } from '@common/decorators/user.decorator';
 import { AuthService, OTPService, UserService } from '@domain/services';
 import { Response } from 'express';
 import { ForgotPasswordForm } from '../dto/forgot-password.dto';
@@ -83,6 +84,7 @@ export class AuthController extends BaseController {
     public async resetPassword(
         @Body() resetPasswordForm: PasswordResetForm,
         @Res() res: Response,
+        @Req() req,
     ): Promise<{ passwordReset: boolean }> {
         const { email, newPassword, resetToken } = resetPasswordForm;
 
@@ -92,6 +94,8 @@ export class AuthController extends BaseController {
         const saved = await this.authService.resetPassword(user, resetToken, newPassword);
         if (!saved) return this.clientError('Invalid or expired token');
 
+        req.session.destroy();
+
         return this.ok(res, { passwordReset: saved });
     }
 
@@ -100,12 +104,12 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 201, description: '2FA registration started. Requires verification' })
     @ApiResponse({ status: 400, description: 'Email verification required or 2FA already enabled' })
     @UseGuards(AuthGuard)
-    public async register2FA(@Req() req, @Res() res: Response): Promise<{ qrcode: string }> {
-        const { emailVerfied, twoFactor } = req.user;
-        if (!emailVerfied) this.clientError('Email verification required before enabling 2FA');
-        if (twoFactor.enabled) this.clientError('2FA already enabled');
+    public async register2FA(@User() sessionUser: UserDTO, @Res() res: Response): Promise<{ qrcode: string }> {
+        const { id: userId, emailVerified, twoFactorEnabled } = sessionUser;
+        if (!emailVerified) this.clientError('Email verification required before enabling 2FA');
+        if (twoFactorEnabled) this.clientError('2FA already enabled');
 
-        const user = await this.userService.findOneByUid(req.user.id as string);
+        const user = await this.userService.findOneByUid(userId);
         const { secret, qrcode } = await this.otpService.generate2FASecret();
         await this.authService.save2FASecret(user, secret.base32);
 
@@ -119,15 +123,18 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 400, description: '2FA not setup or invalid verification code' })
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
-    public async verify2FA(@Param('code') code: string, @Req() req, @Res() res: Response): Promise<{ verified: boolean }> {
-        const { enabled, secret } = req.user.twoFactor;
-        if (!secret) this.clientError('2FA is disabled');
+    public async verify2FA(
+        @Param('code') code: string,
+        @User() sessionUser: UserDTO,
+        @Res() res: Response,
+    ): Promise<{ verified: boolean }> {
+        const user = await this.userService.findOneByUid(sessionUser.id);
+        if (!user.twoFactor.secret) this.clientError('2FA is disabled');
 
-        const verified = this.otpService.verify2FACode(req.user.twoFactor.secret as string, code);
+        const verified = this.otpService.verify2FACode(user.twoFactor.secret, code);
         if (!verified) this.clientError('Invalid verfication code');
 
-        if (!enabled) {
-            const user = await this.userService.findOneByUid(req.user.id as string);
+        if (!user.twoFactor.enabled) {
             this.authService.enable2FA(user);
         }
 
@@ -139,8 +146,8 @@ export class AuthController extends BaseController {
     @UsePipes(ValidationPipe)
     @ApiOperation({ summary: 'Disable 2FA' })
     @ApiResponse({ status: 200, description: '2FA disabled or 2FA was never enabled' })
-    public async disable2FA(@Req() req, @Res() res: Response): Promise<{ disabled: boolean }> {
-        const user = await this.userService.findOneByUid(req.user.id as string);
+    public async disable2FA(@User() sessionUser: UserDTO, @Res() res: Response): Promise<{ disabled: boolean }> {
+        const user = await this.userService.findOneByUid(sessionUser.id);
         const disabled = await this.authService.disable2FA(user);
 
         return this.ok(res, { disabled: disabled });

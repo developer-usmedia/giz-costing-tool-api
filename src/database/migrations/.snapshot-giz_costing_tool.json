@@ -268,8 +268,8 @@
           "nullable": false,
           "mappedType": "string"
         },
-        "email_verfied": {
-          "name": "email_verfied",
+        "email_verified": {
+          "name": "email_verified",
           "type": "boolean",
           "unsigned": false,
           "autoincrement": false,

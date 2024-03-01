@@ -1,17 +1,17 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as connectRedis from 'connect-redis';
+import * as postgresConnect from 'connect-pg-simple';
 import * as cookieParser from 'cookie-parser';
 import { randomUUID } from 'crypto';
 import * as session from 'express-session';
-import { default as Redis } from 'ioredis';
 import * as passport from 'passport';
 
 import { environment } from '@common/environment/environment';
 import { AppModule } from './app.module';
 
-let redisClient: Redis;
+const SESSION_NAME = 'GIZ-COOKIE';
+const SESSION_TABLE_NAME = 'giz_session'; // Q for J: where to store this?
 
 const setupSwagger = (app: INestApplication<any>) => {
     const config = new DocumentBuilder()
@@ -24,24 +24,16 @@ const setupSwagger = (app: INestApplication<any>) => {
 };
 
 const setupAuth = (app: INestApplication<any>) => {
-    const RedisStore = connectRedis(session);
-    redisClient = new Redis({
-        host: environment.redis.host,
-        port: environment.redis.port,
-    });
-
-    redisClient.on('ready', () => {
-        console.log('[main.ts] Redis connection established');
-    });
-
-    redisClient.on('error', () => {
-        console.log('[main.ts] Redis failed to connect');
+    const pgConnection = postgresConnect(session);
+    const pgSessionStore = new pgConnection({
+        conString: environment.getPostgresConnectionString(),
+        tableName: SESSION_TABLE_NAME,
     });
 
     app.use(
         session({
-            store: new RedisStore({ client: redisClient }),
-            name: 'GIZ-COOKIE',
+            store: pgSessionStore,
+            name: SESSION_NAME,
             secret: environment.session.secret,
             resave: false,
             saveUninitialized: false,

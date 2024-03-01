@@ -67,14 +67,14 @@ export class AuthService {
     }
 
     public async verifyEmailCode(user: User, code: string): Promise<boolean> {
-        if (user.emailVerfied) return true;
+        if (user.emailVerified) return true;
 
         const validToken = user.verifyCode(code);
 
         if (!validToken) return false;
 
         user.verificationCode.reset();
-        user.emailVerfied = true;
+        user.emailVerified = true;
 
         return !!(await this.usersService.persist(user));
     }

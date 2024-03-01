@@ -20,12 +20,13 @@ import { Response } from 'express';
 import { AuthGuard } from '@api/auth/local/auth.guard';
 import { BaseController } from '@api/base.controller';
 import { Paging } from '@common/decorators/paging.decorator';
+import { User as UserDecorator } from '@common/decorators/user.decorator';
 import { PagingParams } from '@common/paging/paging-params';
 import { PagingValidationPipe } from '@common/pipes/paging-params';
 import { User } from '@database/entities/user.entity';
 import { AuthService, UserService } from '@domain/services';
 import { UpdateUserDTO } from '../dto/update-user.form';
-import { UserDTOFactory, UserListResponse, UserResponse } from '../dto/user.dto';
+import { UserDTO, UserDTOFactory, UserListResponse, UserResponse } from '../dto/user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -79,9 +80,17 @@ export class UserController extends BaseController {
     @ApiResponse({ status: 404, description: 'User not found' })
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
-    public async destroy(@Param('id', ParseUUIDPipe) id: string): Promise<UserResponse> {
+    public async destroy(
+        @Param('id', ParseUUIDPipe) id: string,
+        @Req() req,
+        @UserDecorator() sessionUser: UserDTO,
+    ): Promise<UserResponse> {
         const user = await this.userService.findOneByUid(id);
         const deleted = await this.userService.remove(user);
+
+        if (sessionUser.id === user.id) {
+            req.session.destroy();
+        }
 
         return UserDTOFactory.fromEntity(deleted);
     }
@@ -92,13 +101,16 @@ export class UserController extends BaseController {
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
-    public async sendEmailVerification(@Req() req, @Res() res: Response): Promise<{ success: boolean }> {
-        if (req.user.emailVerfied) this.clientError('User email already verified');
+    public async sendEmailVerification(
+        @UserDecorator() sessionUser: UserDTO,
+        @Res() res: Response,
+    ): Promise<{ verificationEmailSent: boolean }> {
+        if (sessionUser.emailVerified) this.clientError('User email already verified');
 
-        const user = await this.userService.findOne({ id: req.user.id });
+        const user = await this.userService.findOne({ id: sessionUser.id });
         const sent = await this.authService.sendVerificationEmail(user);
 
-        return this.ok(res, { success: sent });
+        return this.ok(res, { verificationEmailSent: sent });
     }
 
     @Post('/verify-email/:code')
@@ -107,10 +119,14 @@ export class UserController extends BaseController {
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
-    public async verifyEmail(@Param('code') code: string, @Req() req, @Res() res: Response): Promise<{ success: boolean }> {
-        if (req.user.emailVerfied) this.clientError('User email already verified');
+    public async verifyEmail(
+        @Param('code') code: string,
+        @UserDecorator() sessionUser: UserDTO,
+        @Res() res: Response,
+    ): Promise<{ success: boolean }> {
+        if (sessionUser.emailVerified) this.clientError('User email already verified');
 
-        const user = await this.userService.findOneByUid(req.user.id as string);
+        const user = await this.userService.findOneByUid(sessionUser.id);
         const verified = await this.authService.verifyEmailCode(user, code);
 
         return this.ok(res, { success: verified });

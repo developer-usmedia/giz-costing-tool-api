@@ -28,7 +28,7 @@ export class User extends AbstractEntity<User> {
     salt!: string;
 
     @Property({ default: false })
-    emailVerfied!: boolean;
+    emailVerified!: boolean;
 
     @Embedded({ entity: () => VerificationCode, prefix: 'verification_', nullable: true })
     verificationCode!: VerificationCode; // Use OTP table for this? That will support sms verification as wel

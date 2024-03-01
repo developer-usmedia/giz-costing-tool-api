@@ -1,7 +1,7 @@
 @host=localhost
 @port=3000
 @endpoint=users
-@userId=b587063f-7676-4419-aec5-37626ae41856
+@userId=f4629b0d-9c29-475e-bda0-98db8508c239
 
 ### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}
@@ -16,8 +16,8 @@ GET http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
 DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
 
 ### Send email verification code
-POST http://{{host}}:{{port}}/api/{{endpoint}}/send-email-verification
+POST http://{{host}}:{{port}}/api/{{endpoint}}/verify-email
 
 ### Verify email verification code
-@emailToken=67NHHN
+@emailToken=L5MFXS
 POST http://{{host}}:{{port}}/api/{{endpoint}}/verify-email/{{emailToken}}

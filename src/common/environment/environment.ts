@@ -23,11 +23,6 @@ class Environment {
         from: string;
     };
 
-    public redis: {
-        host: string;
-        port: number;
-    };
-
     constructor() {
         config();
 
@@ -35,7 +30,6 @@ class Environment {
         const { MIKRO_ORM_HOST, MIKRO_ORM_DB_NAME, MIKRO_ORM_PORT, MIKRO_ORM_USER, MIKRO_ORM_PASSWORD } = process.env;
         const { SENDGRID_API_KEY, EMAIL_FROM } = process.env;
         const { SESSION_SECRET, SESSION_EXPIRES_IN } = process.env;
-        const { REDIS_HOST, REDIS_PORT } = process.env;
 
         this.db = {
             host: MIKRO_ORM_HOST,
@@ -58,12 +52,10 @@ class Environment {
             apiKey: SENDGRID_API_KEY,
             from: EMAIL_FROM,
         };
-
-        this.redis = {
-            host: REDIS_HOST,
-            port: +REDIS_PORT,
-        };
     }
+
+    public getPostgresConnectionString = (): string =>
+        `postgres://${this.db.user}:${this.db.password}@${this.db.host}:${this.db.port}/${this.db.name}`;
 
     public isLocal = (): boolean => {
         return ['development', 'test'].includes(process.env.NODE_ENV);
@@ -79,8 +71,6 @@ class Environment {
             !!this.api.url &&
             !!this.session.secret &&
             !!this.session.expiresIn &&
-            !!this.redis.host &&
-            !!this.redis.port &&
             !!this.mail.apiKey &&
             !!this.mail.from
         );

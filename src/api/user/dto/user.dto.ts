@@ -12,11 +12,13 @@ import { User } from '@database/entities/user.entity';
  * - Contains factory class that converts DB layer entity to response
  */
 
-export interface UserDTO {
+export interface UserDTO { // This is also used to store the user in session (local.strategy.ts)
     id: string;
     email: string;
+    emailVerified: boolean;
     firstName: string;
     lastName: string;
+    twoFactorEnabled: boolean;
 }
 
 export interface UserListResponse extends PagedEntityResponse<'users', UserDTO> {}
@@ -40,10 +42,13 @@ export class UserDTOFactory {
 }
 
 const mapEntityToDTO = (entity: User): UserDTO => {
+
     return {
         id: entity.id,
         email: entity.email,
+        emailVerified: entity.emailVerified,
         firstName: entity.firstName,
         lastName: entity.lastName,
+        twoFactorEnabled: entity.twoFactor.enabled,
     };
 };

@@ -53,7 +53,6 @@ export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
     },
     timezone: '+00:00',
     forceUtcTimezone: true,
-    forceUndefined: true,
     debug: environment.isLocal(),
     findOneOrFailHandler: (entity: string) => {
         return new NotFoundException(`${entity} not found`);

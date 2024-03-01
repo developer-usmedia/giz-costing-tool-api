@@ -10,9 +10,3 @@ services:
       POSTGRES_PASSWORD: ${MIKRO_ORM_PASSWORD}
       POSTGRES_USER: ${MIKRO_ORM_USER}
       POSTGRES_DB: ${MIKRO_ORM_DB_NAME}
-
-  redis:
-    image: redis
-    container_name: redis
-    ports:
-      - "6379:6379"
