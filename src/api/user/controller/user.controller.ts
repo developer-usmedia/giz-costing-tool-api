@@ -15,6 +15,7 @@ import {
     ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 
 import { AuthGuard } from '@api/auth/local/auth.guard';
@@ -95,7 +96,8 @@ export class UserController extends BaseController {
         return UserDTOFactory.fromEntity(deleted);
     }
 
-    @Post('/verify-email')
+    @Throttle({ default: { limit: 3 }})
+    @Post('/:id/send-email-verification')
     @ApiOperation({ summary: 'Send the user an email with a verification code' })
     @ApiResponse({ status: 200, description: 'The email has been successfully sent' })
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
