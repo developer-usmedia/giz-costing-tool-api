@@ -4,6 +4,7 @@ import { User } from '@database/entities/user.entity';
 
 /**
  * API layer DTO used in the creation of a user
+ * toEntity -> Convert to database entity from DTO specification
  */
 export class CreateUserDTO {
     @IsString()
@@ -12,7 +13,6 @@ export class CreateUserDTO {
     @IsString()
     password!: string;
 
-    // Convert to database entity from DTO specification above
     public static toEntity(form: CreateUserDTO): User {
         return new User({
             email: form.email,

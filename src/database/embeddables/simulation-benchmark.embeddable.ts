@@ -1,7 +1,5 @@
 import { Embeddable, Property } from '@mikro-orm/core';
 
-// TODO: think again on the database types and limitation
-
 @Embeddable()
 export class SimulationBenchmark {
     @Property({ length: 4 })
@@ -11,16 +9,16 @@ export class SimulationBenchmark {
     source?: string;
 
     @Property({ length: 50, nullable: true })
-    locality?: string; // Rural / Urban
+    locality?: string;
 
     @Property({ length: 50, nullable: true })
-    region?: string; // Dhaka City
+    region?: string;
 
     @Property({ length: 3 })
-    currencyCode!: string; // ARS / EUR
+    currencyCode!: string; 
 
     @Property({ length: 100 })
-    currencyName!: string; // Bangladeshi Taki / Argentine Peso
+    currencyName!: string;
 
     @Property({ columnType: 'numeric(19,4)' })
     localValue!: number;

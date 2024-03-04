@@ -16,6 +16,8 @@ class Environment {
     public session: {
         secret: string;
         expiresIn: number;
+        name: string;
+        tableName: string;
     };
 
     public mail: {
@@ -29,7 +31,7 @@ class Environment {
         const { API_URL } = process.env;
         const { MIKRO_ORM_HOST, MIKRO_ORM_DB_NAME, MIKRO_ORM_PORT, MIKRO_ORM_USER, MIKRO_ORM_PASSWORD } = process.env;
         const { SENDGRID_API_KEY, EMAIL_FROM } = process.env;
-        const { SESSION_SECRET, SESSION_EXPIRES_IN } = process.env;
+        const { SESSION_SECRET, SESSION_EXPIRES_IN, SESSION_NAME, SESSION_TABLE_NAME } = process.env;
 
         this.db = {
             host: MIKRO_ORM_HOST,
@@ -46,6 +48,8 @@ class Environment {
         this.session = {
             secret: SESSION_SECRET,
             expiresIn: +SESSION_EXPIRES_IN,
+            name: SESSION_NAME ?? 'GIZ-COOKIE',
+            tableName: SESSION_TABLE_NAME ?? 'giz_session',
         };
 
         this.mail = {

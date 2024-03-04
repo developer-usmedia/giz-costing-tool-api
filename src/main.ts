@@ -10,8 +10,6 @@ import * as passport from 'passport';
 import { environment } from '@common/environment/environment';
 import { AppModule } from './app.module';
 
-const SESSION_NAME = 'GIZ-COOKIE';
-const SESSION_TABLE_NAME = 'giz_session'; // Q for J: where to store this?
 
 const setupSwagger = (app: INestApplication<any>) => {
     const config = new DocumentBuilder()
@@ -27,13 +25,13 @@ const setupAuth = (app: INestApplication<any>) => {
     const pgConnection = postgresConnect(session);
     const pgSessionStore = new pgConnection({
         conString: environment.getPostgresConnectionString(),
-        tableName: SESSION_TABLE_NAME,
+        tableName: environment.session.tableName,
     });
 
     app.use(
         session({
             store: pgSessionStore,
-            name: SESSION_NAME,
+            name: environment.session.name,
             secret: environment.session.secret,
             resave: false,
             saveUninitialized: false,

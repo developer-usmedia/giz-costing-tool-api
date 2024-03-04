@@ -11,22 +11,22 @@ export class Benchmark extends AbstractEntity<Benchmark> {
     source?: string;
 
     @Property({ length: 3 })
-    countryCode!: string; // BD / AR
+    countryCode!: string;
 
     @Property({ nullable: false })
-    countryName!: string;   // Bangladesh / Argentina
+    countryName!: string;
 
     @Property({ length: 50 })
-    countryLocality!: string; // Rural / Urban
+    countryLocality!: string;
 
-    @Property({ length: 100, nullable: true }) 
-    countryRegion?: string; // Dhaka City
+    @Property({ length: 100, nullable: true })
+    countryRegion?: string;
 
-    @Property({ length: 3 }) 
-    currencyCode!: string; // ARS / EUR
+    @Property({ length: 3 })
+    currencyCode!: string;
 
     @Property({ length: 100 })
-    currencyName!: string;  // Bangladeshi Taki / Argentine Peso
+    currencyName!: string;
 
     @Property({ columnType: 'numeric(19,4)' })
     localValue!: number;

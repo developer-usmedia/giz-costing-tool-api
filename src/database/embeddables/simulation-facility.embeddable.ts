@@ -1,6 +1,5 @@
 import { Embeddable, Property } from '@mikro-orm/core';
 
-// TODO: think again on the database types and limitation
 
 @Embeddable()
 export class SimulationFacility {
@@ -25,7 +24,7 @@ export class SimulationFacility {
     @Property({ length: 50 })
     unitOfProduction!: string;
 
-    @Property({ columnType: 'integer', unsigned: true }) // numeric(19,4)
+    @Property({ columnType: 'numeric(19,4)', unsigned: true })
     annualProduction!: number;
 
     constructor(props: {

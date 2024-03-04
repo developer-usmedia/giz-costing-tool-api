@@ -513,12 +513,14 @@
         },
         "facility_annual_production": {
           "name": "facility_annual_production",
-          "type": "integer",
-          "unsigned": true,
+          "type": "numeric(19,4)",
+          "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "mappedType": "integer"
+          "precision": 19,
+          "scale": 4,
+          "mappedType": "decimal"
         },
         "benchmark_year": {
           "name": "benchmark_year",
