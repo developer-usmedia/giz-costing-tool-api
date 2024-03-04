@@ -6,8 +6,8 @@ import {
     HttpCode,
     Param,
     ParseUUIDPipe,
+    Patch,
     Post,
-    Put,
     Req,
     Res,
     UseGuards,
@@ -59,7 +59,7 @@ export class UserController extends BaseController {
         return UserDTOFactory.fromEntity(user);
     }
 
-    @Put('/:id')
+    @Patch('/:id')
     @HttpCode(201)
     @ApiOperation({ summary: 'Update a user' })
     @ApiResponse({ status: 201, description: 'The user has been successfully updated' })
