@@ -55,7 +55,7 @@ export class UserController extends BaseController {
     @ApiResponse({ status: 404, description: 'The user cannot be found' })
     @UseGuards(AuthGuard)
     public async findBy(@Param('id', ParseUUIDPipe) id: string): Promise<UserResponse> {
-        const user = await this.userService.findOne({ id });
+        const user = await this.userService.findOneByUid(id);
 
         return UserDTOFactory.fromEntity(user);
     }
@@ -68,7 +68,7 @@ export class UserController extends BaseController {
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
     public async patch(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserForm: UpdateUserDTO): Promise<UserResponse> {
-        const user = await this.userService.findOne({ id });
+        const user = await this.userService.findOneByUid(id);
         const updatedUser = UpdateUserDTO.toEntity(user, updateUserForm);
         const savedUser = await this.userService.persist(updatedUser);
 
@@ -109,7 +109,7 @@ export class UserController extends BaseController {
     ): Promise<{ verificationEmailSent: boolean }> {
         if (sessionUser.emailVerified) this.clientError('User email already verified');
 
-        const user = await this.userService.findOne({ id: sessionUser.id });
+        const user = await this.userService.findOneByUid(sessionUser.id);
         const sent = await this.authService.sendVerificationEmail(user);
 
         return this.ok(res, { verificationEmailSent: sent });

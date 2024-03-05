@@ -5,6 +5,7 @@ import { SeedManager } from '@mikro-orm/seeder';
 import { NotFoundException } from '@nestjs/common';
 import { join } from 'path';
 
+import { UserAwareArgs } from '@api/interceptors/user-aware.interceptor';
 import { environment } from '@common/environment/environment';
 import { SimulationBenchmark, SimulationFacility, WorkerIKB } from './embeddables';
 import { VerificationCode } from './embeddables/verification-code.embeddable';
@@ -21,6 +22,11 @@ export const entities = [
     WorkerIKB,
     Benchmark,
 ];
+
+export enum MikroFilters {
+    USER_AWARE = 'user-aware',
+    USER = 'user',
+}
 
 export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
     driver: PostgreSqlDriver,
@@ -56,6 +62,17 @@ export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
     debug: environment.api.isLocal,
     findOneOrFailHandler: (entity: string) => {
         return new NotFoundException(`${entity} not found`);
+    },
+    filters: {
+        [MikroFilters.USER_AWARE]: {
+            cond: (args: UserAwareArgs) => (args.enable ? { user: args.userId } : {}),
+            entity: [ 'Simulation' ],
+        },
+        [MikroFilters.USER]: {
+            // Requires own filter as a user has no userId property but an id property
+            cond: (args: UserAwareArgs) => (args.enable ? { id: args.userId } : {}),
+            entity: [ 'User' ],
+        },
     },
 };
 

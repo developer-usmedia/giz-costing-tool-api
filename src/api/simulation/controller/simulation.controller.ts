@@ -32,9 +32,7 @@ export class SimulationController extends BaseController {
     @UseGuards(AuthGuard)
     public async index(
         @Paging('Simulation', PagingValidationPipe) paging: PagingParams<Simulation>,
-        @UserDecorator() sessionUser: UserDTO,
     ): Promise<SimulationListResponse> {
-        paging.filter = { ...paging.filter, user: sessionUser.id };
         const [simulations, count] = await this.simulationService.findManyPaged(paging);
 
         return SimulationDTOFactory.fromCollection(simulations, count, paging);
@@ -45,11 +43,8 @@ export class SimulationController extends BaseController {
     @ApiResponse({ status: 404, description: 'The simulation cannot be found' })
     @ApiResponse({ status: 200, description: 'The simulation record' })
     @UseGuards(AuthGuard)
-    public async findBy(
-        @Param('id', ParseUUIDPipe) id: string,
-        @UserDecorator() sessionUser: UserDTO,
-    ): Promise<SimulationResponse> {
-        const simulation = await this.simulationService.findOne({ id: id, user: sessionUser.id });
+    public async findBy(@Param('id', ParseUUIDPipe) id: string): Promise<SimulationResponse> {
+        const simulation = await this.simulationService.findOneByUid(id);
 
         return SimulationDTOFactory.fromEntity(simulation);
     }
@@ -89,9 +84,8 @@ export class SimulationController extends BaseController {
     public async workers(
         @Param('id', ParseUUIDPipe) simulationId: string,
         @Paging('Worker', PagingValidationPipe) paging: PagingParams<Worker>,
-        @UserDecorator() sessionUser: UserDTO,
     ): Promise<WorkerListResponse> {
-        const simulation = await this.simulationService.findOne({ id: simulationId, user: sessionUser.id });
+        const simulation = await this.simulationService.findOneByUid(simulationId);
         paging.filter = { ...paging.filter, simulation: simulation.id };
         const [workers, count] = await this.workerService.findManyPaged(paging);
 
