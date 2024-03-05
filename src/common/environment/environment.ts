@@ -11,6 +11,7 @@ class Environment {
 
     public api: {
         url: string;
+        isLocal: boolean;
     };
 
     public session: {
@@ -43,6 +44,7 @@ class Environment {
 
         this.api = {
             url: API_URL,
+            isLocal: this.isLocal(),
         };
 
         this.session = {

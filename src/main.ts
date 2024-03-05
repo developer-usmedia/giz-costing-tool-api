@@ -26,6 +26,7 @@ const setupAuth = (app: INestApplication<any>) => {
     const pgSessionStore = new pgConnection({
         conString: environment.getPostgresConnectionString(),
         tableName: environment.session.tableName,
+        pruneSessionInterval: 900, // Default, added to be explicit
     });
 
     app.use(
@@ -38,8 +39,8 @@ const setupAuth = (app: INestApplication<any>) => {
             genid: () => randomUUID(),
             cookie: {
                 maxAge: environment.session.expiresIn,
-                secure: !environment.isLocal(),
-                httpOnly: !environment.isLocal(),
+                secure: !environment.api.isLocal,
+                httpOnly: !environment.api.isLocal,
             },
         }),
     );

@@ -40,7 +40,7 @@ export class EmailService {
         try {
             console.info(`Sending email to ${mail.to as string}`);
 
-            if (environment.isLocal()) {
+            if (environment.api.isLocal) {
                 console.info(mail);
                 return true;
             }
