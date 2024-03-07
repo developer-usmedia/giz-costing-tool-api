@@ -16,8 +16,6 @@ export interface UserDTO { // This is also used to store the user in session (lo
     id: string;
     email: string;
     emailVerified: boolean;
-    firstName: string;
-    lastName: string;
     twoFactorEnabled: boolean;
 }
 
@@ -47,8 +45,6 @@ const mapEntityToDTO = (entity: User): UserDTO => {
         id: entity.id,
         email: entity.email,
         emailVerified: entity.emailVerified,
-        firstName: entity.firstName,
-        lastName: entity.lastName,
         twoFactorEnabled: entity.twoFactor.enabled,
     };
 };

@@ -25,7 +25,7 @@ export abstract class BaseService<T extends AbstractEntity<T>> {
     }
 
     public findOne<P extends string = never>(where?: FilterQuery<T>, options?: FindOptions<T, P>, findOrFail = true): Promise<T> {
-        if(findOrFail) {
+        if (findOrFail) {
             return this.repo.findOneOrFail<P>(where, options);
         } else {
             return this.repo.findOne<P>(where, options);

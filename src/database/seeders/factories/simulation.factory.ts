@@ -12,7 +12,6 @@ export class SimulationFactory extends Factory<Simulation> {
         const now = new Date();
 
         return new Simulation({
-            name: faker.lorem.words(3),
             // between now and 8 years ago
             year: faker.date.between({ from: new Date(now).setFullYear(now.getFullYear() - 8), to: now }).getFullYear(),
             user: null, // Needs to be set in the seeder itself
@@ -22,7 +21,6 @@ export class SimulationFactory extends Factory<Simulation> {
                 name: faker.airline.airport().name,
                 countryCode: faker.location.countryCode(),
                 currencyCode: faker.finance.currencyCode(),
-                sector: faker.commerce.department(),
                 product: faker.commerce.product(),
                 unitOfProduction: faker.commerce.productMaterial(),
                 annualProduction: faker.number.int({ min: 1000, max: 100000 }),

@@ -5,31 +5,31 @@ import { AbstractEntity } from './base/abstract.entity';
 @Entity()
 export class Benchmark extends AbstractEntity<Benchmark> {
     @Property({ length: 4 })
-    year!: number;
+    year: number;
 
     @Property({ length: 100, nullable: true })
     source?: string;
 
     @Property({ length: 3 })
-    countryCode!: string;
+    countryCode: string;
 
     @Property({ nullable: false })
-    countryName!: string;
+    countryName: string;
 
     @Property({ length: 50 })
-    countryLocality!: string;
+    countryLocality: string;
 
     @Property({ length: 100, nullable: true })
     countryRegion?: string;
 
     @Property({ length: 3 })
-    currencyCode!: string;
+    currencyCode: string;
 
     @Property({ length: 100 })
-    currencyName!: string;
+    currencyName: string;
 
     @Property({ columnType: 'numeric(19,4)' })
-    localValue!: number;
+    localValue: number;
 
     @Property({ columnType: 'numeric(19,4)', nullable: true })
     eurValue?: number;

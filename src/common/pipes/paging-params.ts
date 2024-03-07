@@ -72,13 +72,7 @@ export class PagingValidationPipe<T extends AbstractEntity<T>> implements PipeTr
 
     private getColumnDefinitions(entity: string): string[] {
         const metadata = this.orm.getMetadata().get(entity);
-        const isTranslated = ['Sector', 'WorkArea'].includes(entity);
-
         const props = metadata.props.filter((prop) => !prop.embeddable).map((prop) => prop.name);
-
-        if (isTranslated) {
-            props.push('label');
-        }
 
         return props;
     }

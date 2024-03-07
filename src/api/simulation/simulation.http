@@ -11,8 +11,30 @@ POST http://{{host}}:{{port}}/api/{{endpoint}}
 Content-Type: application/json
 
 {
-    "name": "My simuluation",
-    "year": 2024
+    "facilityName": "My facility",
+    "countryCode": "FRA",
+    "year": 2031
+}
+
+### Patch
+PATCH http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
+Content-Type: application/json
+
+{
+    "year": 2041,
+    "administrativeCosts": 200,
+    "defaultEmployerTax": 3,
+    "defaultEmployeeTax": 5,
+    "facility": {
+        "name": "My Spinach Facility",
+        "countryCode": "UK",
+        "currencyCode": "GBP",
+        "product": "Spinach",
+        "unitOfProduction": "Box",
+        "annualProduction": 200000,
+        "buyerName": "Lidl",
+        "buyerProportion": 50
+    }
 }
 
 ### Get

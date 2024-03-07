@@ -12,15 +12,6 @@ GET http://{{host}}:{{port}}/api/{{endpoint}}?size=2&index=3
 ### Get by id
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
 
-### Update by id
-PATCH http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
-Content-Type: application/json
-
-{
-    "firstName": "Jane",
-    "lastName": "Patched"
-}
-
 ### Delete
 DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
 

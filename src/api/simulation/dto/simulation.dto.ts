@@ -3,6 +3,8 @@ import { generatePaginationLinks } from '@common/paging/generate-pagination-link
 import { PagingParams } from '@common/paging/paging-params';
 import { EntityResponse, PagedEntityResponse } from '@common/paging/paging-response';
 import { Simulation } from '@database/entities/simulation.entity';
+import { SimulationBenchmarkDTO, SimulationBenchmarkDTOFactory } from './simulation-benchmark.dto';
+import { SimulationFacilityDTO, SimulationFacilityDTOFactory } from './simulation-facility.dto';
 
 /**
  * API layer DTO used in the request response for simulation endpoint
@@ -14,9 +16,15 @@ import { Simulation } from '@database/entities/simulation.entity';
 
 export interface SimulationDTO {
     id: string;
-    name: string;
     year: string;
     status: string;
+    administrativeCosts: number;
+    defaultEmployerTax: number;
+    defaultEmployeeTax: number;
+    facility: SimulationFacilityDTO;
+    benchmark: SimulationBenchmarkDTO;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface SimulationListResponse extends PagedEntityResponse<'simulations', SimulationDTO> {}
@@ -46,8 +54,14 @@ export class SimulationDTOFactory {
 const mapEntityToDTO = (entity: Simulation): SimulationDTO => {
     return {
         id: entity.id,
-        name: entity.name,
         year: entity.year.toString(),
         status: entity.status,
+        administrativeCosts: entity.administrativeCosts,
+        defaultEmployeeTax: entity.defaultEmployeeTax,
+        defaultEmployerTax: entity.defaultEmployerTax,
+        facility: SimulationFacilityDTOFactory.fromEntity(entity.facility),
+        benchmark: SimulationBenchmarkDTOFactory.fromEntity(entity.benchmark),
+        createdAt: entity.createdAt,
+        updatedAt: entity.updatedAt,
     };
 };

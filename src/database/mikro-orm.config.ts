@@ -25,7 +25,6 @@ export const entities = [
 
 export enum MikroFilters {
     USER_AWARE = 'user-aware',
-    USER = 'user',
 }
 
 export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
@@ -67,11 +66,6 @@ export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
         [MikroFilters.USER_AWARE]: {
             cond: (args: UserAwareArgs) => (args.enable ? { user: args.userId } : {}),
             entity: [ 'Simulation' ],
-        },
-        [MikroFilters.USER]: {
-            // Requires own filter as a user has no userId property but an id property
-            cond: (args: UserAwareArgs) => (args.enable ? { id: args.userId } : {}),
-            entity: [ 'User' ],
         },
     },
 };

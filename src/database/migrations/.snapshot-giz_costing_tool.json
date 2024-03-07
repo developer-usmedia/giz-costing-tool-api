@@ -232,24 +232,6 @@
           "nullable": false,
           "mappedType": "string"
         },
-        "first_name": {
-          "name": "first_name",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "string"
-        },
-        "last_name": {
-          "name": "last_name",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "mappedType": "string"
-        },
         "password": {
           "name": "password",
           "type": "varchar(255)",
@@ -400,16 +382,6 @@
           "default": "1",
           "mappedType": "integer"
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 100,
-          "mappedType": "string"
-        },
         "year": {
           "name": "year",
           "type": "int",
@@ -448,7 +420,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
           "length": 100,
           "mappedType": "string"
         },
@@ -463,12 +435,12 @@
         },
         "facility_country_code": {
           "name": "facility_country_code",
-          "type": "varchar(2)",
+          "type": "varchar(3)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
-          "length": 2,
+          "nullable": false,
+          "length": 3,
           "mappedType": "string"
         },
         "facility_currency_code": {
@@ -479,16 +451,7 @@
           "primary": false,
           "nullable": true,
           "length": 3,
-          "mappedType": "string"
-        },
-        "facility_sector": {
-          "name": "facility_sector",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 100,
+          "default": "null",
           "mappedType": "string"
         },
         "facility_product": {
@@ -499,6 +462,7 @@
           "primary": false,
           "nullable": true,
           "length": 255,
+          "default": "null",
           "mappedType": "string"
         },
         "facility_unit_of_production": {
@@ -509,6 +473,7 @@
           "primary": false,
           "nullable": true,
           "length": 50,
+          "default": "null",
           "mappedType": "string"
         },
         "facility_annual_production": {
@@ -520,7 +485,28 @@
           "nullable": true,
           "precision": 19,
           "scale": 4,
+          "default": "null",
           "mappedType": "decimal"
+        },
+        "facility_buyer_name": {
+          "name": "facility_buyer_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "default": "null",
+          "mappedType": "string"
+        },
+        "facility_buyer_proportion": {
+          "name": "facility_buyer_proportion",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "default": "null",
+          "mappedType": "integer"
         },
         "benchmark_year": {
           "name": "benchmark_year",
@@ -530,6 +516,7 @@
           "primary": false,
           "nullable": true,
           "length": 4,
+          "default": "null",
           "mappedType": "integer"
         },
         "benchmark_source": {
@@ -540,6 +527,7 @@
           "primary": false,
           "nullable": true,
           "length": 100,
+          "default": "null",
           "mappedType": "string"
         },
         "benchmark_locality": {
@@ -550,6 +538,7 @@
           "primary": false,
           "nullable": true,
           "length": 50,
+          "default": "null",
           "mappedType": "string"
         },
         "benchmark_region": {
@@ -560,6 +549,7 @@
           "primary": false,
           "nullable": true,
           "length": 50,
+          "default": "null",
           "mappedType": "string"
         },
         "benchmark_currency_code": {
@@ -570,6 +560,7 @@
           "primary": false,
           "nullable": true,
           "length": 3,
+          "default": "null",
           "mappedType": "string"
         },
         "benchmark_currency_name": {
@@ -580,6 +571,7 @@
           "primary": false,
           "nullable": true,
           "length": 100,
+          "default": "null",
           "mappedType": "string"
         },
         "benchmark_local_value": {
@@ -591,6 +583,43 @@
           "nullable": true,
           "precision": 19,
           "scale": 4,
+          "default": "null",
+          "mappedType": "decimal"
+        },
+        "default_employer_tax": {
+          "name": "default_employer_tax",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "default": "0",
+          "mappedType": "decimal"
+        },
+        "default_employee_tax": {
+          "name": "default_employee_tax",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "default": "0",
+          "mappedType": "decimal"
+        },
+        "administrative_costs": {
+          "name": "administrative_costs",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "default": "0",
           "mappedType": "decimal"
         }
       },

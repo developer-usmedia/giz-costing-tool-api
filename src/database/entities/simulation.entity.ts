@@ -9,44 +9,48 @@ import { Worker } from './worker.entity';
 
 @Entity()
 export class Simulation extends AbstractEntity<Simulation> {
-    @Property({ length: 100 })
-    name!: string;
-
     @Property()
-    year!: number;
+    year: number;
 
     @ManyToOne(() => User, { deleteRule: 'cascade' })
-    user!: User;
+    user: User;
 
     @Enum({ items: () => SimulationStatus, default: SimulationStatus.OPEN })
-    status!: SimulationStatus;
+    status: SimulationStatus;
 
-    @Embedded({ entity: () => SimulationFacility, prefix: 'facility_', nullable: true })
-    facility!: SimulationFacility;
+    @Embedded({ entity: () => SimulationFacility, prefix: 'facility_' })
+    facility: SimulationFacility;
 
-    @Embedded({ entity: () => SimulationBenchmark, prefix: 'benchmark_', nullable: true })
-    benchmark!: SimulationBenchmark;
+    @Embedded({ entity: () => SimulationBenchmark, prefix: 'benchmark_' })
+    benchmark: SimulationBenchmark;
 
     @OneToMany({ entity: () => Worker, mappedBy: (worker) => worker.simulation, nullable: true })
     workers? = new Collection<Worker>(this);
 
+    @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
+    defaultEmployerTax?: number; //  Percentage (0 - 100)
+
+    @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
+    defaultEmployeeTax?: number; // Percentage (0 - 100)
+
+    @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
+    administrativeCosts: number;
+
     constructor(props: {
-        name: string;
         year: number;
         user: User;
+        facility: SimulationFacility;
         status?: SimulationStatus;
-        facility?: SimulationFacility;
         benchmark?: SimulationBenchmark;
     }) {
         super();
 
-        this.name = props.name;
         this.year = props.year;
         this.user = props.user;
-        this.status = props.status;
         this.facility = props.facility;
-        this.benchmark = props.benchmark;
 
+        this.status = props.status;
+        this.benchmark = props.benchmark ?? new SimulationBenchmark({});
         this.workers = null;
     }
 }

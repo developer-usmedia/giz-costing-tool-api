@@ -33,7 +33,6 @@ export class UserAwareInterceptor implements NestInterceptor {
         }
 
         this.em.setFilterParams(MikroFilters.USER_AWARE, userAware);
-        this.em.setFilterParams(MikroFilters.USER, userAware);
 
         return next.handle();
     }

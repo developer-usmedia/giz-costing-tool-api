@@ -1,12 +1,9 @@
 import {
-    Body,
     Controller,
     Delete,
     Get,
-    HttpCode,
     Param,
     ParseUUIDPipe,
-    Patch,
     Post,
     Req,
     Res,
@@ -26,7 +23,6 @@ import { PagingParams } from '@common/paging/paging-params';
 import { PagingValidationPipe } from '@common/pipes/paging-params';
 import { User } from '@database/entities/user.entity';
 import { AuthService, UserService } from '@domain/services';
-import { UpdateUserDTO } from '../dto/update-user.form';
 import { UserDTO, UserDTOFactory, UserListResponse, UserResponse } from '../dto/user.dto';
 
 @ApiTags('users')
@@ -60,21 +56,6 @@ export class UserController extends BaseController {
         return UserDTOFactory.fromEntity(user);
     }
 
-    @Patch('/:id')
-    @HttpCode(201)
-    @ApiOperation({ summary: 'Update a user' })
-    @ApiResponse({ status: 201, description: 'The user has been successfully updated' })
-    @ApiResponse({ status: 404, description: 'The user cannot be found' })
-    @UseGuards(AuthGuard)
-    @UsePipes(ValidationPipe)
-    public async patch(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserForm: UpdateUserDTO): Promise<UserResponse> {
-        const user = await this.userService.findOneByUid(id);
-        const updatedUser = UpdateUserDTO.toEntity(user, updateUserForm);
-        const savedUser = await this.userService.persist(updatedUser);
-
-        return UserDTOFactory.fromEntity(savedUser);
-    }
-
     @Delete('/:id')
     @ApiOperation({ summary: 'Delete a user' })
     @ApiResponse({ status: 200, description: 'Deleted user' })
@@ -96,7 +77,7 @@ export class UserController extends BaseController {
         return UserDTOFactory.fromEntity(deleted);
     }
 
-    @Throttle({ default: { limit: 3 }})
+    @Throttle({ default: { limit: 3 } })
     @Post('/:id/send-email-verification')
     @ApiOperation({ summary: 'Send the user an email with a verification code' })
     @ApiResponse({ status: 200, description: 'The email has been successfully sent' })

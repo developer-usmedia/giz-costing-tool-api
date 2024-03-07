@@ -10,8 +10,6 @@ export class UserFactory extends Factory<User> {
         return {
             email: faker.internet.email(),
             password: faker.internet.password(),
-            firstName: faker.person.firstName(),
-            lastName: faker.person.lastName(),
         };
     }
 }

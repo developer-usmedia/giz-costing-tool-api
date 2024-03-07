@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseUUIDPipe,
+    Patch,
+    Post,
+    UseGuards,
+    UsePipes,
+    ValidationPipe,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthGuard } from '@api/auth/local/auth.guard';
@@ -14,6 +26,7 @@ import { Simulation } from '@database/entities/simulation.entity';
 import { SimulationService, UserService, WorkerService } from '@domain/services';
 import { CreateSimulationDTO } from '../dto/create-simulation.dto';
 import { SimulationDTOFactory, SimulationListResponse, SimulationResponse } from '../dto/simulation.dto';
+import { UpdateSimulationForm } from '../dto/update-simulation.form';
 
 @ApiTags('simulations')
 @Controller('simulations')
@@ -56,11 +69,28 @@ export class SimulationController extends BaseController {
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
     public async create(@Body() simulationForm: CreateSimulationDTO, @UserDecorator() sessionUser: UserDTO) {
-        const user = await this.userService.findOne({ id: sessionUser.id });
+        const user = await this.userService.findOneByUid(sessionUser.id);
         const newSimulation = CreateSimulationDTO.toEntity(simulationForm, user);
         const savedSimulation = await this.simulationService.persist(newSimulation);
 
         return SimulationDTOFactory.fromEntity(savedSimulation);
+    }
+
+    @Patch('/:id')
+    @ApiOperation({ summary: 'Update a simulation' })
+    @ApiResponse({ status: 201, description: 'Updated Simulation' })
+    @ApiResponse({ status: 404, description: 'Simulation to update not found' })
+    @UseGuards(AuthGuard)
+    @UsePipes(ValidationPipe)
+    public async update(
+        @Param('id', ParseUUIDPipe) id: string,
+        @Body() updateSimulationForm: UpdateSimulationForm,
+    ): Promise<SimulationResponse> {
+        const original = await this.simulationService.findOneByUid(id);
+        const updated = UpdateSimulationForm.toEntity(original, updateSimulationForm);
+        const saved = await this.simulationService.persist(updated);
+
+        return SimulationDTOFactory.fromEntity(saved);
     }
 
     @Delete('/:id')

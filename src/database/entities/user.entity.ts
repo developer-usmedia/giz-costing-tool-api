@@ -10,31 +10,25 @@ import { Simulation } from './simulation.entity';
 export class User extends AbstractEntity<User> {
     @Property({ unique: true })
     @Unique()
-    email!: string;
-
-    @Property({ nullable: true })
-    firstName?: string;
-
-    @Property({ nullable: true })
-    lastName?: string;
+    email: string;
 
     @Property({
         hidden: true, // Keeps it from .toObject() and .toJSON()
         lazy: true, // Requires dev to specifically ask for the property
     })
-    password!: string;
+    password: string;
 
     @Property()
-    salt!: string;
+    salt: string;
 
     @Property({ default: false })
-    emailVerified!: boolean;
+    emailVerified: boolean;
 
     @Embedded({ entity: () => VerificationCode, prefix: 'verification_', nullable: true })
-    verificationCode!: VerificationCode; // Use OTP table for this? That will support sms verification as wel
+    verificationCode: VerificationCode; // Use OTP table for this? That will support sms verification as wel
 
     @Embedded({ entity: () => TwoFactor, prefix: 'two-factor_', nullable: true })
-    twoFactor!: TwoFactor;
+    twoFactor: TwoFactor;
 
     @OneToMany({ entity: () => Simulation, mappedBy: (simulation) => simulation.user, nullable: true })
     simulations? = new Collection<Simulation>(this);
@@ -43,8 +37,7 @@ export class User extends AbstractEntity<User> {
         super();
 
         this.email = props.email;
-        this.firstName = props.firstName;
-        this.firstName = props.lastName;
+
         this.salt = this.generateSalt();
         this.password = this.hashPassword(props.password, this.salt);
         this.verificationCode = new VerificationCode();

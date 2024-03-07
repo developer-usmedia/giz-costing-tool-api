@@ -8,22 +8,22 @@ import { Simulation } from './simulation.entity';
 @Entity()
 export class Worker extends AbstractEntity<Worker> {
     @ManyToOne(() => Simulation, { deleteRule: 'cascade' })
-    simulation!: Simulation;
+    simulation: Simulation;
 
     @Property({ length: 100 })
-    name!: string;
+    name: string;
 
     @Enum(() => Gender)
-    gender!: Gender;
+    gender: Gender;
 
     @Property({ default: 1 })
-    numberOfWorkers!: number;
+    numberOfWorkers: number;
 
     @Property()
-    monthlyWage!: number;
+    monthlyWage: number;
 
     @Property()
-    monthlyBonus!: number;
+    monthlyBonus: number;
 
     @Property({ length: 3 })
     percentageOfYearWorked: number;
