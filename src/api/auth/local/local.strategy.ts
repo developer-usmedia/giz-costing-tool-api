@@ -2,8 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 
-import { UserDTO, UserDTOFactory } from '@api/user/dto/user.dto';
 import { AuthService } from '@domain/services/auth.service';
+
+export type SessionUser = { id: string };
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -15,7 +16,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     }
 
     // Used by @UseGuard(LocalAuthGuard) decorator
-    async validate(email: string, password: string): Promise<UserDTO> {
+    async validate(email: string, password: string): Promise<SessionUser> {
         try {
             const [user, validCredentials] = await this.authService.login(email, password);
 
@@ -23,8 +24,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
             if (!user) throw new Error('User not found');
 
             // This is stored on the session
-            const { user: userDto } = UserDTOFactory.fromEntity(user);
-            return userDto;
+            return { id: user.id };
         } catch (err) {
             throw new UnauthorizedException(err.message);
         }

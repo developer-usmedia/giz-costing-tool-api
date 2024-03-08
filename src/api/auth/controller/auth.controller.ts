@@ -2,7 +2,7 @@ import { Body, Controller, HttpCode, Param, Post, Req, Request, Res, UseGuards, 
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { BaseController } from '@api/base.controller';
-import { UserDTO, UserDTOFactory, UserResponse } from '@api/user/dto/user.dto';
+import { UserDTOFactory, UserResponse } from '@api/user/dto/user.dto';
 import { User } from '@common/decorators/user.decorator';
 import { AuthService, OTPService, UserService } from '@domain/services';
 import { Response } from 'express';
@@ -65,11 +65,9 @@ export class AuthController extends BaseController {
         @Body() { email }: ForgotPasswordForm,
         @Res() res: Response,
     ): Promise<{ resetEmailSent: boolean }> {
-        // TODO: rate limit this endpoint
         const user = await this.userService.findOne({ email });
         if (!user) this.clientError('Forgot password failed');
 
-        // Q for J: Does this endpoint require a validated email? Or send anyway?
         const sent = await this.authService.startPasswordReset(user);
 
         return this.ok(res, { resetEmailSent: sent });
@@ -104,12 +102,12 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 201, description: '2FA registration started. Requires verification' })
     @ApiResponse({ status: 400, description: 'Email verification required or 2FA already enabled' })
     @UseGuards(AuthGuard)
-    public async register2FA(@User() sessionUser: UserDTO, @Res() res: Response): Promise<{ qrcode: string }> {
-        const { id: userId, emailVerified, twoFactorEnabled } = sessionUser;
-        if (!emailVerified) this.clientError('Email verification required before enabling 2FA');
-        if (twoFactorEnabled) this.clientError('2FA already enabled');
+    public async register2FA(@User() sessionUser: { id: string }, @Res() res: Response): Promise<{ qrcode: string }> {
+        const user = await this.userService.findOneByUid(sessionUser.id);
 
-        const user = await this.userService.findOneByUid(userId);
+        if (!user.emailVerified) this.clientError('Email verification required before enabling 2FA');
+        if (user.twoFactor.enabled) this.clientError('2FA already enabled');
+
         const { secret, qrcode } = await this.otpService.generate2FASecret();
         await this.authService.save2FASecret(user, secret.base32);
 
@@ -125,7 +123,7 @@ export class AuthController extends BaseController {
     @UsePipes(ValidationPipe)
     public async verify2FA(
         @Param('code') code: string,
-        @User() sessionUser: UserDTO,
+        @User() sessionUser: { id: string },
         @Res() res: Response,
     ): Promise<{ verified: boolean }> {
         const user = await this.userService.findOneByUid(sessionUser.id);
@@ -146,7 +144,7 @@ export class AuthController extends BaseController {
     @UsePipes(ValidationPipe)
     @ApiOperation({ summary: 'Disable 2FA' })
     @ApiResponse({ status: 200, description: '2FA disabled or 2FA was never enabled' })
-    public async disable2FA(@User() sessionUser: UserDTO, @Res() res: Response): Promise<{ disabled: boolean }> {
+    public async disable2FA(@User() sessionUser: { id: string }, @Res() res: Response): Promise<{ disabled: boolean }> {
         const user = await this.userService.findOneByUid(sessionUser.id);
         const disabled = await this.authService.disable2FA(user);
 

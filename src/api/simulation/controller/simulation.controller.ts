@@ -15,7 +15,6 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { AuthGuard } from '@api/auth/local/auth.guard';
 import { BaseController } from '@api/base.controller';
-import { UserDTO } from '@api/user/dto/user.dto';
 import { WorkerDTOFactory, WorkerListResponse } from '@api/worker/dto/worker.dto';
 import { Paging } from '@common/decorators/paging.decorator';
 import { User as UserDecorator } from '@common/decorators/user.decorator';
@@ -68,7 +67,7 @@ export class SimulationController extends BaseController {
     @ApiResponse({ status: 404, description: 'User from token not found' })
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
-    public async create(@Body() simulationForm: CreateSimulationDTO, @UserDecorator() sessionUser: UserDTO) {
+    public async create(@Body() simulationForm: CreateSimulationDTO, @UserDecorator() sessionUser: { id: string }) {
         const user = await this.userService.findOneByUid(sessionUser.id);
         const newSimulation = CreateSimulationDTO.toEntity(simulationForm, user);
         const savedSimulation = await this.simulationService.persist(newSimulation);

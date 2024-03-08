@@ -23,7 +23,7 @@ import { PagingParams } from '@common/paging/paging-params';
 import { PagingValidationPipe } from '@common/pipes/paging-params';
 import { User } from '@database/entities/user.entity';
 import { AuthService, UserService } from '@domain/services';
-import { UserDTO, UserDTOFactory, UserListResponse, UserResponse } from '../dto/user.dto';
+import { UserDTOFactory, UserListResponse, UserResponse } from '../dto/user.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -65,7 +65,7 @@ export class UserController extends BaseController {
     public async destroy(
         @Param('id', ParseUUIDPipe) id: string,
         @Req() req,
-        @UserDecorator() sessionUser: UserDTO,
+        @UserDecorator() sessionUser: { id: string },
     ): Promise<UserResponse> {
         const user = await this.userService.findOneByUid(id);
         const deleted = await this.userService.remove(user);
@@ -78,21 +78,20 @@ export class UserController extends BaseController {
     }
 
     @Throttle({ default: { limit: 3 } })
-    @Post('/:id/send-email-verification')
+    @Post('/verify-email')
     @ApiOperation({ summary: 'Send the user an email with a verification code' })
     @ApiResponse({ status: 200, description: 'The email has been successfully sent' })
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
     @UseGuards(AuthGuard)
     @UsePipes(ValidationPipe)
     public async sendEmailVerification(
-        @UserDecorator() sessionUser: UserDTO,
+        @UserDecorator() sessionUser: { id: string },
         @Res() res: Response,
     ): Promise<{ verificationEmailSent: boolean }> {
-        if (sessionUser.emailVerified) this.clientError('User email already verified');
-
         const user = await this.userService.findOneByUid(sessionUser.id);
-        const sent = await this.authService.sendVerificationEmail(user);
+        if (user.emailVerified) this.clientError('User email already verified');
 
+        const sent = await this.authService.sendVerificationEmail(user);
         return this.ok(res, { verificationEmailSent: sent });
     }
 
@@ -104,14 +103,13 @@ export class UserController extends BaseController {
     @UsePipes(ValidationPipe)
     public async verifyEmail(
         @Param('code') code: string,
-        @UserDecorator() sessionUser: UserDTO,
+        @UserDecorator() sessionUser: { id: string },
         @Res() res: Response,
     ): Promise<{ success: boolean }> {
-        if (sessionUser.emailVerified) this.clientError('User email already verified');
-
         const user = await this.userService.findOneByUid(sessionUser.id);
-        const verified = await this.authService.verifyEmailCode(user, code);
+        if (user.emailVerified) this.clientError('User email already verified');
 
+        const verified = await this.authService.verifyEmailCode(user, code);
         return this.ok(res, { success: verified });
     }
 }
