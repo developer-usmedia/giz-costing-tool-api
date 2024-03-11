@@ -34,6 +34,11 @@ Content-Type: application/json
         "annualProduction": 200000,
         "buyerName": "Lidl",
         "buyerProportion": 50
+    },
+    "benchmark": {
+        "region": "São Paulo",
+        "locality": "Rural",
+        "localValue": 462
     }
 }
 
