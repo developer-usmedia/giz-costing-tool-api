@@ -6,6 +6,12 @@
 ### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}
 
+### Get latest 3
+GET http://{{host}}:{{port}}/api/{{endpoint}}?size=3&sort=updatedAt,ASC
+
+### Get with filter
+GET http://{{host}}:{{port}}/api/{{endpoint}}?year=2032
+
 ### Create
 POST http://{{host}}:{{port}}/api/{{endpoint}}
 Content-Type: application/json

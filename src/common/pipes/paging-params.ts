@@ -36,11 +36,13 @@ export class PagingValidationPipe<T extends AbstractEntity<T>> implements PipeTr
         const index = paging.index > -1;
         const size = paging.size > 0;
 
-        const filters = Object.keys(paging.filter || {}).filter(() => false);
-        const relations = paging.include.filter((relation) => !relationships.includes(relation));
-        const sorts = Object.keys(paging.sort || {}).filter((key) => !columns.includes(key) && !relationshipColumns.includes(key));
+        const invalidFilters = Object.keys(paging.filter || {}).filter((filter) => !columns.includes(filter));
+        const invalidRelations = paging.include.filter((relation) => !relationships.includes(relation));
+        const invalidSorts = Object.keys(paging.sort || {}).filter(
+            (key) => !columns.includes(key) && !relationshipColumns.includes(key),
+        );
 
-        const isValid = index && size && filters.length + sorts.length + relations.length === 0;
+        const isValid = index && size && invalidFilters.length + invalidSorts.length + invalidRelations.length === 0;
         if (!isValid) {
             validation.isValid = false;
 
@@ -54,15 +56,15 @@ export class PagingValidationPipe<T extends AbstractEntity<T>> implements PipeTr
                 validation.errors['size'] = 'Given size is invalid';
             }
 
-            filters.forEach((filter) => {
+            invalidFilters.forEach((filter) => {
                 validation.errors[filter] = `Given filter ${filter} is invalid`;
             });
 
-            relations.forEach((include) => {
+            invalidRelations.forEach((include) => {
                 validation.errors[include] = `Given include ${include} is invalid`;
             });
 
-            sorts.forEach((sort) => {
+            invalidSorts.forEach((sort) => {
                 validation.errors[sort] = `Given sort ${sort} is invalid`;
             });
         }

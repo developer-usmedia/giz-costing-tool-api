@@ -1,19 +1,23 @@
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { BadRequestException, createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
 
 import { PageFilter, PageSort, PagingParams, Sort } from '@common/paging/paging-params';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const Paging = createParamDecorator((entityName: string, ctx: ExecutionContext): PagingParams<any> => {
-    const request = ctx.switchToHttp().getRequest<Request>();
+    try {
+        const request = ctx.switchToHttp().getRequest<Request>();
 
-    return {
-        index: getIndexFromRequest(request),
-        size: getSizeFromRequest(request),
-        sort: getSortFromRequest(request),
-        filter: getFilterFromRequest(request),
-        include: getIncludesFromRequest(request),
-    };
+        return {
+            index: getIndexFromRequest(request),
+            size: getSizeFromRequest(request),
+            sort: getSortFromRequest(request),
+            filter: getFilterFromRequest(request),
+            include: getIncludesFromRequest(request),
+        };
+    } catch (error) {
+        throw new BadRequestException('Pagination query parameters are incorrect');
+    }
 });
 
 const getIndexFromRequest = (request: Request): number => {
@@ -47,7 +51,7 @@ const getSortFromRequest = (request: Request): PageSort | null => {
     params.forEach((param) => {
         const [attr, direction] = param.split(',');
 
-        sort[attr] = (direction.toUpperCase() as Sort) === Sort.DESC ? Sort.DESC : Sort.ASC;
+        sort[attr] = (direction?.toUpperCase() as Sort) === Sort.DESC ? Sort.DESC : Sort.ASC;
     });
 
     return sort ? sort : null;
