@@ -1,11 +1,14 @@
+
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { TerminusModule } from '@nestjs/terminus/dist/terminus.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 import { ApiModule } from '@api/api.module';
 import mikroOrmOpts from '@database/mikro-orm.config';
-import { APP_GUARD } from '@nestjs/core';
+import { AppController } from './app.controller';
 
 @Module({
     imports: [
@@ -19,8 +22,9 @@ import { APP_GUARD } from '@nestjs/core';
                 limit: 10,
             },
         ]),
+        TerminusModule,
     ],
-    controllers: [],
+    controllers: [AppController],
     providers: [
       {
         provide: APP_GUARD,

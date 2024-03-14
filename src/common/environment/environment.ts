@@ -12,6 +12,7 @@ class Environment {
     public api: {
         url: string;
         isLocal: boolean;
+        env: string;
     };
 
     public session: {
@@ -45,6 +46,7 @@ class Environment {
         this.api = {
             url: API_URL,
             isLocal: this.isLocal(),
+            env: process.env.NODE_ENV,
         };
 
         this.session = {
@@ -63,10 +65,6 @@ class Environment {
     public getPostgresConnectionString = (): string =>
         `postgres://${this.db.user}:${this.db.password}@${this.db.host}:${this.db.port}/${this.db.name}`;
 
-    public isLocal = (): boolean => {
-        return ['development', 'test'].includes(process.env.NODE_ENV);
-    };
-
     public isValid = (): boolean => {
         return (
             !!this.db.host &&
@@ -80,6 +78,10 @@ class Environment {
             !!this.mail.apiKey &&
             !!this.mail.from
         );
+    };
+
+    private readonly isLocal = (): boolean => {
+        return ['development', 'test'].includes(process.env.NODE_ENV);
     };
 }
 

@@ -1,0 +1,11 @@
+@host=localhost
+@port=3000
+
+### Health stats
+GET http://{{host}}:{{port}}/health
+
+### Liveness
+GET http://{{host}}:{{port}}/health/liveness
+
+### Readiness
+GET http://{{host}}:{{port}}/health/readiness

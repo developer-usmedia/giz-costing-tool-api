@@ -38,6 +38,28 @@ definitions:
           - npm ci
           - npm run test
 
+    - step: &deploy
+        name: Deploy
+        image: google/cloud-sdk:latest
+        services:
+         - docker
+        script:
+          - export PATH=/usr/bin:$PATH
+          - echo ${GCP_BITBUCKET_PIPELINE_SA} | base64 --decode --ignore-garbage > client-secret.json
+          - gcloud auth activate-service-account --key-file client-secret.json && rm client-secret.json
+          - gcloud auth configure-docker
+          - docker build -t eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_COMMIT} --file ./config/Dockerfile .
+          - docker push eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_COMMIT}
+          - docker tag eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_COMMIT} eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_DEPLOYMENT_ENVIRONMENT}
+          - docker push eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_DEPLOYMENT_ENVIRONMENT}
+          - gcloud config set project ${GOOGLE_PROJECT_ID}
+          - gcloud config set run/region europe-west4
+          - apt-get update && apt-get install gettext-base
+          - >
+            envsubst < config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.yml > config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.tmp.yml
+            && mv config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.tmp.yml config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.yml
+          - gcloud run services replace config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.yml
+
 pipelines:
   pull-requests:
     '**':
@@ -51,17 +73,12 @@ pipelines:
   branches:
     develop:
       - step: *build
-      # - step:
-      #     name: Deploy to develop
-      #     deployment: develop
-      #     <<: *deploy
+      - step:
+          name: Deploy to staging
+          deployment: staging
+          <<: *deploy
 
     # master:
-    #   - step: *build
-    #   - step:
-    #       name: Deploy to staging
-    #       deployment: staging
-    #       <<: *deploy
     #   - step:
     #       name: Deploy to production
     #       deployment: production

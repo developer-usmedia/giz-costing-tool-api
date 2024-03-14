@@ -1,0 +1,81 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: giz-costing-tool-api
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: '0'
+        autoscaling.knative.dev/maxScale: '1'
+        run.googleapis.com/vpc-access-egress: private-ranges-only
+        run.googleapis.com/cloudsql-instances: true-elevator-417011:europe-west4:giz-costing-tool-staging-postgresql
+        run.googleapis.com/vpc-access-connector: projects/true-elevator-417011/locations/europe-west4/connectors/giz-costing-tool-api-vpc
+        run.googleapis.com/cpu-throttling: 'false'
+        run.googleapis.com/startup-cpu-boost: 'false'
+    spec:
+      serviceAccountName: svc-giz-costing-tool-staging@true-elevator-417011.iam.gserviceaccount.com
+      containers:
+        - image: eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_COMMIT}
+          ports:
+            - name: http1
+              containerPort: 3000
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 2Gi
+          startupProbe:
+            httpGet:
+              path: '/health/readiness'
+              port: 3000
+            initialDelaySeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+            periodSeconds: 10
+          livenessProbe:
+              httpGet:
+                path: "/health/liveness"
+              timeoutSeconds: 1
+              failureThreshold: 5
+              periodSeconds: 10
+          env:
+            - name: ENV
+              value: 'staging'
+            - name: NODE_ENV
+              value: 'staging'
+            - name: LOGGER_TYPE
+              value: 'json'
+            - name: LOGGER_LEVEL
+              value: 'info'
+            - name: MIKRO_ORM_DB_NAME
+              value: giz-costing-tool-staging
+            - name: MIKRO_ORM_USER
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: DB_USER
+            - name: MIKRO_ORM_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: DB_PASSWORD
+            - name: MIKRO_ORM_HOST
+              value: '10.79.32.3' # Private IP because of Google VPC
+            - name: MIKRO_ORM_PORT
+              value: '5432'
+            - name: API_URL
+              value: 'https://giz-costing-tool-api-6qii37ligq-ez.a.run.app'
+            - name: SESSION_EXPIRES_IN
+              value: '3600000'
+            - name: SESSION_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: SESSION_SECRET
+            - name: SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: SENDGRID_API_KEY
+            - name: EMAIL_FROM
+              value: info@usmedia.nl

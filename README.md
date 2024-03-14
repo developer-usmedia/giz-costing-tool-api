@@ -2,21 +2,21 @@
 
 ## Environments - API
 
-| Environment | API                      |
-| ----------- | ------------------------ |
-| Local       | <http://localhost:3000/> |
-| Develop     | <>                       |
-| Staging     | <>                       |
-| Production  | <>                       |
+| Environment | API                                                    |
+| ----------- | ------------------------------------------------------ |
+| Local       | <http://localhost:3000/>                               |
+| Develop     | <>                                                     |
+| Staging     | <https://giz-costing-tool-api-6qii37ligq-ez.a.run.app> |
+| Production  | <>                                                     |
 
-<!-- ## Environments - Docs
+## Environments - Docs
 
-| Environment | API Docs                                    |
-| ----------- | ------------------------------------------- |
-| Local       | <http://localhost:8080/docs>                |
-| Develop     | <> |
-| Staging     | <> |
-| Production  | <> | -->
+| Environment | API Docs                                                    |
+| ----------- | ----------------------------------------------------------- |
+| Local       | <http://localhost:8080/docs>                                |
+| Develop     | <>                                                          |
+| Staging     | <https://giz-costing-tool-api-6qii37ligq-ez.a.run.app/docs> |
+| Production  | <>                                                          |
 
 ## Environments - App
 

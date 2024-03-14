@@ -1,4 +1,5 @@
-import { INestApplication } from '@nestjs/common';
+import { MikroORM } from '@mikro-orm/postgresql';
+import { INestApplication, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as postgresConnect from 'connect-pg-simple';
@@ -8,8 +9,10 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 
 import { environment } from '@common/environment/environment';
+import mikroOrmOpts from '@database/mikro-orm.config';
 import { AppModule } from './app.module';
 
+const logger = new Logger('main.ts');
 
 const setupSwagger = (app: INestApplication<any>) => {
     const config = new DocumentBuilder()
@@ -49,6 +52,28 @@ const setupAuth = (app: INestApplication<any>) => {
     app.use(passport.session());
 };
 
+async function runMigrations(): Promise<void> {
+    if (environment.api.isLocal === false) {
+        logger.debug(`Running migrations... (${environment.api.env})`);
+        try {
+            const orm = await MikroORM.init(mikroOrmOpts);
+
+            const migrator = orm.getMigrator();
+            const pending = await migrator.getPendingMigrations();
+            logger.debug(`Pending migrations: ${pending.length}`);
+
+            if (!pending.length) {
+                return;
+            }
+
+            const ranMigrations = await migrator.up();
+            logger.debug(`Ran ${ranMigrations.length} migrations`);
+        } catch (err) {
+            logger.error(err);
+        }
+    }
+}
+
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
@@ -56,7 +81,7 @@ async function bootstrap() {
         throw new Error('Missing environment variables, see environment.ts');
     }
 
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api', { exclude: ['/', 'health', 'health/liveness', 'health/readiness'] });
     app.enableCors({
         origin: ['http://localhost:4200'],
         credentials: true,
@@ -65,6 +90,8 @@ async function bootstrap() {
 
     setupAuth(app);
     setupSwagger(app);
+
+    runMigrations();
 
     await app.listen(3000);
 }
