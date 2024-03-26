@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from '@mikro-orm/seeder';
 
-import { Gender } from '@common/enums/gender.enum';
-import { Worker } from '@database/entities';
+import { Worker } from '@domain/entities/worker.entity';
+import { Gender } from '@domain/enums/gender.enum';
 
 export class WorkerFactory extends Factory<Worker> {
     model = Worker;

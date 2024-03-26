@@ -1,10 +1,10 @@
 import type { EntityManager } from '@mikro-orm/core';
 import { Seeder } from '@mikro-orm/seeder';
 
-import { BenchmarkFactory } from './factories/benchmark.factory';
-import { SimulationFactory } from './factories/simulation.factory';
-import { UserFactory } from './factories/user.factory';
-import { WorkerFactory } from './factories/worker.factory';
+import { BenchmarkFactory } from '@database/seeders/factories/benchmark.factory';
+import { SimulationFactory } from '@database/seeders/factories/simulation.factory';
+import { UserFactory } from '@database/seeders/factories/user.factory';
+import { WorkerFactory } from '@database/seeders/factories/worker.factory';
 
 export class DatabaseSeeder extends Seeder {
     async run(em: EntityManager): Promise<void> {

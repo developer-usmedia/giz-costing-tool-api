@@ -1,5 +1,5 @@
-import { generatePaginationLinks } from '@common/paging/generate-pagination-links';
-import { Sort } from '@common/paging/paging-params';
+import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
+import { Sort } from '@api/paging/paging-params';
 import { resolveLink } from '@common/utils/link-resolver';
 
 // Mocking the resolveLink function

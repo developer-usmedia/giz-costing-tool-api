@@ -2,8 +2,8 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
-import { Worker } from '@database/entities';
-import { BaseService } from './base/base.service';
+import { Worker } from '@domain/entities/worker.entity';
+import { BaseService } from '@domain/services/base/base.service';
 
 @Injectable()
 export class WorkerService extends BaseService<Worker> {

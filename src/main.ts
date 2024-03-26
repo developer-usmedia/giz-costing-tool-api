@@ -8,9 +8,9 @@ import { randomUUID } from 'crypto';
 import * as session from 'express-session';
 import * as passport from 'passport';
 
-import { environment } from '@common/environment/environment';
+import { AppModule } from '@app/app.module';
+import { environment } from '@app/environment';
 import mikroOrmOpts from '@database/mikro-orm.config';
-import { AppModule } from './app.module';
 
 const logger = new Logger('main.ts');
 

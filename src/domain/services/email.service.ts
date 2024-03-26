@@ -1,8 +1,9 @@
-import { environment } from '@common/environment/environment';
-import { User } from '@database/entities';
 import { Injectable } from '@nestjs/common';
 import * as SendGrid from '@sendgrid/mail';
 import { MailDataRequired } from '@sendgrid/mail';
+
+import { environment } from '@app/environment';
+import { User } from '@domain/entities/user.entity';
 
 @Injectable()
 export class EmailService {

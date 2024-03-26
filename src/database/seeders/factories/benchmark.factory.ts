@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from '@mikro-orm/seeder';
 
-import { Benchmark } from '@database/entities';
+import { Benchmark } from '@domain/entities/benchmark.entity';
 
 export class BenchmarkFactory extends Factory<Benchmark> {
     model = Benchmark;

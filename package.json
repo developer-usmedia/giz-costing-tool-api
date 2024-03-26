@@ -14,7 +14,8 @@
     "test": "jest --config config/jest-unit.json && jest --config ./config/jest-e2e.json",
     "test:pre-clear": "npx mikro-orm migration:fresh && npm run test",
     "db:seed": "npx mikro-orm seeder:run",
-    "db:fresh": "npx mikro-orm migration:fresh"
+    "db:fresh": "npx mikro-orm migration:fresh",
+    "prepare": "husky"
   },
   "dependencies": {
     "@mikro-orm/core": "6.1.0",

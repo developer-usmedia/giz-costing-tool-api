@@ -5,12 +5,17 @@ import { SeedManager } from '@mikro-orm/seeder';
 import { NotFoundException } from '@nestjs/common';
 import { join } from 'path';
 
-import { UserAwareArgs } from '@api/interceptors/user-aware.interceptor';
-import { environment } from '@common/environment/environment';
-import { SimulationBenchmark, SimulationFacility, WorkerIKB } from './embeddables';
-import { VerificationCode } from './embeddables/verification-code.embeddable';
-import { Benchmark, Simulation, User, Worker } from './entities';
-import { GizNamingStrategy, validateMigrationName } from './naming-strategy';
+import { UserAwareArgs } from '@api/nestjs/interceptors/user-aware.interceptor';
+import { environment } from '@app/environment';
+import { GizNamingStrategy } from '@database/naming/database.naming-strategy';
+import { SimulationBenchmark } from '@domain/embeddables/simulation-benchmark.embed';
+import { SimulationFacility } from '@domain/embeddables/simulation-facility.embed';
+import { VerificationCode } from '@domain/embeddables/verification-code.embed';
+import { WorkerIKB } from '@domain/embeddables/worker-ikb.embed';
+import { Benchmark } from '@domain/entities/benchmark.entity';
+import { Simulation } from '@domain/entities/simulation.entity';
+import { User } from '@domain/entities/user.entity';
+import { Worker } from '@domain/entities/worker.entity';
 
 export const entities = [
     User,
@@ -45,7 +50,13 @@ export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
         transactional: true,
         disableForeignKeys: false,
         path: join(__dirname, 'migrations'),
-        fileName: validateMigrationName,
+        fileName: (timestamp: string, name?: string) => {
+            if (!name) {
+                throw new Error('Specify migration name via `mikro-orm migration:create --name=...`');
+            }
+        
+            return `Migration${timestamp}_${name}`;
+        },
     },
     namingStrategy: GizNamingStrategy,
     extensions: [Migrator, SeedManager],

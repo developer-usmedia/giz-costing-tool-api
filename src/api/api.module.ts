@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core/constants';
 
-import { AuthModule } from './auth/auth.module';
-import { UserAwareInterceptor } from './interceptors/user-aware.interceptor';
-import { SimulationModule } from './simulation/simulation.module';
-import { UserModule } from './user/user.module';
+import { AuthModule } from '@api/modules/auth/auth.module';
+import { SimulationModule } from '@api/modules/simulation/simulation.module';
+import { UserModule } from '@api/modules/user/user.module';
+import { UserAwareInterceptor } from '@api/nestjs/interceptors/user-aware.interceptor';
 
 @Module({
   imports: [

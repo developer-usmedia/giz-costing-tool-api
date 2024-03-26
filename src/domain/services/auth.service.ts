@@ -1,10 +1,10 @@
 import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
-import { CreateUserDTO } from '@api/auth/dto/create-user.dto';
-import { User } from '@database/entities/user.entity';
-import { EmailService } from './email.service';
-import { UserService } from './user.service';
+import { CreateUserDTO } from '@api/modules/auth/form/create-user.form';
+import { User } from '@domain/entities/user.entity';
+import { EmailService } from '@domain/services/email.service';
+import { UserService } from '@domain/services/user.service';
 
 @Injectable()
 export class AuthService {
@@ -47,7 +47,9 @@ export class AuthService {
     public async resetPassword(user: User, token: string, newPassword: string): Promise<boolean> {
         const validToken = user.verifyCode(token);
 
-        if (!validToken) return null;
+        if (!validToken) {
+            return null;
+        }
 
         user.resetPassword(newPassword);
         const saved = await this.usersService.persist(user);
@@ -60,7 +62,9 @@ export class AuthService {
     }
 
     public async sendVerificationEmail(user: User, refresh = true): Promise<boolean> {
-        if (refresh) user.refreshVerificationCode();
+        if (refresh) {
+            user.refreshVerificationCode();
+        }
 
         const saved = await this.usersService.persist(user);
         const sent = await this.emailService.sendEmailVerificationEmail(user);
@@ -68,13 +72,17 @@ export class AuthService {
     }
 
     public async verifyEmailCode(user: User, code: string): Promise<boolean> {
-        if (user.emailVerified) return true;
+        if (user.emailVerified) {
+            return true;
+        }
 
         const validToken = user.verifyCode(code);
 
-        if (!validToken) return false;
+        if (!validToken) {
+            return false;
+        }
 
-        user.verificationCode.reset();
+        user.verificationCode = null;
         user.emailVerified = true;
 
         return !!(await this.usersService.persist(user));

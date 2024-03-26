@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from '@mikro-orm/seeder';
 
-import { SimulationStatus } from '@common/enums/simulation-status.enum';
-import { Simulation } from '@database/entities/simulation.entity';
+import { Simulation } from '@domain/entities/simulation.entity';
+import { SimulationStatus } from '@domain/enums/simulation-status.enum';
 
 export class SimulationFactory extends Factory<Simulation> {
     model = Simulation;

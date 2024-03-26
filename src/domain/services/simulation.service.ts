@@ -2,8 +2,8 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
-import { Simulation } from '@database/entities/simulation.entity';
-import { BaseService } from './base/base.service';
+import { Simulation } from '@domain/entities/simulation.entity';
+import { BaseService } from '@domain/services/base/base.service';
 
 @Injectable()
 export class SimulationService extends BaseService<Simulation> {

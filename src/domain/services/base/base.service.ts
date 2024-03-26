@@ -1,10 +1,10 @@
 import { EntityName, FilterQuery, FindOptions } from '@mikro-orm/core';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 
-import { PagingParams } from '@common/paging/paging-params';
-import { toFindOptions } from '@common/utils/toFindOptions';
-import { toWhereOptions } from '@common/utils/toWhereOptions';
-import { AbstractEntity } from '@database/entities/base/abstract.entity';
+import { PagingParams } from '@api/paging/paging-params';
+import { toFindOptions } from '@api/paging/to-find-options';
+import { toWhereOptions } from '@api/paging/to-where-options';
+import { AbstractEntity } from '@domain/entities/base/abstract.entity';
 
 export abstract class BaseService<T extends AbstractEntity<T>> {
     protected abstract readonly entityName: EntityName<T>;
