@@ -17,7 +17,3 @@ DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
 
 ### Send email verification code
 POST http://{{host}}:{{port}}/api/{{endpoint}}/verify-email
-
-### Verify email verification code
-@emailToken=L5MFXS
-POST http://{{host}}:{{port}}/api/{{endpoint}}/verify-email/{{emailToken}}

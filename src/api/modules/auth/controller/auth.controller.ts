@@ -193,7 +193,7 @@ export class AuthController extends BaseController {
         @Res() res: Response,
     ): Promise<{ verified: boolean }> {
         const user = await this.userService.findOneByUid(sessionUser.id);
-        if (!user.twoFactor.secret) {
+        if (!user.twoFactor.enabled || !user.twoFactor.secret) {
             return this.clientError('2FA is disabled');
         }
 

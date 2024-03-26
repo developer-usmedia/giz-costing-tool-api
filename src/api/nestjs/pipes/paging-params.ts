@@ -36,7 +36,8 @@ export class PagingValidationPipe<T extends AbstractEntity<T>> implements PipeTr
         const index = paging.index > -1;
         const size = paging.size > 0;
 
-        const invalidFilters = Object.keys(paging.filter || {}).filter((filter) => !columns.includes(filter));
+        // Prefix filter with _ to align with model attributes
+        const invalidFilters = Object.keys(paging.filter || {}).filter((filter) => !columns.includes(`_${filter}`));
         const invalidRelations = paging.include.filter((relation) => !relationships.includes(relation));
         const invalidSorts = Object.keys(paging.sort || {}).filter(
             (key) => !columns.includes(key) && !relationshipColumns.includes(key),
