@@ -28,6 +28,7 @@ export enum MikroFilters {
 }
 
 export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
+    metadataCache: { pretty: environment.api.isLocal, enabled: true },
     driver: PostgreSqlDriver,
     host: environment.db.host,
     port: environment.db.port,
@@ -64,7 +65,7 @@ export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
     },
     filters: {
         [MikroFilters.USER_AWARE]: {
-            cond: (args: UserAwareArgs) => (args.enable ? { user: args.userId } : {}),
+            cond: (args: UserAwareArgs) => (args.enable ? { _user: args.userId } : {}),
             entity: [ 'Simulation' ],
         },
     },

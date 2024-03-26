@@ -7,9 +7,8 @@ import { Worker } from '@database/entities';
 export class WorkerFactory extends Factory<Worker> {
     model = Worker;
 
-    definition(): Worker {
-        return new Worker({
-            simulation: null,
+    definition(): Partial<Worker> {
+        return {
             name: faker.person.jobTitle(),
             gender: Math.random() < 0.5 ? Gender.Men : Gender.Women,
             numberOfWorkers: faker.number.int({ min: 2, max: 26 }),
@@ -18,7 +17,6 @@ export class WorkerFactory extends Factory<Worker> {
             percentageOfYearWorked: faker.number.int({ min: 80, max: 100 }),
             employeeTax: faker.number.int({ min: 0, max: 3 }),
             employerTax: faker.number.int({ min: 0, max: 3 }),
-            inKindBenefits: null, // Constructor will set all values on 0
-        });
+        };
     }
 }

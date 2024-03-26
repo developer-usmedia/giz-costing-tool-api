@@ -18,14 +18,15 @@ export class AuthService {
 
     public async register(email: string, password: string): Promise<User> {
         const user = CreateUserDTO.toEntity({ email, password });
+        const saved = await this.usersService.persist(user);
 
         await this.sendVerificationEmail(user, false); // Move this to user entity lifecycle
 
-        return await this.usersService.persist(user);
+        return saved;
     }
 
     public async login(email: string, password: string): Promise<[User, boolean]> {
-        const user = await this.usersService.findOne({ email: email }, { populate: ['password'] });
+        const user = await this.usersService.findOne({ email: email });
 
         if (user) {
             const passwordValid = user.comparePasswords(password);

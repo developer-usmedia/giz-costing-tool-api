@@ -10,11 +10,13 @@ export const GuardRegex = {
     COUNTRY_CODE2: /^[A-Z]{2}$/,
     COUNTRY_CODE3: /^[A-Z]{3}$/,
     CURRENCY_CODE: /^[A-Z]{3}$/,
+    YEAR: /^[0-9]{4}$/,
     IBAN: /^[A-Z]{2}\d{2}[A-Z0-9]{4}\d{10}$/,
     PHONE: /^0[1-9]\d{8}$/,
     MOBILE: /^06\d{8}$/,
     POSTCODE_NL: /^\d{4}[A-Z]{2}$/,
     EMAIL: /\b[\w.-]+@[\w.-]+\.\w{2,4}\b/i,
+    UUID: /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/,
 };
 
 export interface GuardChecks {
@@ -210,7 +212,7 @@ export class Guard {
             this.isDefined(value);
         }
 
-        if (value && (typeof value !== 'number' || (checkFinite && Number.isFinite(value)))) {
+        if (value && (typeof value !== 'number' || (checkFinite && !Number.isFinite(value)))) {
             throw new Error('Value is not a number');
         }
     }
@@ -364,7 +366,7 @@ export class Guard {
      * @throws {Error} Throws an error if the value does not match the regular expression.
      */
     public static regex(value: string | null | undefined, regex: RegExp): void {
-        if (value && regex.test(value)) {
+        if (value && !regex.test(value)) {
             throw new Error(`Value does not match regex (${regex})`);
         }
     }

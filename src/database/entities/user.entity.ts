@@ -1,39 +1,33 @@
-import { Collection, Embedded, Entity, OneToMany, Property, Unique } from '@mikro-orm/core';
+import { Embedded, Entity, Property, Unique } from '@mikro-orm/core';
 import * as bcrypt from 'bcrypt';
 
+import { Guard, GuardRegex } from '@common/utils/guard';
 import { TwoFactor } from '@database/embeddables/two-factor.embeddable';
 import { VerificationCode } from '@database/embeddables/verification-code.embeddable';
 import { AbstractEntity } from './base/abstract.entity';
-import { Simulation } from './simulation.entity';
 
 @Entity()
 export class User extends AbstractEntity<User> {
     @Property({ unique: true })
     @Unique()
-    email: string;
+    private _email: string;
 
-    @Property({
-        hidden: true, // Keeps it from .toObject() and .toJSON()
-        lazy: true, // Requires dev to specifically ask for the property
-    })
-    password: string;
+    @Property({ hidden: true })
+    private _password: string;
 
     @Property()
-    salt: string;
+    private _salt: string;
 
     @Property({ default: false })
-    emailVerified: boolean;
+    private _emailVerified: boolean;
 
     @Embedded({ entity: () => VerificationCode, prefix: 'verification_', nullable: true })
-    verificationCode: VerificationCode; // Use OTP table for this? That will support sms verification as wel
+    private _verificationCode: VerificationCode;
 
-    @Embedded({ entity: () => TwoFactor, prefix: 'two-factor_', nullable: true })
-    twoFactor: TwoFactor;
+    @Embedded({ entity: () => TwoFactor, prefix: 'twofactor_', nullable: true })
+    private _twoFactor: TwoFactor;
 
-    @OneToMany({ entity: () => Simulation, mappedBy: (simulation) => simulation.user, nullable: true })
-    simulations? = new Collection<Simulation>(this);
-
-    constructor(props: { email: string; password: string; firstName?: string; lastName?: string }) {
+    constructor(props: { email: string; password: string }) {
         super();
 
         this.email = props.email;
@@ -41,15 +35,61 @@ export class User extends AbstractEntity<User> {
         this.salt = this.generateSalt();
         this.password = this.hashPassword(props.password, this.salt);
         this.verificationCode = new VerificationCode();
+    }
 
-        this.simulations = null;
+    get email() {
+        return this._email;
+    }
+    get password() {
+        return this._password;
+    }
+    get salt() {
+        return this._salt;
+    }
+    get emailVerified() {
+        return this._emailVerified;
+    }
+    get verificationCode() {
+        return this._verificationCode;
+    }
+    get twoFactor() {
+        return this._twoFactor;
+    }
+
+    set email(value: string) {
+        Guard.check(value, { type: 'string', regex: GuardRegex.EMAIL });
+        this._email = value;
+    }
+
+    set password(value: string) {
+        Guard.check(value, { type: 'string' });
+        if (!this.salt) {
+            throw new Error('[User] No salt');
+        }
+        this._password = this.hashPassword(value, this.salt);
+    }
+
+    set salt(value: string) {
+        Guard.check(value, { type: 'string' });
+        this._salt = value;
+    }
+
+    set emailVerified(value: boolean) {
+        Guard.check(value, { type: 'boolean' });
+        this._emailVerified = value;
+    }
+
+    set verificationCode(value: VerificationCode) {
+        Guard.check(value, { type: 'object' });
+        this._verificationCode = value;
+    }
+
+    set twoFactor(value: TwoFactor) {
+        Guard.check(value, { type: 'object' });
+        this._twoFactor = value;
     }
 
     public comparePasswords(password: string): boolean {
-        if (!this.password) {
-            throw new Error('Please remember to populate the password field when fetching the user from the database');
-        }
-
         return bcrypt.compareSync(password, this.password);
     }
 

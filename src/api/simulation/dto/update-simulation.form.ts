@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsObject, IsOptional, ValidateNested } from 'class-validator';
+import { IsNumber, IsObject, IsOptional, Max, Min, ValidateNested } from 'class-validator';
 
 import { Simulation } from '@database/entities';
 import { SimulationBenchmarkForm } from './simulation-benchmark.form';
@@ -21,11 +21,15 @@ export class UpdateSimulationForm {
 
     @ApiProperty({ example: 2, minimum: 0, maximum: 100, description: 'In percentage (%)', nullable: true })
     @IsNumber()
+    @Min(0)
+    @Max(100)
     @IsOptional()
     defaultEmployerTax?: number;
 
     @ApiProperty({ example: 1, minimum: 0, maximum: 100, description: 'In percentage (%)', nullable: true })
     @IsNumber()
+    @Min(0)
+    @Max(100)
     @IsOptional()
     defaultEmployeeTax?: number;
 

@@ -58,16 +58,6 @@
           "length": 4,
           "mappedType": "integer"
         },
-        "source": {
-          "name": "source",
-          "type": "varchar(100)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 100,
-          "mappedType": "string"
-        },
         "country_code": {
           "name": "country_code",
           "type": "varchar(3)",
@@ -280,8 +270,8 @@
           "length": 6,
           "mappedType": "datetime"
         },
-        "two-factor_enabled": {
-          "name": "two-factor_enabled",
+        "twofactor_enabled": {
+          "name": "twofactor_enabled",
           "type": "boolean",
           "unsigned": false,
           "autoincrement": false,
@@ -290,8 +280,8 @@
           "default": "false",
           "mappedType": "boolean"
         },
-        "two-factor_secret": {
-          "name": "two-factor_secret",
+        "twofactor_secret": {
+          "name": "twofactor_secret",
           "type": "varchar(255)",
           "unsigned": false,
           "autoincrement": false,

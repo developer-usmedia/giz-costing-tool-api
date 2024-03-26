@@ -7,15 +7,23 @@ export class GizNamingStrategy extends UnderscoreNamingStrategy {
         return this.prefix + this.underscoreIt(entityName);
     }
 
-    public joinKeyColumnName(entityName: string, referencedColumnName: string): string {
+    public joinTableName(sourceEntity: string, _targetEntity: string, propertyName: string): string {
+        return this.classToTableName(sourceEntity) + '_' + this.underscoreIt(propertyName);
+    }
+
+    public joinColumnName(propertyName: string) {
+        return this.underscoreIt(propertyName) + '_' + this.referenceColumnName();
+    }
+
+    public joinKeyColumnName(entityName: string, referencedColumnName?: string): string {
         return this.underscoreIt(entityName) + '_' + (referencedColumnName || this.referenceColumnName());
     }
 
-    public joinTableName(sourceEntity: string, _targetEntity: string, propertyName: string): string {
-        return this.prefix + this.underscoreIt(sourceEntity) + '_' + this.underscoreIt(propertyName);
-    }
+    public propertyToColumnName(propertyName: string): string {
+        return this.underscoreIt(propertyName);
+      }
 
     private underscoreIt(name: string): string {
-        return name.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
+        return name.replace(/^_/g, '').replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
     }
 }

@@ -1,41 +1,39 @@
 import { Entity, Property } from '@mikro-orm/core';
 
 import { AbstractEntity } from './base/abstract.entity';
+import { Guard, GuardRegex } from '@common/utils/guard';
 
 @Entity()
 export class Benchmark extends AbstractEntity<Benchmark> {
     @Property({ length: 4 })
-    year: number;
-
-    @Property({ length: 100, nullable: true })
-    source?: string;
+    private _year: number;
 
     @Property({ length: 3 })
-    countryCode: string;
+    private _countryCode: string;
 
     @Property({ nullable: false })
-    countryName: string;
+    private _countryName: string;
 
     @Property({ length: 50 })
-    countryLocality: string;
+    private _countryLocality: string;
 
     @Property({ length: 100, nullable: true })
-    countryRegion?: string;
+    private _countryRegion?: string;
 
     @Property({ length: 3 })
-    currencyCode: string;
+    private _currencyCode: string;
 
     @Property({ length: 100 })
-    currencyName: string;
+    private _currencyName: string;
 
     @Property({ columnType: 'numeric(19,4)' })
-    localValue: number;
+    private _localValue: number;
 
     @Property({ columnType: 'numeric(19,4)', nullable: true })
-    eurValue?: number;
+    private _eurValue?: number;
 
     @Property({ columnType: 'numeric(19,4)', nullable: true })
-    usdValue?: number;
+    private _usdValue?: number;
 
     constructor(props: {
         year: number;
@@ -53,7 +51,6 @@ export class Benchmark extends AbstractEntity<Benchmark> {
         super();
 
         this.year = props.year;
-        this.source = props.source;
 
         this.countryCode = props.countryCode;
         this.countryName = props.countryName;
@@ -65,5 +62,86 @@ export class Benchmark extends AbstractEntity<Benchmark> {
         this.localValue = props.localValue;
         this.eurValue = props.eurValue;
         this.usdValue = props.usdValue;
+    }
+
+    get year() {
+        return this._year;
+    }
+    get countryCode() {
+        return this._countryCode;
+    }
+    get countryName() {
+        return this._countryName;
+    }
+    get countryLocality() {
+        return this._countryLocality;
+    }
+    get countryRegion() {
+        return this._countryRegion;
+    }
+    get currencyCode() {
+        return this._currencyCode;
+    }
+    get currencyName() {
+        return this._currencyName;
+    }
+    get localValue() {
+        return this._localValue;
+    }
+    get eurValue() {
+        return this._eurValue;
+    }
+    get usdValue() {
+        return this._usdValue;
+    }
+
+    set year(value: number) {
+        Guard.check(value, { type: 'number', min: 0, max: 9999 });
+        this._year = value;
+    }
+
+    set countryCode(value: string) {
+        Guard.check(value, { type: 'string', minLength: 2, maxLength: 3 });
+        this._countryCode = value;
+    }
+
+    set countryName(value: string) {
+        Guard.check(value, { type: 'string' });
+        this._countryName = value;
+    }
+
+    set countryLocality(value: string) {
+        Guard.check(value, { type: 'string' });
+        this._countryLocality = value;
+    }
+
+    set countryRegion(value: string) {
+        Guard.check(value, { type: 'string' });
+        this._countryRegion = value;
+    }
+
+    set currencyCode(value: string) {
+        Guard.check(value, { type: 'string', regex: GuardRegex.CURRENCY_CODE });
+        this._currencyCode = value;
+    }
+
+    set currencyName(value: string) {
+        Guard.check(value, { type: 'string' });
+        this._currencyName = value;
+    }
+
+    set localValue(value: number) {
+        Guard.check(value, { type: 'number', min: 0 });
+        this._localValue = value;
+    }
+
+    set eurValue(value: number) {
+        Guard.check(value, { type: 'number', min: 0 });
+        this._eurValue = value;
+    }
+
+    set usdValue(value: number) {
+        Guard.check(value, { type: 'number', min: 0 });
+        this._usdValue = value;
     }
 }

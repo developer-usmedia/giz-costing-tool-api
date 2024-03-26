@@ -7,8 +7,8 @@
   "scripts": {
     "build": "nest build",
     "start:prod": "node dist/main",
-    "start:db": "docker-compose -f config/docker-compose.yml --env-file .env up",
-    "start:beaver": "docker-compose -f config/docker-compose.beaver.yml --env-file .env up",
+    "start:db": "docker compose -f config/docker-compose.yml --env-file .env up",
+    "start:beaver": "docker compose -f config/docker-compose.beaver.yml --env-file .env up",
     "start": "nest start --watch",
     "lint": "eslint -c config/.eslintrc.js \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest --config config/jest-unit.json && jest --config ./config/jest-e2e.json",
