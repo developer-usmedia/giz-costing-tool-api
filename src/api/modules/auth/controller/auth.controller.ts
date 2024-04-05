@@ -20,6 +20,7 @@ import { ForgotPasswordForm } from '@api/modules/auth/form/forgot-password.form'
 import { LoginForm } from '@api/modules/auth/form/login-form.form';
 import { PasswordResetForm } from '@api/modules/auth/form/password-reset-form.form';
 import { RegisterForm } from '@api/modules/auth/form/register-form.form';
+import { VerifyEmailForm } from '@api/modules/auth/form/verify-email.form';
 import { GlobalGuard } from '@api/modules/auth/login/global.guard';
 import { LoginAuthGuard } from '@api/modules/auth/login/login.guard';
 import { OTPService } from '@api/modules/auth/service/otp.service';
@@ -66,7 +67,7 @@ export class AuthController extends BaseController {
         @Body() loginForm: LoginForm,
         @UserDecorator() sessionUser: { id: string },
         @Res() res: Response,
-    ): Promise<{ success: boolean }> {
+    ): Promise<UserResponse> {
         const user = await this.userService.findOneByUid(sessionUser.id);
 
         if (!user.emailVerified) {
@@ -81,7 +82,7 @@ export class AuthController extends BaseController {
             }
         }
 
-        return this.ok(res, { success: true });
+        return this.ok(res, UserDTOFactory.fromEntity(user));
     }
 
     @Post('/logout')
@@ -101,7 +102,7 @@ export class AuthController extends BaseController {
     public async forgotPassword(
         @Body() { email }: ForgotPasswordForm,
         @Res() res: Response,
-    ): Promise<{ resetEmailSent: boolean }> {
+    ): Promise<{ success: boolean }> {
         const user = await this.userService.findOne({ email });
         if (!user) {
             return this.clientError('Forgot password failed');
@@ -109,7 +110,7 @@ export class AuthController extends BaseController {
 
         const sent = await this.authService.startPasswordReset(user);
 
-        return this.ok(res, { resetEmailSent: sent });
+        return this.ok(res, { success: sent });
     }
 
     @Post('/reset-password')
@@ -122,7 +123,7 @@ export class AuthController extends BaseController {
         @Body() resetPasswordForm: PasswordResetForm,
         @Res() res: Response,
         @Req() req,
-    ): Promise<{ passwordReset: boolean }> {
+    ): Promise<{ success: boolean }> {
         const { email, newPassword, resetToken } = resetPasswordForm;
 
         const user = await this.userService.findOne({ email: email });
@@ -137,7 +138,7 @@ export class AuthController extends BaseController {
 
         req.session.destroy();
 
-        return this.ok(res, { passwordReset: saved });
+        return this.ok(res, { success: saved });
     }
     @Throttle({ default: { limit: 3 } })
     @Post('/verify-email')
@@ -147,16 +148,17 @@ export class AuthController extends BaseController {
     @UseGuards(GlobalGuard)
     @UsePipes(ValidationPipe)
     public async sendEmailVerification(
-        @UserDecorator() sessionUser: { id: string },
+        @Body() form: VerifyEmailForm,
         @Res() res: Response,
-    ): Promise<{ verificationEmailSent: boolean }> {
-        const user = await this.userService.findOneByUid(sessionUser.id);
+    ): Promise<{ success: boolean }> {
+        const user = await this.userService.findOneByUid(form.userId);
+
         if (user.emailVerified) {
             return this.clientError('User email already verified');
         }
 
         const sent = await this.authService.sendVerificationEmail(user);
-        return this.ok(res, { verificationEmailSent: sent });
+        return this.ok(res, { success: sent });
     }
 
     @Post('/2fa/enable')
@@ -191,7 +193,7 @@ export class AuthController extends BaseController {
         @Param('code') code: string,
         @User() sessionUser: { id: string },
         @Res() res: Response,
-    ): Promise<{ verified: boolean }> {
+    ): Promise<{ success: boolean }> {
         const user = await this.userService.findOneByUid(sessionUser.id);
         if (!user.twoFactor.enabled || !user.twoFactor.secret) {
             return this.clientError('2FA is disabled');
@@ -206,7 +208,7 @@ export class AuthController extends BaseController {
             this.authService.enable2FA(user);
         }
 
-        return this.ok(res, { verified: verified });
+        return this.ok(res, { success: verified });
     }
 
     @Post('/2fa/disable')
@@ -214,10 +216,10 @@ export class AuthController extends BaseController {
     @UsePipes(ValidationPipe)
     @ApiOperation({ summary: 'Disable 2FA' })
     @ApiResponse({ status: 200, description: '2FA disabled or 2FA was never enabled' })
-    public async disable2FA(@User() sessionUser: { id: string }, @Res() res: Response): Promise<{ disabled: boolean }> {
+    public async disable2FA(@User() sessionUser: { id: string }, @Res() res: Response): Promise<{ success: boolean }> {
         const user = await this.userService.findOneByUid(sessionUser.id);
         const disabled = await this.authService.disable2FA(user);
 
-        return this.ok(res, { disabled: disabled });
+        return this.ok(res, { success: disabled });
     }
 }
