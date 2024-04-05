@@ -5,7 +5,7 @@ import { IsOptional, IsString } from 'class-validator';
  * API layer DTO used in loggin in
  */
 export class LoginForm {
-    @ApiProperty({ example: 'info@usmedia.nl' })
+    @ApiProperty({ example: 'debug@usmedia.nl' })
     @IsString()
     email!: string;
 

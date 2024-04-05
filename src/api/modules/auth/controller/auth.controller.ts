@@ -145,7 +145,6 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Send the user an email with a verification code' })
     @ApiResponse({ status: 200, description: 'The email has been successfully sent' })
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
-    @UseGuards(GlobalGuard)
     @UsePipes(ValidationPipe)
     public async sendEmailVerification(
         @Body() form: VerifyEmailForm,

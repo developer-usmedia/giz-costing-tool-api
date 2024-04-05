@@ -5,7 +5,7 @@ import { IsString } from 'class-validator';
  * API layer DTO used in user registration
  */
 export class RegisterForm {
-    @ApiProperty({ example: 'info@usmedia.nl' })
+    @ApiProperty({ example: 'debug@usmedia.nl' })
     @IsString()
     email!: string;
 
