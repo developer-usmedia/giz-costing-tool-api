@@ -1,7 +1,8 @@
+import { WORKER_LINKS } from '@api/modules/worker/dto/worker.links';
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
+import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
-import { EntityResponse, PagedEntityResponse } from '@api/paging/paging-response';
-import { environment } from '@app/environment';
+import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
 import { Worker } from '@domain/entities/worker.entity';
 import { Gender } from '@domain/enums/gender.enum';
 
@@ -13,7 +14,7 @@ import { Gender } from '@domain/enums/gender.enum';
  * - Contains factory class that converts DB layer entity to response
  */
 
-export interface WorkerDTO {
+export interface WorkerDTO extends HalResponse {
     id: string;
     simulationId: string;
     name: string;
@@ -24,25 +25,31 @@ export interface WorkerDTO {
     percentageOfYearWorked: number;
     employeeTax: number;
     employerTax: number;
+    _links: {
+        self: Link;
+    };
 }
 
-export interface WorkerListResponse extends PagedEntityResponse<'workers', WorkerDTO> {}
-export interface WorkerResponse extends EntityResponse<'worker', WorkerDTO> {}
+export interface WorkerListResponse extends CollectionResponse<{ workers: WorkerDTO[] }> {}
+export interface WorkerResponse extends EntityResponse<WorkerDTO> {}
 
 export class WorkerDTOFactory {
     public static fromEntity(entity: Worker): WorkerResponse {
-        return {
-            worker: mapEntityToDTO(entity),
-        };
+        return mapEntityToDTO(entity);
     }
 
-    public static fromCollection(collection: Worker[], count: number, paging: PagingParams<Worker>): WorkerListResponse {
-        const workerCollection = new URL(environment.api.url + '/api/workers');
-
+    public static fromCollection(
+        collection: Worker[],
+        count: number,
+        paging: PagingParams<Worker>,
+    ): WorkerListResponse {
         return {
-            workers: collection.map(mapEntityToDTO),
-            links: generatePaginationLinks(workerCollection, count, paging),
-    };
+            _embedded: {
+                workers: collection.map(mapEntityToDTO),
+            },
+            _links: generatePaginationLinks(WORKER_LINKS.workers, count, paging),
+            paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: count / paging.size },
+        };
     }
 }
 
@@ -58,5 +65,8 @@ const mapEntityToDTO = (entity: Worker): WorkerDTO => {
         percentageOfYearWorked: entity.percentageOfYearWorked,
         employeeTax: entity.employeeTax,
         employerTax: entity.employerTax,
+        _links: {
+            self: { href: resolveLink(WORKER_LINKS.worker, { workerId: entity.id }) },
+        },
     };
 };

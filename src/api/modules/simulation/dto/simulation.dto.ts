@@ -1,9 +1,16 @@
-import { SimulationBenchmarkDTO, SimulationBenchmarkDTOFactory } from '@api/modules/simulation/dto/simulation-benchmark.dto';
-import { SimulationFacilityDTO, SimulationFacilityDTOFactory } from '@api/modules/simulation/dto/simulation-facility.dto';
+import {
+    SimulationBenchmarkDTO,
+    SimulationBenchmarkDTOFactory,
+} from '@api/modules/simulation/dto/simulation-benchmark.dto';
+import {
+    SimulationFacilityDTO,
+    SimulationFacilityDTOFactory,
+} from '@api/modules/simulation/dto/simulation-facility.dto';
+import { SIMULATION_LINKS } from '@api/modules/simulation/dto/simulation.links';
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
+import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
-import { EntityResponse, PagedEntityResponse } from '@api/paging/paging-response';
-import { environment } from '@app/environment';
+import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
 import { Simulation } from '@domain/entities/simulation.entity';
 
 /**
@@ -14,7 +21,7 @@ import { Simulation } from '@domain/entities/simulation.entity';
  * - Contains factory class that converts DB layer entity to response
  */
 
-export interface SimulationDTO {
+export interface SimulationDTO extends HalResponse {
     id: string;
     year: string;
     status: string;
@@ -25,16 +32,18 @@ export interface SimulationDTO {
     benchmark: SimulationBenchmarkDTO;
     createdAt: Date;
     updatedAt: Date;
+    _links: {
+        self: Link;
+        workers: Link;
+    };
 }
 
-export interface SimulationListResponse extends PagedEntityResponse<'simulations', SimulationDTO> {}
-export interface SimulationResponse extends EntityResponse<'simulation', SimulationDTO> {}
+export interface SimulationListResponse extends CollectionResponse<{ simulations: SimulationDTO[] }> {}
+export interface SimulationResponse extends EntityResponse<SimulationDTO> {}
 
 export class SimulationDTOFactory {
     public static fromEntity(entity: Simulation): SimulationResponse {
-        return {
-            simulation: mapEntityToDTO(entity),
-        };
+        return mapEntityToDTO(entity);
     }
 
     public static fromCollection(
@@ -42,11 +51,10 @@ export class SimulationDTOFactory {
         count: number,
         paging: PagingParams<Simulation>,
     ): SimulationListResponse {
-        const simulationCollectionUrl = new URL(environment.api.url + '/api/simulations');
-
         return {
-            simulations: collection.map(mapEntityToDTO),
-            links: generatePaginationLinks(simulationCollectionUrl, count, paging),
+            _embedded: { simulations: collection.map(mapEntityToDTO) },
+            _links: generatePaginationLinks(SIMULATION_LINKS.simulations, count, paging),
+            paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: count / paging.size },
         };
     }
 }
@@ -63,5 +71,9 @@ const mapEntityToDTO = (entity: Simulation): SimulationDTO => {
         benchmark: SimulationBenchmarkDTOFactory.fromEntity(entity.benchmark),
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
+        _links: {
+            self: { href: resolveLink(SIMULATION_LINKS.simulation, { simulationId: entity.id }) },
+            workers: { href: resolveLink(SIMULATION_LINKS.workers, { simulationId: entity.id }) },
+        },
     };
 };

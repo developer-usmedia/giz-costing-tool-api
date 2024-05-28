@@ -69,7 +69,7 @@ export class SimulationController extends BaseController {
     @ApiResponse({ status: 404, description: 'User from token not found' })
     @UseGuards(GlobalGuard)
     @UsePipes(ValidationPipe)
-    public async create(@Body() simulationForm: CreateSimulationDTO, @UserDecorator() sessionUser: { id: string }) {
+    public async create(@Body() simulationForm: CreateSimulationDTO, @UserDecorator() sessionUser: { id: string }): Promise<SimulationResponse> {
         const user = await this.userService.findOneByUid(sessionUser.id);
         const newSimulation = CreateSimulationDTO.toEntity(simulationForm, user);
         const savedSimulation = await this.simulationService.persist(newSimulation);
