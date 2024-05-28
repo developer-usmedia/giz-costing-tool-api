@@ -65,6 +65,8 @@ spec:
               value: '5432'
             - name: API_URL
               value: 'https://giz-costing-tool-api-6qii37ligq-ez.a.run.app'
+            - name: API_CORS_ORIGIN
+              value: 'https://true-elevator-417011.ew.r.appspot.com'
             - name: SESSION_EXPIRES_IN
               value: '3600000'
             - name: SESSION_SECRET

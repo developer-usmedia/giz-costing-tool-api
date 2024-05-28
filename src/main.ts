@@ -83,7 +83,7 @@ async function bootstrap() {
 
     app.setGlobalPrefix('api', { exclude: ['/', 'health', 'health/liveness', 'health/readiness'] });
     app.enableCors({
-        origin: ['http://localhost:4200'],
+        origin: environment.api.corsOrigin,
         credentials: true,
     });
     app.use(cookieParser());

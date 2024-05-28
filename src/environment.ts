@@ -13,6 +13,7 @@ class Environment {
         url: string;
         isLocal: boolean;
         env: string;
+        corsOrigin: string[];
     };
 
     public session: {
@@ -30,7 +31,6 @@ class Environment {
     constructor() {
         config();
 
-        const { API_URL } = process.env;
         const { MIKRO_ORM_HOST, MIKRO_ORM_DB_NAME, MIKRO_ORM_PORT, MIKRO_ORM_USER, MIKRO_ORM_PASSWORD } = process.env;
         const { SENDGRID_API_KEY, EMAIL_FROM } = process.env;
         const { SESSION_SECRET, SESSION_EXPIRES_IN, SESSION_NAME, SESSION_TABLE_NAME } = process.env;
@@ -44,9 +44,10 @@ class Environment {
         };
 
         this.api = {
-            url: API_URL,
+            url: process.env.API_URL,
             isLocal: this.isLocal(),
             env: process.env.NODE_ENV,
+            corsOrigin: this.parseUrls(process.env.API_CORS_ORIGIN),
         };
 
         this.session = {
@@ -83,6 +84,14 @@ class Environment {
     private readonly isLocal = (): boolean => {
         return ['development', 'test'].includes(process.env.NODE_ENV);
     };
+
+    private parseUrls(urls: string): string[] {
+        if (!urls) {
+            return [];
+        }
+
+        return urls.split(',').map(u => u.trim().replace(/\/$/, ''));
+    }
 }
 
 export const environment = new Environment();
