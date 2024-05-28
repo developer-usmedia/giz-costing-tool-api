@@ -1,5 +1,4 @@
 import {
-    BadRequestException,
     Body,
     Controller,
     HttpCode,
@@ -17,7 +16,6 @@ import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 
 import { ForgotPasswordForm } from '@api/modules/auth/form/forgot-password.form';
-import { LoginForm } from '@api/modules/auth/form/login-form.form';
 import { PasswordResetForm } from '@api/modules/auth/form/password-reset-form.form';
 import { RegisterForm } from '@api/modules/auth/form/register-form.form';
 import { VerifyEmailForm } from '@api/modules/auth/form/verify-email.form';
@@ -26,7 +24,7 @@ import { LoginAuthGuard } from '@api/modules/auth/login/login.guard';
 import { OTPService } from '@api/modules/auth/service/otp.service';
 import { BaseController } from '@api/modules/base.controller';
 import { UserDTOFactory, UserResponse } from '@api/modules/user/dto/user.dto';
-import { User, User as UserDecorator } from '@api/nestjs/decorators/user.decorator';
+import { User } from '@api/nestjs/decorators/user.decorator';
 import { AuthService } from '@domain/services/auth.service';
 import { UserService } from '@domain/services/user.service';
 
@@ -63,26 +61,8 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 200, description: 'Successfull login' })
     @UsePipes(ValidationPipe)
     @UseGuards(LoginAuthGuard)
-    public async login(
-        @Body() loginForm: LoginForm,
-        @UserDecorator() sessionUser: { id: string },
-        @Res() res: Response,
-    ): Promise<UserResponse> {
-        const user = await this.userService.findOneByUid(sessionUser.id);
-
-        if (!user.emailVerified) {
-            if (!loginForm.emailVerificationCode) {
-                throw new BadRequestException('Email verification code required for login');
-            }
-            // verify token and set emailVerified=true
-            const correct = await this.authService.verifyEmailCode(user, loginForm.emailVerificationCode);
-
-            if (!correct) {
-                throw new BadRequestException('Invalid email verification code');
-            }
-        }
-
-        return this.ok(res, UserDTOFactory.fromEntity(user));
+    public login(@Res() res: Response): { success: boolean } {
+        return this.ok(res, { success: true });
     }
 
     @Post('/logout')
