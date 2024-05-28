@@ -1,6 +1,15 @@
+import { LogLevel } from '@nestjs/common';
 import { config } from 'dotenv';
 
 class Environment {
+    public api: {
+        url: string;
+        isLocal: boolean;
+        env: string;
+        corsOrigin: string[];
+        logLevel: LogLevel;
+    };
+
     public db: {
         host: string;
         name: string;
@@ -9,11 +18,9 @@ class Environment {
         password: string;
     };
 
-    public api: {
-        url: string;
-        isLocal: boolean;
-        env: string;
-        corsOrigin: string[];
+    public mail: {
+        apiKey: string;
+        from: string;
     };
 
     public session: {
@@ -23,43 +30,35 @@ class Environment {
         tableName: string;
     };
 
-    public mail: {
-        apiKey: string;
-        from: string;
-    };
-
     constructor() {
         config();
-
-        const { MIKRO_ORM_HOST, MIKRO_ORM_DB_NAME, MIKRO_ORM_PORT, MIKRO_ORM_USER, MIKRO_ORM_PASSWORD } = process.env;
-        const { SENDGRID_API_KEY, EMAIL_FROM } = process.env;
-        const { SESSION_SECRET, SESSION_EXPIRES_IN, SESSION_NAME, SESSION_TABLE_NAME } = process.env;
-
-        this.db = {
-            host: MIKRO_ORM_HOST,
-            name: MIKRO_ORM_DB_NAME,
-            port: +MIKRO_ORM_PORT,
-            user: MIKRO_ORM_USER,
-            password: MIKRO_ORM_PASSWORD,
-        };
 
         this.api = {
             url: process.env.API_URL,
             isLocal: this.isLocal(),
             env: process.env.NODE_ENV,
             corsOrigin: this.parseUrls(process.env.API_CORS_ORIGIN),
+            logLevel: process.env.LOG_LEVEL as LogLevel ?? 'warn',
         };
 
-        this.session = {
-            secret: SESSION_SECRET,
-            expiresIn: +SESSION_EXPIRES_IN,
-            name: SESSION_NAME ?? 'GIZ-COOKIE',
-            tableName: SESSION_TABLE_NAME ?? 'giz_session',
+        this.db = {
+            host: process.env.MIKRO_ORM_HOST,
+            name: process.env.MIKRO_ORM_DB_NAME,
+            port: +process.env.MIKRO_ORM_PORT,
+            user: process.env.MIKRO_ORM_USER,
+            password: process.env.MIKRO_ORM_PASSWORD,
         };
 
         this.mail = {
-            apiKey: SENDGRID_API_KEY,
-            from: EMAIL_FROM,
+            apiKey: process.env.SENDGRID_API_KEY,
+            from: process.env.EMAIL_FROM,
+        };
+
+        this.session = {
+            secret: process.env.SESSION_SECRET,
+            expiresIn: +process.env.SESSION_EXPIRES_IN,
+            name: process.env.SESSION_NAME ?? 'GIZ-COOKIE',
+            tableName: process.env.SESSION_TABLE_NAME ?? 'giz_session',
         };
     }
 
@@ -90,7 +89,7 @@ class Environment {
             return [];
         }
 
-        return urls.split(',').map(u => u.trim().replace(/\/$/, ''));
+        return urls.split(',').map((u) => u.trim().replace(/\/$/, ''));
     }
 }
 

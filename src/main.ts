@@ -75,7 +75,9 @@ async function runMigrations(): Promise<void> {
 }
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, {
+        logger: [ environment.api.logLevel ],
+    });
 
     if (!environment.isValid()) {
         throw new Error('Missing environment variables, see environment.ts');
