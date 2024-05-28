@@ -27,9 +27,9 @@ export class UserAwareInterceptor implements NestInterceptor {
         const userAware = this.isUserAware(request);
 
         if (userAware.enable) {
-            this.logger.debug('UserAware Enabled');
+            this.logger.verbose('UserAware Enabled');
         } else {
-            this.logger.debug('UserAware Disabled');
+            this.logger.verbose('UserAware Disabled');
         }
 
         this.em.setFilterParams(MikroFilters.USER_AWARE, userAware);
