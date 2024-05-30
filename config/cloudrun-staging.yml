@@ -6,7 +6,7 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/minScale: '0'
+        autoscaling.knative.dev/minScale: '1'
         autoscaling.knative.dev/maxScale: '1'
         run.googleapis.com/vpc-access-egress: private-ranges-only
         run.googleapis.com/cloudsql-instances: true-elevator-417011:europe-west4:giz-costing-tool-staging-postgresql
@@ -66,7 +66,7 @@ spec:
             - name: API_URL
               value: 'https://giz-costing-tool-api-6qii37ligq-ez.a.run.app'
             - name: API_CORS_ORIGIN
-              value: 'https://true-elevator-417011.ew.r.appspot.com'
+              value: 'https://true-elevator-417011.ew.r.appspot.com,http://localhost:4200'
             - name: SESSION_EXPIRES_IN
               value: '3600000'
             - name: SESSION_SECRET
