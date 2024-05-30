@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Get,
     HttpCode,
     Param,
     Post,
@@ -62,8 +63,19 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 200, description: 'Successfull login' })
     @UsePipes(ValidationPipe)
     @UseGuards(LoginAuthGuard)
-    public login( @User() user: SessionUser, @Res() res: Response): { success: boolean; id: string } {
-        return this.ok(res, { success: true, id: user.id });
+    public login(@Res() res: Response): { success: boolean } {
+        return this.ok(res, { success: true });
+    }
+
+    @Get('/session')
+    @ApiOperation({ summary: 'Get user of currently signed in user' })
+    @ApiResponse({ status: 200, description: 'Currently logged in user from session' })
+    @UsePipes(ValidationPipe)
+    public async current(@User() session: SessionUser): Promise<UserResponse>{
+        // This is the second user db call (LoginStrategy)
+        // Find a way to improve this or leave it be...
+        const user = await this.userService.findOneByUid(session.id);
+        return UserDTOFactory.fromEntity(user);
     }
 
     @Post('/logout')

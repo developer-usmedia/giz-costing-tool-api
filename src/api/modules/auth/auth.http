@@ -21,6 +21,9 @@ Content-Type: application/json
     "emailVerificationCode": "ZRR9QP"
 }
 
+### Get user from session
+GET http://{{host}}:{{port}}/api/{{endpoint}}/session
+
 ### Logout
 POST http://{{host}}:{{port}}/api/{{endpoint}}/logout
 
