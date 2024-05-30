@@ -21,6 +21,7 @@ import { RegisterForm } from '@api/modules/auth/form/register-form.form';
 import { VerifyEmailForm } from '@api/modules/auth/form/verify-email.form';
 import { GlobalGuard } from '@api/modules/auth/login/global.guard';
 import { LoginAuthGuard } from '@api/modules/auth/login/login.guard';
+import { SessionUser } from '@api/modules/auth/login/login.strategy';
 import { OTPService } from '@api/modules/auth/service/otp.service';
 import { BaseController } from '@api/modules/base.controller';
 import { UserDTOFactory, UserResponse } from '@api/modules/user/dto/user.dto';
@@ -61,8 +62,8 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 200, description: 'Successfull login' })
     @UsePipes(ValidationPipe)
     @UseGuards(LoginAuthGuard)
-    public login(@Res() res: Response): { success: boolean } {
-        return this.ok(res, { success: true });
+    public login( @User() user: SessionUser, @Res() res: Response): { success: boolean; id: string } {
+        return this.ok(res, { success: true, id: user.id });
     }
 
     @Post('/logout')
