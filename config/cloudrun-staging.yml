@@ -41,8 +41,6 @@ spec:
           env:
             - name: ENV
               value: 'staging'
-            - name: NODE_ENV
-              value: 'staging'
             - name: LOGGER_TYPE
               value: 'json'
             - name: LOGGER_LEVEL

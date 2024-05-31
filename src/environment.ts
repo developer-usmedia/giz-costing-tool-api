@@ -1,11 +1,13 @@
 import { LogLevel } from '@nestjs/common';
 import { config } from 'dotenv';
 
+type Envs = 'development' | 'staging' | 'production';
+
 class Environment {
     public api: {
         url: string;
         isLocal: boolean;
-        env: string;
+        env: Envs;
         corsOrigin: string[];
         logLevel: LogLevel;
     };
@@ -36,7 +38,7 @@ class Environment {
         this.api = {
             url: process.env.API_URL,
             isLocal: this.isLocal(),
-            env: process.env.NODE_ENV,
+            env: process.env.ENV as Envs,
             corsOrigin: this.parseUrls(process.env.API_CORS_ORIGIN),
             logLevel: process.env.LOG_LEVEL as LogLevel ?? 'warn',
         };
@@ -81,7 +83,7 @@ class Environment {
     };
 
     private readonly isLocal = (): boolean => {
-        return ['development', 'test'].includes(process.env.NODE_ENV);
+        return ['development', 'test'].includes(process.env.ENV);
     };
 
     private parseUrls(urls: string): string[] {

@@ -31,7 +31,7 @@ COPY --chown=node:node . .
 
 RUN npm run build
 
-ENV NODE_ENV production
+ENV ENV production
 
 RUN npm ci --omit=dev && npm cache clean --force
 
