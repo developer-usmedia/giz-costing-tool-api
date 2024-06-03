@@ -13,11 +13,13 @@ import {
     ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
 
 import { ForgotPasswordForm } from '@api/modules/auth/form/forgot-password.form';
 import { PasswordResetForm } from '@api/modules/auth/form/password-reset-form.form';
 import { RegisterForm } from '@api/modules/auth/form/register-form.form';
+import { VerifyEmailForm } from '@api/modules/auth/form/verify-email.form';
 import { GlobalGuard } from '@api/modules/auth/login/global.guard';
 import { LoginAuthGuard } from '@api/modules/auth/login/login.guard';
 import { SessionUser } from '@api/modules/auth/login/login.strategy';
@@ -132,6 +134,30 @@ export class AuthController extends BaseController {
         req.session.destroy();
 
         return this.ok(res, { success: saved });
+    }
+
+    @Post('/verify-email')
+    @UseGuards(ThrottlerGuard)
+    @Throttle({ default: { 
+        limit: 5, 
+        ttl: 60 * 60 * 10000 , // 1 hour
+    }})
+    @ApiOperation({ summary: 'Send the user an email with a verification code' })
+    @ApiResponse({ status: 200, description: 'The email has been successfully sent' })
+    @ApiResponse({ status: 400, description: 'Email already verified for user' })
+    @UsePipes(ValidationPipe)
+    public async sendEmailVerification(
+        @Body() form: VerifyEmailForm,
+        @Res() res: Response,
+    ): Promise<{ success: boolean }> {
+        const user = await this.userService.findOne({ email: form.email });
+
+        if (user.emailVerified) {
+            return this.clientError('User email already verified');
+        }
+
+        const sent = await this.authService.sendVerificationEmail(user);
+        return this.ok(res, { success: sent });
     }
 
     @Post('/2fa/enable')

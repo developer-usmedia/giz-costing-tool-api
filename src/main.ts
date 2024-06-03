@@ -42,9 +42,9 @@ const setupAuth = (app: INestApplication<any>) => {
             genid: () => randomUUID(),
             cookie: {
                 maxAge: environment.session.expiresIn,
-                secure: environment.api.env !== 'production',
+                secure: !environment.api.isLocal,
                 httpOnly: !environment.api.isLocal,
-                sameSite: environment.api.env !== 'production' ? 'none': false,
+                sameSite: environment.api.isLocal ? 'none': false,
             },
         }),
     );
