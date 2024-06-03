@@ -8,7 +8,7 @@ class Environment {
         url: string;
         isLocal: boolean;
         env: Envs;
-        corsOrigin: string[];
+        corsOrigin: (string|RegExp)[];
         logLevel: LogLevel;
     };
 
@@ -86,12 +86,20 @@ class Environment {
         return ['development', 'test'].includes(process.env.ENV);
     };
 
-    private parseUrls(urls: string): string[] {
+    private parseUrls(urls: string): (string | RegExp)[] {
         if (!urls) {
             return [];
         }
 
-        return urls.split(',').map((u) => u.trim().replace(/\/$/, ''));
+        return urls.split(',').map((u) => {
+            let url: string | RegExp = u.trim();
+            if (url.startsWith('.') || url.startsWith('-')) {
+                url = new RegExp(url);
+            } else {
+                url = url.replace(/\/$/, '');
+            }
+            return url;
+        });
     }
 }
 
