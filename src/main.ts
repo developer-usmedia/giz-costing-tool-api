@@ -44,7 +44,6 @@ const setupAuth = (app: INestApplication<any>) => {
                 maxAge: environment.session.expiresIn,
                 secure: !environment.api.isLocal,
                 httpOnly: !environment.api.isLocal,
-                sameSite: environment.api.isLocal ? 'none': false,
             },
         }),
     );
