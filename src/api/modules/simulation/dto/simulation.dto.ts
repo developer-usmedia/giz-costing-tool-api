@@ -23,6 +23,7 @@ import { Simulation } from '@domain/entities/simulation.entity';
 
 export interface SimulationDTO extends HalResponse {
     id: string;
+    matrixId: string;
     year: string;
     status: string;
     administrativeCosts: number;
@@ -62,6 +63,7 @@ export class SimulationDTOFactory {
 const mapEntityToDTO = (entity: Simulation): SimulationDTO => {
     return {
         id: entity.id,
+        matrixId: entity.matrixId ?? null,
         year: entity.year.toString(),
         status: entity.status,
         administrativeCosts: entity.administrativeCosts,

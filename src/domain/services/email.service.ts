@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as SendGrid from '@sendgrid/mail';
 import { MailDataRequired } from '@sendgrid/mail';
 
@@ -10,6 +10,7 @@ export class EmailService {
     public static readonly BASE_EMAIL = {
         from: environment.mail.from,
     };
+    private readonly logger = new Logger(EmailService.name);
 
     constructor() {
         SendGrid.setApiKey(environment.mail.apiKey);
@@ -39,17 +40,17 @@ export class EmailService {
 
     public async send(mail: MailDataRequired): Promise<boolean> {
         try {
-            console.info(`Sending email to ${mail.to as string}`);
+            this.logger.log(`Sending email to ${mail.to as string}`);
 
             if (environment.api.isLocal) {
-                console.info(mail);
+                this.logger.log(mail);
                 return true;
             }
 
             await SendGrid.send(mail);
             return true; // Any error will be caught below
         } catch (error) {
-            console.error(`Error while sending email to ${mail.to as string}`, error);
+            this.logger.error(`Error while sending email to ${mail.to as string}`, error);
             throw error;
         }
     }

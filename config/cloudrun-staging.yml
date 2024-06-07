@@ -43,8 +43,8 @@ spec:
               value: 'staging'
             - name: LOGGER_TYPE
               value: 'json'
-            - name: LOGGER_LEVEL
-              value: 'info'
+            - name: LOG_LEVEL
+              value: 'debug'
             - name: MIKRO_ORM_DB_NAME
               value: giz-costing-tool-staging
             - name: MIKRO_ORM_USER

@@ -10,6 +10,9 @@ import { Guard } from '@domain/utils/guard';
 
 @Entity()
 export class Simulation extends AbstractEntity<Simulation> {
+    @Property({ nullable: true })
+    private _matrixId: string;
+
     @Property()
     private _year: number;
 
@@ -38,14 +41,17 @@ export class Simulation extends AbstractEntity<Simulation> {
     @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
     private _administrativeCosts: number;
 
+
     constructor(props: {
         year: number;
         user: User;
         facility: SimulationFacility;
+        matrixId?: string;
         status?: SimulationStatus;
         benchmark?: SimulationBenchmark;
     }) {
         super();
+        this.matrixId = props.matrixId;
         this.year = props.year;
         this.user = props.user;
         this.facility = props.facility;
@@ -54,6 +60,9 @@ export class Simulation extends AbstractEntity<Simulation> {
         this.benchmark = props.benchmark ?? new SimulationBenchmark({});
     }
 
+    get matrixId() {
+        return this._matrixId;
+    }
     get year() {
         return this._year;
     }
@@ -80,6 +89,11 @@ export class Simulation extends AbstractEntity<Simulation> {
     }
     get administrativeCosts() {
         return this._administrativeCosts;
+    }
+
+    set matrixId(value: string) {
+        Guard.check(value, { type: 'string', optional: true, allowEmpty: true });
+        this._matrixId = value;
     }
 
     set year(value: number) {
@@ -123,5 +137,9 @@ export class Simulation extends AbstractEntity<Simulation> {
     set administrativeCosts(value: number) {
         Guard.check(value, { type: 'number', min: 0 });
         this._administrativeCosts = value;
+    }
+    
+    public addWorker(worker: Worker): void {
+        this._workers.add(worker);
     }
 }

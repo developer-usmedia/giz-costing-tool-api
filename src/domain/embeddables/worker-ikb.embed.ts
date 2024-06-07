@@ -18,4 +18,18 @@ export class WorkerIKB {
 
     @Property({ default: 0, columnType: 'numeric(19,4)', nullable: true })
     ikbChildcare?: number;
+
+    constructor(props: {
+        ikbFood?: number;
+        ikbTransportation?: number;
+        ikbHousing?: number;
+        ikbHealthcare?: number;
+        ikbChildcare?: number;
+    }) {
+        this.ikbFood = props.ikbFood ?? 0;
+        this.ikbTransportation = props.ikbTransportation ?? 0;
+        this.ikbHousing = props.ikbHousing ?? 0;
+        this.ikbChildcare = props.ikbChildcare ?? 0;
+        this.ikbHealthcare = props.ikbHealthcare ?? 0;
+    }
 }

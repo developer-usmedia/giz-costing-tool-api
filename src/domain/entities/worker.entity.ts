@@ -17,22 +17,22 @@ export class Worker extends AbstractEntity<Worker> {
     @Enum(() => Gender)
     private _gender: Gender;
 
-    @Property({ default: 1 })
+    @Property({ columnType: 'numeric(6,0)', default: 1 })
     private _numberOfWorkers: number;
 
-    @Property()
+    @Property({ columnType: 'numeric(8,2)' })
     private _monthlyWage: number;
 
-    @Property()
+    @Property({ columnType: 'numeric(8,2)' })
     private _monthlyBonus: number;
 
-    @Property({ length: 3 })
+    @Property({ columnType: 'numeric(5,2)', length: 3 })
     private _percentageOfYearWorked: number;
 
-    @Property({ length: 3 })
+    @Property({ columnType: 'numeric(5,2)', length: 3 })
     private _employeeTax: number;
 
-    @Property({ length: 3 })
+    @Property({ columnType: 'numeric(5,2)', length: 3 })
     private _employerTax: number;
 
     @Embedded({ entity: () => WorkerIKB, prefix: false })
@@ -62,7 +62,7 @@ export class Worker extends AbstractEntity<Worker> {
         this.percentageOfYearWorked = props.percentageOfYearWorked;
         this.employeeTax = props.employeeTax;
         this.employerTax = props.employerTax;
-        this.inKindBenefits = this.inKindBenefits ?? new WorkerIKB();
+        this.inKindBenefits = this.inKindBenefits ?? new WorkerIKB({});
     }
 
     get simulation() {
@@ -112,15 +112,15 @@ export class Worker extends AbstractEntity<Worker> {
         this._gender = value;
     }
     set numberOfWorkers(value: number) {
-        Guard.check(value, { type: 'number', min: 0 });
+        Guard.check(value, { type: 'number', min: 0, max: 999999 });
         this._numberOfWorkers = value;
     }
     set monthlyWage(value: number) {
-        Guard.check(value, { type: 'number', min: 0 });
+        Guard.check(value, { type: 'number', min: 0, max: 999999.99 });
         this._monthlyWage = value;
     }
     set monthlyBonus(value: number) {
-        Guard.check(value, { type: 'number', min: 0 });
+        Guard.check(value, { type: 'number', min: 0, max: 999999.99 });
         this._monthlyBonus = value;
     }
     set percentageOfYearWorked(value: number) {

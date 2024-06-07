@@ -7,15 +7,23 @@ import {
     ParseUUIDPipe,
     Patch,
     Post,
+    UnprocessableEntityException,
+    UploadedFile,
     UseGuards,
+    UseInterceptors,
     UsePipes,
     ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { GlobalGuard } from '@api/modules/auth/login/global.guard';
+import { SessionUser } from '@api/modules/auth/login/login.strategy';
 import { BaseController } from '@api/modules/base.controller';
-import { SimulationDTOFactory, SimulationListResponse, SimulationResponse } from '@api/modules/simulation/dto/simulation.dto';
+import {
+    SimulationDTOFactory,
+    SimulationListResponse,
+    SimulationResponse,
+} from '@api/modules/simulation/dto/simulation.dto';
 import { CreateSimulationDTO } from '@api/modules/simulation/form/create-simulation.form';
 import { UpdateSimulationForm } from '@api/modules/simulation/form/update-simulation.form';
 import { WorkerDTOFactory, WorkerListResponse } from '@api/modules/worker/dto/worker.dto';
@@ -25,9 +33,12 @@ import { PagingValidationPipe } from '@api/nestjs/pipes/paging-params';
 import { PagingParams } from '@api/paging/paging-params';
 import { Simulation } from '@domain/entities/simulation.entity';
 import { Worker } from '@domain/entities/worker.entity';
+import { SimulationImportException } from '@domain/services/import/dto/import-validation.dto';
+import { SimulationImporter } from '@domain/services/import/simulation-importer';
 import { SimulationService } from '@domain/services/simulation.service';
 import { UserService } from '@domain/services/user.service';
 import { WorkerService } from '@domain/services/worker.service';
+import { FileHelper } from '@domain/utils/file-helper';
 
 @ApiTags('simulations')
 @Controller('simulations')
@@ -69,11 +80,48 @@ export class SimulationController extends BaseController {
     @ApiResponse({ status: 404, description: 'User from token not found' })
     @UseGuards(GlobalGuard)
     @UsePipes(ValidationPipe)
-    public async create(@Body() simulationForm: CreateSimulationDTO, @UserDecorator() sessionUser: { id: string }): Promise<SimulationResponse> {
+    public async create(
+        @Body() simulationForm: CreateSimulationDTO,
+        @UserDecorator() sessionUser: SessionUser,
+    ): Promise<SimulationResponse> {
         const user = await this.userService.findOneByUid(sessionUser.id);
         const newSimulation = CreateSimulationDTO.toEntity(simulationForm, user);
         const savedSimulation = await this.simulationService.persist(newSimulation);
 
+        return SimulationDTOFactory.fromEntity(savedSimulation);
+    }
+
+    @Post('/import')
+    @ApiOperation({ summary: 'Import a simulation via SM Excel export' })
+    @ApiResponse({ status: 201, description: 'Imported Simulation' })
+    @ApiResponse({ status: 422, description: 'Errors found while importing' })
+    @UseInterceptors(
+        FileHelper.createFileInterceptor(SimulationImporter.ACCEPTED_FILE_TYPE, SimulationImporter.FILE_SIZE_LIMIT),
+    )
+    @UseGuards(GlobalGuard)
+    public async import(
+        @UploadedFile() file: Express.Multer.File,
+        @UserDecorator() sessionUser: SessionUser,
+    ): Promise<any> {
+        if (!file) {
+            throw new UnprocessableEntityException('No file uploaded');
+        }
+
+        const user = await this.userService.findOneByUid(sessionUser.id);
+        const importer = new SimulationImporter(file.originalname, file.buffer, user);
+        await importer.validateSheetStructure();
+
+        if (importer.errors.length > 0) {
+            throw new SimulationImportException(importer.errors);
+        }
+
+        await importer.doImport();
+
+        if (importer.errors.length > 0) {
+            throw new SimulationImportException(importer.errors);
+        }
+
+        const savedSimulation = await this.simulationService.persist(importer.simulation);
         return SimulationDTOFactory.fromEntity(savedSimulation);
     }
 
@@ -117,7 +165,7 @@ export class SimulationController extends BaseController {
         @Paging('Worker', PagingValidationPipe) paging: PagingParams<Worker>,
     ): Promise<WorkerListResponse> {
         const simulation = await this.simulationService.findOneByUid(simulationId);
-        paging.filter = { ...paging.filter, simulation: simulation.id };
+        paging.filter = { ...paging.filter, _simulation: simulation.id } as any; // TODO: this needs fixing
         const [workers, count] = await this.workerService.findManyPaged(paging);
 
         // TODO: check hateaos links on this endpoint

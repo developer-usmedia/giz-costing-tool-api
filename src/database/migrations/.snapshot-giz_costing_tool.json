@@ -372,6 +372,15 @@
           "default": "1",
           "mappedType": "integer"
         },
+        "matrix_id": {
+          "name": "matrix_id",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "string"
+        },
         "year": {
           "name": "year",
           "type": "int",
@@ -723,61 +732,70 @@
         },
         "number_of_workers": {
           "name": "number_of_workers",
-          "type": "int",
+          "type": "numeric(6,0)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "precision": 6,
+          "scale": 0,
           "default": "1",
-          "mappedType": "integer"
+          "mappedType": "decimal"
         },
         "monthly_wage": {
           "name": "monthly_wage",
-          "type": "int",
+          "type": "numeric(8,2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "integer"
+          "precision": 8,
+          "scale": 2,
+          "mappedType": "decimal"
         },
         "monthly_bonus": {
           "name": "monthly_bonus",
-          "type": "int",
+          "type": "numeric(8,2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "mappedType": "integer"
+          "precision": 8,
+          "scale": 2,
+          "mappedType": "decimal"
         },
         "percentage_of_year_worked": {
           "name": "percentage_of_year_worked",
-          "type": "int",
+          "type": "numeric(5,2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 3,
-          "mappedType": "integer"
+          "precision": 5,
+          "scale": 2,
+          "mappedType": "decimal"
         },
         "employee_tax": {
           "name": "employee_tax",
-          "type": "int",
+          "type": "numeric(5,2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 3,
-          "mappedType": "integer"
+          "precision": 5,
+          "scale": 2,
+          "mappedType": "decimal"
         },
         "employer_tax": {
           "name": "employer_tax",
-          "type": "int",
+          "type": "numeric(5,2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "length": 3,
-          "mappedType": "integer"
+          "precision": 5,
+          "scale": 2,
+          "mappedType": "decimal"
         },
         "ikb_food": {
           "name": "ikb_food",

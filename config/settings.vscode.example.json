@@ -1,0 +1,13 @@
+{
+  "rest-client.environmentVariables": {
+    "local": {
+      "host": "http://localhost:3000"
+    },
+    "staging": {
+      "host": "https://giz-costing-tool-api-6qii37ligq-ez.a.run.app"
+    },
+    "production": {
+      "host": ""
+    }
+  }
+}

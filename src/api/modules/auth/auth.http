@@ -18,7 +18,7 @@ Content-Type: application/json
 {
     "email": "debug@usmedia.nl",
     "password": "HASHME",
-    "emailVerificationCode": "ZRR9QP"
+    "emailVerificationCode": "XP98HC"
 }
 
 ### Get user from session
