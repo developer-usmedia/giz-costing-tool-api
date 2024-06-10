@@ -25,11 +25,11 @@ class Environment {
         from: string;
     };
 
-    public session: {
+    public jwt: {
         secret: string;
-        expiresIn: number;
-        name: string;
-        tableName: string;
+        expiresIn: string;
+        refreshExpiresIn: string;
+        issuer: string;
     };
 
     constructor() {
@@ -56,11 +56,12 @@ class Environment {
             from: process.env.EMAIL_FROM,
         };
 
-        this.session = {
-            secret: process.env.SESSION_SECRET,
-            expiresIn: +process.env.SESSION_EXPIRES_IN,
-            name: process.env.SESSION_NAME ?? 'GIZ-COOKIE',
-            tableName: process.env.SESSION_TABLE_NAME ?? 'giz_session',
+        const envJwtExpire = process.env.JWT_EXPIRES_IN ?? '1hr';
+        this.jwt = {
+            secret: process.env.JWT_SECRET,
+            expiresIn: this.api.isLocal ? '1d' : envJwtExpire,
+            refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN ?? '7d',
+            issuer: process.env.JWT_ISSUER ?? 'UsMedia',
         };
     }
 
@@ -75,8 +76,7 @@ class Environment {
             !!this.db.user &&
             !!this.db.password &&
             !!this.api.url &&
-            !!this.session.secret &&
-            !!this.session.expiresIn &&
+            !!this.jwt.secret &&
             !!this.mail.apiKey &&
             !!this.mail.from
         );

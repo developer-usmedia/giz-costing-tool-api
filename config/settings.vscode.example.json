@@ -1,13 +1,16 @@
 {
   "rest-client.environmentVariables": {
     "local": {
-      "host": "http://localhost:3000"
+      "host": "http://localhost:3000",
+      "token": "replaceme"
     },
     "staging": {
-      "host": "https://giz-costing-tool-api-6qii37ligq-ez.a.run.app"
+      "host": "https://giz-costing-tool-api-6qii37ligq-ez.a.run.app",
+      "token": "replaceme"
     },
     "production": {
-      "host": ""
+      "host": "",
+      "token": "replaceme"
     }
   }
 }

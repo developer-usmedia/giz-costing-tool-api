@@ -1,10 +1,18 @@
 import { EntityManager } from '@mikro-orm/postgresql';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import { CreateUserDTO } from '@api/modules/auth/form/create-user.form';
+import { JwtPayload } from '@api/modules/auth/jwt/jwt-payload.type';
+import { environment } from '@app/environment';
 import { User } from '@domain/entities/user.entity';
 import { EmailService } from '@domain/services/email.service';
 import { UserService } from '@domain/services/user.service';
+
+interface JwtToken {
+    accessToken: string;
+    refreshToken: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -14,6 +22,7 @@ export class AuthService {
         protected readonly em: EntityManager,
         protected readonly usersService: UserService,
         private readonly emailService: EmailService,
+        private readonly jwtService: JwtService,
     ) {}
 
     public async register(email: string, password: string): Promise<User> {
@@ -25,15 +34,22 @@ export class AuthService {
         return saved;
     }
 
-    public async login(email: string, password: string): Promise<[User, boolean]> {
-        const user = await this.usersService.findOne({ email: email });
+    public login(user: User, password: string): JwtToken {
+        const isMatch = user?.comparePasswords(password);
 
-        if (user) {
-            const passwordValid = user.comparePasswords(password);
-            return [user, passwordValid];
+        if (!user || !isMatch) throw new UnauthorizedException('Invalid credentials');
+
+        return this.generateJwt(user, false);
+    }
+
+    public generateJwt(user: User, saveRefreshToken = true): JwtToken {
+        const token = this.signJwt(user);
+
+        if (saveRefreshToken) {
+            user.refreshToken = token.refreshToken;
         }
 
-        return [null, false];
+        return token;
     }
 
     public async startPasswordReset(user: User): Promise<boolean> {
@@ -100,9 +116,24 @@ export class AuthService {
         return !!(await this.usersService.persist(user));
     }
 
+    // TODO: Remove this inbetween step in service. Call user.disable2FA directly?
     public async disable2FA(user: User): Promise<boolean> {
         user.disable2FA();
 
         return !!(await this.usersService.persist(user));
+    }
+
+    private signJwt(user: User): JwtToken {
+        const { secret, expiresIn, refreshExpiresIn, issuer } = environment.jwt;
+        const payload: JwtPayload = {
+            userId: user.id,
+            email: user.email,
+            iss: issuer,
+        };
+
+        return {
+            accessToken: this.jwtService.sign(payload, { secret: secret, expiresIn: expiresIn }),
+            refreshToken: this.jwtService.sign(payload, { secret: secret, expiresIn: refreshExpiresIn }),
+        };
     }
 }

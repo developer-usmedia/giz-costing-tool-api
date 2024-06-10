@@ -27,6 +27,9 @@ export class User extends AbstractEntity<User> {
     @Embedded({ entity: () => TwoFactor, prefix: 'twofactor_', nullable: true })
     private _twoFactor: TwoFactor;
 
+    @Property({ columnType: 'varchar(400)', nullable: true })
+    private _refreshToken: string;
+
     constructor(props: { email: string; password: string }) {
         super();
 
@@ -54,6 +57,9 @@ export class User extends AbstractEntity<User> {
     }
     get twoFactor() {
         return this._twoFactor;
+    }
+    get refreshToken() {
+        return this._refreshToken;
     }
 
     set email(value: string) {
@@ -87,6 +93,11 @@ export class User extends AbstractEntity<User> {
     set twoFactor(value: TwoFactor) {
         Guard.check(value, { type: 'object' });
         this._twoFactor = value;
+    }
+
+    set refreshToken(value: string) {
+        Guard.check(value, { type: 'string', optional: true, allowEmpty: true });
+        this._refreshToken = value;
     }
 
     public comparePasswords(password: string): boolean {

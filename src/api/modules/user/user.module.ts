@@ -1,5 +1,6 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs/mikro-orm.module';
 import { Module } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import { UserController } from '@api/modules/user/controller/user.controller';
 import { DomainModule } from '@domain/domain.module';
@@ -10,7 +11,7 @@ import { UserService } from '@domain/services/user.service';
 
 @Module({
     imports: [DomainModule, MikroOrmModule.forFeature([User])],
-    providers: [UserService, AuthService, EmailService],
+    providers: [UserService, JwtService, AuthService, EmailService],
     exports: [UserService],
     controllers: [UserController],
 })

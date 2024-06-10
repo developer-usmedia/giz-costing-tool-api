@@ -65,13 +65,13 @@ spec:
               value: 'https://giz-costing-tool-api-6qii37ligq-ez.a.run.app'
             - name: API_CORS_ORIGIN
               value: '-true-elevator-417011.ew.r.appspot.com$,https://true-elevator-417011.ew.r.appspot.com,http://localhost:4200'
-            - name: SESSION_EXPIRES_IN
+            - name: JWT_EXPIRES_IN
               value: '3600000'
-            - name: SESSION_SECRET
+            - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   key: latest
-                  name: SESSION_SECRET
+                  name: SESSION_SECRET # TODO: possibly rename in gcloud to JWT_SECRET
             - name: SENDGRID_API_KEY
               valueFrom:
                 secretKeyRef:

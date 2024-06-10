@@ -21,14 +21,26 @@ Content-Type: application/json
     "emailVerificationCode": "XP98HC"
 }
 
+### Refresh JWT
+POST http://{{host}}:{{port}}/api/{{endpoint}}/refresh
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "refreshToken": ""
+}
+
 ### Get user from session
 GET http://{{host}}:{{port}}/api/{{endpoint}}/session
+Authorization: Bearer {{token}}
 
 ### Logout
 POST http://{{host}}:{{port}}/api/{{endpoint}}/logout
+Authorization: Bearer {{token}}
 
 ### Protected route
 GET http://{{host}}:{{port}}/api/users
+Authorization: Bearer {{token}}
 
 ### Start forgot-password flow
 POST http://{{host}}:{{port}}/api/{{endpoint}}/forgot-password
@@ -50,10 +62,12 @@ Content-Type: application/json
 
 ### Register a new 2 factor authenticator
 POST http://{{host}}:{{port}}/api/{{endpoint}}/2fa/enable
+Authorization: Bearer {{token}}
 
 @2faToken=035863
 ### Verify a 2fa code from authenticator
 POST http://{{host}}:{{port}}/api/{{endpoint}}/2fa/verify/{{2faToken}}
+Authorization: Bearer {{token}}
 
 ### Send email verification code
 POST http://{{host}}:{{port}}/api/{{endpoint}}/verify-email

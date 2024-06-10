@@ -53,7 +53,12 @@ export class UpdateSimulationForm {
         if (form.defaultEmployeeTax) simulation.defaultEmployeeTax = form.defaultEmployeeTax;
 
         if (form.facility) simulation.facility = SimulationFacilityForm.toEntity(simulation.facility, form.facility);
-        if (form.benchmark) simulation.benchmark = SimulationBenchmarkForm.toEntity(simulation.benchmark, form.benchmark, simulation.facility);
+        if (form.benchmark)
+            simulation.benchmark = SimulationBenchmarkForm.toEntity(
+                simulation.benchmark,
+                form.benchmark,
+                simulation.facility,
+            );
 
         return simulation;
     }

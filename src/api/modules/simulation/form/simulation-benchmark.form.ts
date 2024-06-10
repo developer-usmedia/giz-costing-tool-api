@@ -22,10 +22,14 @@ export class SimulationBenchmarkForm {
     locality?: string;
 
     // Convert to database entity from DTO specified above
-    public static toEntity(benchmark: SimulationBenchmark, form: SimulationBenchmarkForm, facility: SimulationFacility): SimulationBenchmark {
+    public static toEntity(
+        benchmark: SimulationBenchmark,
+        form: SimulationBenchmarkForm,
+        facility: SimulationFacility,
+    ): SimulationBenchmark {
         benchmark.region = form.region;
         benchmark.localValue = form.localValue;
-        benchmark.currencyCode = facility.currencyCode; 
+        benchmark.currencyCode = facility.currencyCode;
 
         if (form.locality) benchmark.locality = form.locality;
 

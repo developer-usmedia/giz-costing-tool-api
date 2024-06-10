@@ -16,8 +16,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { GlobalGuard } from '@api/modules/auth/login/global.guard';
-import { SessionUser } from '@api/modules/auth/login/login.strategy';
+import { JwtAuthGuard } from '@api/modules/auth/jwt/jwt.guard';
 import { BaseController } from '@api/modules/base.controller';
 import {
     SimulationDTOFactory,
@@ -28,10 +27,10 @@ import { CreateSimulationDTO } from '@api/modules/simulation/form/create-simulat
 import { UpdateSimulationForm } from '@api/modules/simulation/form/update-simulation.form';
 import { WorkerDTOFactory, WorkerListResponse } from '@api/modules/worker/dto/worker.dto';
 import { Paging } from '@api/nestjs/decorators/paging.decorator';
-import { User as UserDecorator } from '@api/nestjs/decorators/user.decorator';
 import { PagingValidationPipe } from '@api/nestjs/pipes/paging-params';
 import { PagingParams } from '@api/paging/paging-params';
 import { Simulation } from '@domain/entities/simulation.entity';
+import { User } from '@domain/entities/user.entity';
 import { Worker } from '@domain/entities/worker.entity';
 import { SimulationImportException } from '@domain/services/import/dto/import-validation.dto';
 import { SimulationImporter } from '@domain/services/import/simulation-importer';
@@ -39,6 +38,7 @@ import { SimulationService } from '@domain/services/simulation.service';
 import { UserService } from '@domain/services/user.service';
 import { WorkerService } from '@domain/services/worker.service';
 import { FileHelper } from '@domain/utils/file-helper';
+import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
 
 @ApiTags('simulations')
 @Controller('simulations')
@@ -54,7 +54,7 @@ export class SimulationController extends BaseController {
     @Get('/')
     @ApiOperation({ summary: 'Get a paginated list of simulations' })
     @ApiResponse({ status: 200, description: 'Paged simulations for the current user' })
-    @UseGuards(GlobalGuard)
+    @UseGuards(JwtAuthGuard)
     public async index(
         @Paging('Simulation', PagingValidationPipe) paging: PagingParams<Simulation>,
     ): Promise<SimulationListResponse> {
@@ -67,7 +67,7 @@ export class SimulationController extends BaseController {
     @ApiOperation({ summary: 'Get a single simulation by id' })
     @ApiResponse({ status: 404, description: 'The simulation cannot be found' })
     @ApiResponse({ status: 200, description: 'The simulation record' })
-    @UseGuards(GlobalGuard)
+    @UseGuards(JwtAuthGuard)
     public async findBy(@Param('id', ParseUUIDPipe) id: string): Promise<SimulationResponse> {
         const simulation = await this.simulationService.findOneByUid(id);
 
@@ -78,13 +78,9 @@ export class SimulationController extends BaseController {
     @ApiOperation({ summary: 'Create a simulation' })
     @ApiResponse({ status: 201, description: 'Created Simulation' })
     @ApiResponse({ status: 404, description: 'User from token not found' })
-    @UseGuards(GlobalGuard)
+    @UseGuards(JwtAuthGuard)
     @UsePipes(ValidationPipe)
-    public async create(
-        @Body() simulationForm: CreateSimulationDTO,
-        @UserDecorator() sessionUser: SessionUser,
-    ): Promise<SimulationResponse> {
-        const user = await this.userService.findOneByUid(sessionUser.id);
+    public async create(@Body() simulationForm: CreateSimulationDTO, @CurrentUser() user: User): Promise<SimulationResponse> {
         const newSimulation = CreateSimulationDTO.toEntity(simulationForm, user);
         const savedSimulation = await this.simulationService.persist(newSimulation);
 
@@ -98,10 +94,10 @@ export class SimulationController extends BaseController {
     @UseInterceptors(
         FileHelper.createFileInterceptor(SimulationImporter.ACCEPTED_FILE_TYPE, SimulationImporter.FILE_SIZE_LIMIT),
     )
-    @UseGuards(GlobalGuard)
+    @UseGuards(JwtAuthGuard)
     public async import(
         @UploadedFile() file: Express.Multer.File,
-        @UserDecorator() sessionUser: SessionUser,
+        @CurrentUser() sessionUser: User,
     ): Promise<any> {
         if (!file) {
             throw new UnprocessableEntityException('No file uploaded');
@@ -129,7 +125,7 @@ export class SimulationController extends BaseController {
     @ApiOperation({ summary: 'Update a simulation' })
     @ApiResponse({ status: 201, description: 'Updated Simulation' })
     @ApiResponse({ status: 404, description: 'Simulation to update not found' })
-    @UseGuards(GlobalGuard)
+    @UseGuards(JwtAuthGuard)
     @UsePipes(ValidationPipe)
     public async update(
         @Param('id', ParseUUIDPipe) id: string,
@@ -146,7 +142,7 @@ export class SimulationController extends BaseController {
     @ApiOperation({ summary: 'Delete a simulation' })
     @ApiResponse({ status: 200, description: 'Deleted simulation' })
     @ApiResponse({ status: 404, description: 'Simulation not found' })
-    @UseGuards(GlobalGuard)
+    @UseGuards(JwtAuthGuard)
     @UsePipes(ValidationPipe)
     public async destroy(@Param('id', ParseUUIDPipe) id: string): Promise<SimulationResponse> {
         const simulation = await this.simulationService.findOneByUid(id);
@@ -159,7 +155,7 @@ export class SimulationController extends BaseController {
     @ApiOperation({ summary: 'Get workers registered on a simulation' })
     @ApiResponse({ status: 404, description: 'The simulation cannot be found' })
     @ApiResponse({ status: 200, description: 'The list of workers on the simulation' })
-    @UseGuards(GlobalGuard)
+    @UseGuards(JwtAuthGuard)
     public async workers(
         @Param('id', ParseUUIDPipe) simulationId: string,
         @Paging('Worker', PagingValidationPipe) paging: PagingParams<Worker>,

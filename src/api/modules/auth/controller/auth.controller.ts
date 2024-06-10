@@ -1,12 +1,13 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Get,
     HttpCode,
+    Logger,
     Param,
     Post,
     Req,
-    Request,
     Res,
     UseGuards,
     UsePipes,
@@ -20,19 +21,23 @@ import { ForgotPasswordForm } from '@api/modules/auth/form/forgot-password.form'
 import { PasswordResetForm } from '@api/modules/auth/form/password-reset-form.form';
 import { RegisterForm } from '@api/modules/auth/form/register-form.form';
 import { VerifyEmailForm } from '@api/modules/auth/form/verify-email.form';
-import { GlobalGuard } from '@api/modules/auth/login/global.guard';
-import { LoginAuthGuard } from '@api/modules/auth/login/login.guard';
-import { SessionUser } from '@api/modules/auth/login/login.strategy';
 import { OTPService } from '@api/modules/auth/service/otp.service';
 import { BaseController } from '@api/modules/base.controller';
 import { UserDTOFactory, UserResponse } from '@api/modules/user/dto/user.dto';
-import { User } from '@api/nestjs/decorators/user.decorator';
+import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
+import { User } from '@domain/entities/user.entity';
 import { AuthService } from '@domain/services/auth.service';
 import { UserService } from '@domain/services/user.service';
+import { LoginForm } from '../form/login-form.form';
+import { JwtPayload } from '../jwt/jwt-payload.type';
+import { RefreshJwtGuard } from '../jwt/jwt-refresh.guard';
+import { JwtAuthGuard } from '../jwt/jwt.guard';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController extends BaseController {
+    private readonly logger = new Logger(AuthController.name);
+
     constructor(
         private readonly authService: AuthService,
         private readonly userService: UserService,
@@ -62,31 +67,80 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 401, description: 'Invalid credentials' })
     @ApiResponse({ status: 200, description: 'Successfull login' })
     @UsePipes(ValidationPipe)
-    @UseGuards(LoginAuthGuard)
-    public login(@Res() res: Response): { success: boolean } {
-        return this.ok(res, { success: true });
+    public async login(
+        @Body() loginForm: LoginForm,
+    ): Promise<{ accessToken: string; refreshToken: string; user: UserResponse }> {
+        const user = await this.userService.findOne({ email: loginForm.email });
+        const jwt = this.authService.login(user, loginForm.password);
+
+        if (!user.emailVerified) {
+            if (!loginForm.emailVerificationCode) {
+                const errorMessage = 'Missing required property emailVerificationCode for verification';
+                this.logger.debug(errorMessage);
+                throw new BadRequestException(errorMessage);
+            }
+
+            // verify emailtoken with db entry and set emailVerified=true if not already verified
+            const correct = await this.authService.verifyEmailCode(user, loginForm.emailVerificationCode);
+            if (!correct) {
+                const errorMessage = 'Invalid email verification code';
+                this.logger.debug(errorMessage);
+                throw new BadRequestException(errorMessage);
+            }
+        }
+
+        user.refreshToken = jwt.refreshToken;
+        await this.userService.persist(user);
+
+        return {
+            accessToken: jwt.accessToken,
+            refreshToken: jwt.refreshToken,
+            user: UserDTOFactory.fromEntity(user),
+        };
     }
 
     @Get('/session')
     @ApiOperation({ summary: 'Get user of currently signed in user' })
     @ApiResponse({ status: 200, description: 'Currently logged in user from session' })
+    @UseGuards(JwtAuthGuard)
     @UsePipes(ValidationPipe)
-    public async current(@User() session: SessionUser): Promise<UserResponse>{
-        if(!session) return null;
-        
-        // This is the second user db call (LoginStrategy)
-        // Find a way to improve this or leave it be...
-        const user = await this.userService.findOneByUid(session.id);
-        return UserDTOFactory.fromEntity(user);
+    public current(@CurrentUser() currentUser: User): UserResponse {
+        return UserDTOFactory.fromEntity(currentUser);
+    }
+
+    @Post('/refresh')
+    @ApiOperation({ summary: 'Refresh jwt access token using refresh token' })
+    @ApiResponse({ status: 401, description: 'Invalid refresh token' })
+    @ApiResponse({ status: 200, description: 'New access and refresh token' })
+    @UseGuards(RefreshJwtGuard)
+    public async refresh(
+        @Req() req: any,
+        @CurrentUser() currentUser: JwtPayload, // Because of RefreshJwtGuard
+        @Res() res: Response,
+    ): Promise<{ accessToken: string; refreshToken: string }> {
+        const user = await this.userService.findOneByUid(currentUser.userId);
+
+        if (user?.refreshToken !== req.body.refreshToken) {
+            throw new BadRequestException('Invalid refresh token');
+        }
+
+        const token = this.authService.generateJwt(user);
+        user.refreshToken = token.refreshToken;
+        await this.userService.persist(user);
+
+        return this.ok(res, { accessToken: token.accessToken, refreshToken: token.refreshToken });
     }
 
     @Post('/logout')
     @HttpCode(200)
-    @ApiOperation({ summary: 'Logout from current session' })
-    @ApiResponse({ status: 200, description: 'Successfull logout' })
-    public logout(@Request() req, @Res() res: Response): { success: boolean } {
-        req.session.destroy();
-        return this.ok(res, { success: true });
+    @ApiOperation({ summary: 'Delete token refresh capability for a user until a new login' })
+    @ApiResponse({ status: 200, description: 'Removed refresh capability for user' })
+    @UseGuards(JwtAuthGuard)
+    public async logout(@Res() res: Response, @CurrentUser() user: User): Promise<{ success: boolean }> {
+        user.refreshToken = null;
+        const saved = await this.userService.persist(user);
+
+        return this.ok(res, { success: !!saved });
     }
 
     @Post('/forgot-password')
@@ -117,7 +171,6 @@ export class AuthController extends BaseController {
     public async resetPassword(
         @Body() resetPasswordForm: PasswordResetForm,
         @Res() res: Response,
-        @Req() req,
     ): Promise<{ success: boolean }> {
         const { email, newPassword, resetToken } = resetPasswordForm;
 
@@ -131,17 +184,17 @@ export class AuthController extends BaseController {
             return this.clientError('Invalid or expired token');
         }
 
-        req.session.destroy();
-
         return this.ok(res, { success: saved });
     }
 
     @Post('/verify-email')
     @UseGuards(ThrottlerGuard)
-    @Throttle({ default: { 
-        limit: 5, 
-        ttl: 60 * 60 * 10000 , // 1 hour
-    }})
+    @Throttle({
+        default: {
+            limit: 5,
+            ttl: 60 * 60 * 10000, // 1 hour
+        },
+    })
     @ApiOperation({ summary: 'Send the user an email with a verification code' })
     @ApiResponse({ status: 200, description: 'The email has been successfully sent' })
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
@@ -164,10 +217,8 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Enable 2FA' })
     @ApiResponse({ status: 201, description: '2FA registration started. Requires verification' })
     @ApiResponse({ status: 400, description: 'Email verification required or 2FA already enabled' })
-    @UseGuards(GlobalGuard)
-    public async register2FA(@User() sessionUser: { id: string }, @Res() res: Response): Promise<{ qrcode: string }> {
-        const user = await this.userService.findOneByUid(sessionUser.id);
-
+    @UseGuards(JwtAuthGuard)
+    public async register2FA(@CurrentUser() user: User, @Res() res: Response): Promise<{ qrcode: string }> {
         if (!user.emailVerified) {
             return this.clientError('Email verification required before enabling 2FA');
         }
@@ -186,14 +237,13 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Verify/enable a 2FA authenticator' })
     @ApiResponse({ status: 200, description: '2FA enabled' })
     @ApiResponse({ status: 400, description: '2FA not setup or invalid verification code' })
-    @UseGuards(GlobalGuard)
+    @UseGuards(JwtAuthGuard)
     @UsePipes(ValidationPipe)
-    public async verify2FA(
+    public verify2FA(
         @Param('code') code: string,
-        @User() sessionUser: { id: string },
+        @CurrentUser() user: User,
         @Res() res: Response,
-    ): Promise<{ success: boolean }> {
-        const user = await this.userService.findOneByUid(sessionUser.id);
+    ): { success: boolean } {
         if (!user.twoFactor.enabled || !user.twoFactor.secret) {
             return this.clientError('2FA is disabled');
         }
@@ -211,12 +261,11 @@ export class AuthController extends BaseController {
     }
 
     @Post('/2fa/disable')
-    @UseGuards(GlobalGuard)
+    @UseGuards(JwtAuthGuard)
     @UsePipes(ValidationPipe)
     @ApiOperation({ summary: 'Disable 2FA' })
     @ApiResponse({ status: 200, description: '2FA disabled or 2FA was never enabled' })
-    public async disable2FA(@User() sessionUser: { id: string }, @Res() res: Response): Promise<{ success: boolean }> {
-        const user = await this.userService.findOneByUid(sessionUser.id);
+    public async disable2FA(@CurrentUser() user: User, @Res() res: Response): Promise<{ success: boolean }> {
         const disabled = await this.authService.disable2FA(user);
 
         return this.ok(res, { success: disabled });

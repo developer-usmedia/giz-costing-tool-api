@@ -5,15 +5,19 @@
 
 ### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}
+Authorization: Bearer {{token}}
 
 ### Get latest 3
 GET http://{{host}}:{{port}}/api/{{endpoint}}?size=3&sort=updatedAt,ASC
+Authorization: Bearer {{token}}
 
 ### Get with filter
 GET http://{{host}}:{{port}}/api/{{endpoint}}?year=2032
+Authorization: Bearer {{token}}
 
 ### Create
 POST http://{{host}}:{{port}}/api/{{endpoint}}
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -24,6 +28,7 @@ Content-Type: application/json
 
 ### Patch
 PATCH http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -50,9 +55,12 @@ Content-Type: application/json
 
 ### Get
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
+Authorization: Bearer {{token}}
 
 ### Delete 
 DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
+Authorization: Bearer {{token}}
 
 ### Get workers
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}/workers
+Authorization: Bearer {{token}}

@@ -1,10 +1,9 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-import { SessionUser } from '@api/modules/auth/login/login.strategy';
+import { User } from '@domain/entities/user.entity';
 
-export const User = createParamDecorator((_data: unknown, ctx: ExecutionContext): SessionUser => {
-    // local.strategy defines what is stored in the session.
+export const CurrentUser = createParamDecorator((_data: unknown, ctx: ExecutionContext): User => {
     const request = ctx.switchToHttp().getRequest();
 
-    return request.user as SessionUser;
+    return request.user as User;
 });

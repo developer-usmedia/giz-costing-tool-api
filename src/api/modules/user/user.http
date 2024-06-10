@@ -5,12 +5,16 @@
 
 ### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}
+Authorization: Bearer {{token}}
 
 ### Get all page 2
 GET http://{{host}}:{{port}}/api/{{endpoint}}?size=2&index=3
+Authorization: Bearer {{token}}
 
 ### Get by id
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
+Authorization: Bearer {{token}}
 
 ### Delete
 DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{userId}}
+Authorization: Bearer {{token}}

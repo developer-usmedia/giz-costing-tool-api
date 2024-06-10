@@ -2,10 +2,7 @@ import { MikroORM } from '@mikro-orm/postgresql';
 import { INestApplication, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as postgresConnect from 'connect-pg-simple';
 import * as cookieParser from 'cookie-parser';
-import { randomUUID } from 'crypto';
-import * as session from 'express-session';
 import * as passport from 'passport';
 
 import { AppModule } from '@app/app.module';
@@ -22,34 +19,6 @@ const setupSwagger = (app: INestApplication<any>) => {
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('docs', app, document);
-};
-
-const setupAuth = (app: INestApplication<any>) => {
-    const pgConnection = postgresConnect(session);
-    const pgSessionStore = new pgConnection({
-        conString: environment.getPostgresConnectionString(),
-        tableName: environment.session.tableName,
-        pruneSessionInterval: 900, // Default, added to be explicit
-    });
-
-    app.use(
-        session({
-            store: pgSessionStore,
-            name: environment.session.name,
-            secret: environment.session.secret,
-            resave: false,
-            saveUninitialized: false,
-            genid: () => randomUUID(),
-            cookie: {
-                maxAge: environment.session.expiresIn,
-                secure: !environment.api.isLocal,
-                httpOnly: !environment.api.isLocal,
-            },
-        }),
-    );
-
-    app.use(passport.initialize());
-    app.use(passport.session());
 };
 
 async function runMigrations(): Promise<void> {
@@ -89,8 +58,8 @@ async function bootstrap() {
         credentials: true,
     });
     app.use(cookieParser());
-
-    setupAuth(app);
+    app.use(passport.initialize());
+    
     setupSwagger(app);
 
     runMigrations();

@@ -116,3 +116,31 @@ npm run test:e2e
 # test coverage
 npm run test:cov
 ```
+
+
+# Using HTTP files to execute requests
+
+JWT token is returned from the login request that is found in auth.http. In development the jwt token will be valid for 1d so it can be used in development. Login normally and use that access token for a day. You can change the value in environment.ts of you need to debug login / jwt issues
+
+## Jetbrains PhpStorm / IntelliJ IDEA
+
+-   Install the [HTTP Client plugin](https://www.jetbrains.com/help/phpstorm/http-client-in-product-code-editor.html)
+-   Go to http file
+-   And [select the correct environment](https://www.jetbrains.com/help/phpstorm/exploring-http-syntax.html#environment-variables)
+-   See all environment options: `./config/http-client.env.json`
+-   Setup variables by executing `cp ./config/http-client.env.example.json ./config/http-client.env.json` and fillin in the values.
+-   Then run one or more of the requests.
+
+## VSCode
+
+-   Install REST Client extension
+-   `ctrl/cmd shift p` opens settings
+-   Copy example json to regular json `cp ./config/settings.vscode.example.json ./.vscode/settings.json`
+-   Go to Rest Client: Switch Environment (cmd/ctrl+shift+p)
+-   And select correct environment
+- Execute request
+
+[More info about VSCode Rest Client](https://www.trpkovski.com/2023/03/19/setting-up-global-variables-in-the-rest-client-vs-code-extension)
+
+
+# JWT
