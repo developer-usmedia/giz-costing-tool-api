@@ -139,4 +139,12 @@ export class Worker extends AbstractEntity<Worker> {
         Guard.check(value, { type: 'object' });
         this._inKindBenefits = value;
     }
+
+    public isBelowLW(): boolean {
+        return (this.simulation.benchmark.localValue ?? 0) > this.getTotalRenumeration();
+    }
+
+    public getTotalRenumeration(): number {
+        return this.monthlyWage + this.monthlyBonus;
+    }
 }

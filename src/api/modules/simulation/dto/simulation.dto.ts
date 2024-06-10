@@ -24,6 +24,7 @@ import { Simulation } from '@domain/entities/simulation.entity';
 export interface SimulationDTO extends HalResponse {
     id: string;
     matrixId: string;
+    verified: boolean;
     year: string;
     status: string;
     administrativeCosts: number;
@@ -31,6 +32,9 @@ export interface SimulationDTO extends HalResponse {
     defaultEmployeeTax: number;
     facility: SimulationFacilityDTO;
     benchmark: SimulationBenchmarkDTO;
+    nrOfJobcategories: number;
+    nrOfWorkers: number;
+    nrOfWorkersBelowLW: number;
     createdAt: Date;
     updatedAt: Date;
     _links: {
@@ -64,6 +68,7 @@ const mapEntityToDTO = (entity: Simulation): SimulationDTO => {
     return {
         id: entity.id,
         matrixId: entity.matrixId ?? null,
+        verified: false,
         year: entity.year.toString(),
         status: entity.status,
         administrativeCosts: entity.administrativeCosts,
@@ -71,6 +76,9 @@ const mapEntityToDTO = (entity: Simulation): SimulationDTO => {
         defaultEmployerTax: entity.defaultEmployerTax,
         facility: SimulationFacilityDTOFactory.fromEntity(entity.facility),
         benchmark: SimulationBenchmarkDTOFactory.fromEntity(entity.benchmark),
+        nrOfWorkers: entity.workers.reduce((counter, worker ) => worker.numberOfWorkers + counter, 0),
+        nrOfJobcategories: entity.workers.length,
+        nrOfWorkersBelowLW: entity.workers.filter((w) => w.isBelowLW()).length,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
         _links: {

@@ -29,8 +29,8 @@ export class Simulation extends AbstractEntity<Simulation> {
     private _benchmark: SimulationBenchmark;
 
     // eslint-disable-next-line @typescript-eslint/dot-notation
-    @OneToMany({ entity: () => Worker, mappedBy: (worker) => worker['_simulation'], nullable: true })
-    private readonly _workers? = new Collection<Worker>(this);
+    @OneToMany({ entity: () => Worker, mappedBy: (worker) => worker['_simulation'], nullable: true, eager: true })
+    private readonly _workers? = new Collection<Worker>(this); // For now fetch eager to populate table, think of a different way
 
     @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
     private _defaultEmployerTax?: number; //  Percentage (0 - 100)
