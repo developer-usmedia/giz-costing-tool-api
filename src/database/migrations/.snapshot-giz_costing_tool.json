@@ -522,7 +522,7 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "default": "null",
           "mappedType": "string"
         },

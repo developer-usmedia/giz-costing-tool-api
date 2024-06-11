@@ -2,7 +2,7 @@ import { Embeddable, Property } from '@mikro-orm/core';
 
 @Embeddable()
 export class SimulationBenchmark {
-    @Property({ default: null })
+    @Property({ nullable: true, default: null })
     name?: string;
 
     @Property({ length: 4, nullable: true, default: null })

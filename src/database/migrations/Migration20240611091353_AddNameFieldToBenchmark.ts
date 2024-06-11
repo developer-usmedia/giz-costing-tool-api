@@ -1,9 +1,9 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20240610170004_AddNameFieldToBenchmark extends Migration {
+export class Migration20240611091353_AddNameFieldToBenchmark extends Migration {
 
   async up(): Promise<void> {
-    this.addSql('alter table "giz_simulation" add column "benchmark_name" varchar(255) not null;');
+    this.addSql('alter table "giz_simulation" add column "benchmark_name" varchar(255) null;');
   }
 
   async down(): Promise<void> {
