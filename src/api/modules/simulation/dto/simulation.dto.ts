@@ -59,7 +59,7 @@ export class SimulationDTOFactory {
         return {
             _embedded: { simulations: collection.map(mapEntityToDTO) },
             _links: generatePaginationLinks(SIMULATION_LINKS.simulations, count, paging),
-            paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: count / paging.size },
+            paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: Math.ceil(count / paging.size) },
         };
     }
 }

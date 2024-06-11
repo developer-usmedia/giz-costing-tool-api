@@ -37,7 +37,7 @@ export class UserDTOFactory {
                 users: collection.map(mapEntityToDTO),
             },
             _links: generatePaginationLinks(USER_LINKS.users, count, paging),
-            paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: count / paging.size },
+            paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: Math.ceil(count / paging.size) },
         };
     }
 }

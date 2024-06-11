@@ -48,7 +48,7 @@ export class WorkerDTOFactory {
                 workers: collection.map(mapEntityToDTO),
             },
             _links: generatePaginationLinks(WORKER_LINKS.workers, count, paging),
-            paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: count / paging.size },
+            paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: Math.ceil(count / paging.size) },
         };
     }
 }
