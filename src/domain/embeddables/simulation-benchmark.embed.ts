@@ -2,6 +2,9 @@ import { Embeddable, Property } from '@mikro-orm/core';
 
 @Embeddable()
 export class SimulationBenchmark {
+    @Property({ default: null })
+    name?: string;
+
     @Property({ length: 4, nullable: true, default: null })
     year?: number;
 
@@ -24,6 +27,7 @@ export class SimulationBenchmark {
     localValue?: number;
 
     constructor(props: {
+        name?: string;
         year?: number;
         source?: string;
         locality?: string;
@@ -32,6 +36,7 @@ export class SimulationBenchmark {
         currencyName?: string;
         localValue?: number;
     }) {
+        this.name = props.name;
         this.year = props.year;
         this.source = props.source;
         this.locality = props.locality;

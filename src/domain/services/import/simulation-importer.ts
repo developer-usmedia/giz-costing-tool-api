@@ -41,6 +41,8 @@ export class SimulationImporter {
     private workbook: Workbook;
     private workbookValidator: WorkbookValidator;
 
+    private benchmarkValue: number;
+
     constructor(fileName: string, fileBuffer: Buffer, user: User) {
         this.fileName = fileName;
         this.fileBuffer = fileBuffer;
@@ -58,6 +60,13 @@ export class SimulationImporter {
         }
 
         await this.processRows();
+
+        // Temp way to get benchmark value from sheet.
+        // Sheet has value set for each worker instead of on the information sheet. A change to the excel is required
+        this.simulation.benchmark.localValue = this.benchmarkValue;
+
+        // This is also missing form the excel sheet
+        this.simulation.benchmark.region = this.simulation.facility.countryCode;
 
         return this.simulation;
     }
@@ -94,6 +103,11 @@ export class SimulationImporter {
 
                 if (this.errors?.length > this.N_OF_ERRORS_BREAKPOINT) {
                     return;
+                }
+
+                
+                if(!this.benchmarkValue) {
+                    this.benchmarkValue = parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.benchmarkValue).text);
                 }
 
                 const worker = this.createWorker(row);
@@ -168,6 +182,7 @@ export class SimulationImporter {
             matrixId: null,
             facilityName: infoSheet.getCell(INFO_SHEET_MAPPING.facilityName).text,
             facilityId: infoSheet.getCell(INFO_SHEET_MAPPING.facilityId).text,
+            benchmarkName: infoSheet.getCell(INFO_SHEET_MAPPING.benchmarkName).text,
             countryCode: null,
             country: infoSheet.getCell(INFO_SHEET_MAPPING.country).text,
             region: infoSheet.getCell(INFO_SHEET_MAPPING.region).text,

@@ -14,6 +14,7 @@ export const INFO_SHEET_MAPPING = {
     templateVersion: 'B21',
     facilityName: 'B1',
     facilityId: 'B2',
+    benchmarkName: 'B19',
     country: 'B6',
     region: 'B7',
     annualProduction: 'B12',
@@ -37,4 +38,6 @@ export const COLUMN_MAPPING_PAYROLL = {
     ikbHealthcare: 'AH',
     ikbChildEducation: 'AJ',
     ikbChildCare: 'AL',
+
+    benchmarkValue: 'AW',
 } as const;

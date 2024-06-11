@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import { SimulationBenchmark } from '@domain/embeddables/simulation-benchmark.embed';
 import { SimulationFacility } from '@domain/embeddables/simulation-facility.embed';
 import { Simulation } from '@domain/entities/simulation.entity';
 import { User } from '@domain/entities/user.entity';
@@ -26,6 +27,11 @@ export class SimulationFactory {
                 product: value.productName,
                 unitOfProduction: value.unitOfProduction,
                 annualProduction: value.annualProduction,
+            }),
+            benchmark: new SimulationBenchmark({
+                name: value.benchmarkName,
+                currencyCode: value.currencyCode,
+                localValue: value.benchmarkValue,
             }),
         });
     }

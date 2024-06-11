@@ -6,6 +6,8 @@ export interface SimulationInfo {
     matrixId: string;
     facilityName: string;
     facilityId: string;
+    benchmarkName: string;
+    benchmarkValue?: number;
     countryCode: string;
     country: string;
     region: string;
@@ -21,6 +23,8 @@ const simulationInfoSchema = (): joi.ObjectSchema => {
         facilityName:           joi.string().trim().max(255).required(),
         facilityId:             joi.string().trim().max(255).required(),
         // TODO: make required and remove default when IDH has updated export to include this facility value
+        benchmarkName:          joi.string().trim().max(255).required(),
+        benchmarkValue:         joi.number().min(0),
         countryCode:            joi.string().trim().max(255).optional().default('NL'),  
         country:                joi.string().trim().max(255).required(),
         region:                 joi.string().trim().max(255).required(),

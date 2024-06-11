@@ -516,6 +516,16 @@
           "default": "null",
           "mappedType": "integer"
         },
+        "benchmark_name": {
+          "name": "benchmark_name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "null",
+          "mappedType": "string"
+        },
         "benchmark_year": {
           "name": "benchmark_year",
           "type": "int",
