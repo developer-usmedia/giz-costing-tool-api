@@ -1,17 +1,12 @@
-import {
-    SimulationBenchmarkDTO,
-    SimulationBenchmarkDTOFactory,
-} from '@api/modules/simulation/dto/simulation-benchmark.dto';
-import {
-    SimulationFacilityDTO,
-    SimulationFacilityDTOFactory,
-} from '@api/modules/simulation/dto/simulation-facility.dto';
-import { SIMULATION_LINKS } from '@api/modules/simulation/dto/simulation.links';
+
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
 import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
 import { Simulation } from '@domain/entities/simulation.entity';
+import { SimulationBenchmarkDTO, SimulationBenchmarkDTOFactory } from './simulation-benchmark.dto';
+import { SimulationFacilityDTO, SimulationFacilityDTOFactory } from './simulation-facility.dto';
+import { SIMULATION_LINKS } from './simulation.links';
 
 /**
  * API layer DTO used in the request response for simulation endpoint

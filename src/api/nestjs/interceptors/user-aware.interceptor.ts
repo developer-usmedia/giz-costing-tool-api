@@ -3,7 +3,7 @@ import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } fr
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 
-import { UserDTO } from '@api/modules/user/dto/user.dto';
+import { UserDTO } from '@api/dto/user.dto';
 import { MikroFilters } from '@database/mikro-orm.config';
 
 export type UserAwareArgs = { enable: boolean; userId: string };

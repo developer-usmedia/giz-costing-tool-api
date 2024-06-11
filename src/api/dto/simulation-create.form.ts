@@ -8,7 +8,7 @@ import { User } from '@domain/entities/user.entity';
 /**
  * API layer DTO used in the creation of a user
  */
-export class CreateSimulationDTO {
+export class SimulationCreateForm {
     @ApiProperty({ example: 'My Facility', required: true })
     @IsString()
     facilityName: string;
@@ -22,7 +22,7 @@ export class CreateSimulationDTO {
     countryCode: string;
 
     // Convert to database entity from DTO specification above
-    public static toEntity(form: CreateSimulationDTO, user: User): Simulation {
+    public static toEntity(form: SimulationCreateForm, user: User): Simulation {
         return new Simulation({
             year: form.year,
             user: user,

@@ -3,7 +3,6 @@ import { SimulationBenchmark } from '@domain/embeddables/simulation-benchmark.em
 export interface SimulationBenchmarkDTO {
     year: number;
     source: string;
-    locality: string;
     region: string;
     currencyCode: string;
     currencyName: string;
@@ -20,7 +19,6 @@ const mapEntityToDTO = (entity: SimulationBenchmark): SimulationBenchmarkDTO => 
     return {
         year: entity.year,
         source: entity.source,
-        locality: entity.locality,
         region: entity.region,
         currencyCode: entity.currencyCode,
         currencyName: entity.currencyName,

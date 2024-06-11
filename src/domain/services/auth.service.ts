@@ -2,8 +2,8 @@ import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { CreateUserDTO } from '@api/modules/auth/form/create-user.form';
-import { JwtPayload } from '@api/modules/auth/jwt/jwt-payload.type';
+import { JwtPayload } from '@api/auth/jwt/jwt-payload.type';
+import { UserCreateForm } from '@api/dto/user-create.form';
 import { environment } from '@app/environment';
 import { User } from '@domain/entities/user.entity';
 import { EmailService } from '@domain/services/email.service';
@@ -26,7 +26,7 @@ export class AuthService {
     ) {}
 
     public async register(email: string, password: string): Promise<User> {
-        const user = CreateUserDTO.toEntity({ email, password });
+        const user = UserCreateForm.toEntity({ email, password });
         const saved = await this.usersService.persist(user);
 
         await this.sendVerificationEmail(user, false); // Move this to user entity lifecycle

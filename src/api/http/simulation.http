@@ -8,7 +8,7 @@ GET http://{{host}}:{{port}}/api/{{endpoint}}
 Authorization: Bearer {{token}}
 
 ### Get latest 3
-GET http://{{host}}:{{port}}/api/{{endpoint}}?size=3&sort=updatedAt,ASC
+GET http://{{host}}:{{port}}/api/{{endpoint}}?size=3&sort=_facility.name,ASC
 Authorization: Bearer {{token}}
 
 ### Get with filter

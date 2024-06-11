@@ -1,4 +1,4 @@
-import { USER_LINKS } from '@api/modules/user/dto/user.links';
+import { USER_LINKS } from '@api/dto/user.links';
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';

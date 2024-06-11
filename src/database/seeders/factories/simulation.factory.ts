@@ -25,7 +25,6 @@ export class SimulationFactory extends Factory<Simulation> {
                 source: faker.internet.displayName(),
                 // between now and 8 years ago
                 year: faker.date.between({ from: new Date(now).setFullYear(now.getFullYear() - 8), to: now }).getFullYear(),
-                locality: faker.location.state(),
                 region: faker.location.county(),
                 localValue: Number(faker.commerce.price()),
                 currencyName: faker.finance.currencyName(),

@@ -1,10 +1,11 @@
-import { WORKER_LINKS } from '@api/modules/worker/dto/worker.links';
+
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
 import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
 import { Worker } from '@domain/entities/worker.entity';
 import { Gender } from '@domain/enums/gender.enum';
+import { WORKER_LINKS } from './worker.links';
 
 /**
  * API layer DTO used in the request response for the workers endpoint

@@ -31,8 +31,6 @@ export class SimulationBenchmarkForm {
         benchmark.localValue = form.localValue;
         benchmark.currencyCode = facility.currencyCode;
 
-        if (form.locality) benchmark.locality = form.locality;
-
         return benchmark;
     }
 }

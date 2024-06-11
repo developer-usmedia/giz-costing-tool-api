@@ -10,13 +10,13 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '@api/modules/auth/jwt/jwt.guard';
-import { BaseController } from '@api/modules/base.controller';
-import { UserDTOFactory, UserListResponse, UserResponse } from '@api/modules/user/dto/user.dto';
-import { Paging } from '@api/nestjs/decorators/paging.decorator';
+import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
+import { BaseController } from '@api/controllers/base.controller';
+import { UserDTOFactory, UserListResponse, UserResponse } from '@api/dto/user.dto';
 import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
-import { PagingValidationPipe } from '@api/nestjs/pipes/paging-params';
 import { PagingParams } from '@api/paging/paging-params';
+import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
+import { Paging } from '@api/paging/paging.decorator';
 import { User } from '@domain/entities/user.entity';
 import { UserService } from '@domain/services/user.service';
 

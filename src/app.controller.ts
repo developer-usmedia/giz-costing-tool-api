@@ -1,9 +1,9 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
 
-import { SIMULATION_LINKS } from '@api/modules/simulation/dto/simulation.links';
-import { USER_LINKS } from '@api/modules/user/dto/user.links';
-import { WORKER_LINKS } from '@api/modules/worker/dto/worker.links';
+import { SIMULATION_LINKS } from '@api/dto/simulation.links';
+import { USER_LINKS } from '@api/dto/user.links';
+import { WORKER_LINKS } from '@api/dto/worker.links';
 import { environment } from './environment';
 
 @Controller()

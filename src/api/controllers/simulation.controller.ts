@@ -16,20 +16,16 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '@api/modules/auth/jwt/jwt.guard';
-import { BaseController } from '@api/modules/base.controller';
-import {
-    SimulationDTOFactory,
-    SimulationListResponse,
-    SimulationResponse,
-} from '@api/modules/simulation/dto/simulation.dto';
-import { CreateSimulationDTO } from '@api/modules/simulation/form/create-simulation.form';
-import { UpdateSimulationForm } from '@api/modules/simulation/form/update-simulation.form';
-import { WorkerDTOFactory, WorkerListResponse } from '@api/modules/worker/dto/worker.dto';
-import { Paging } from '@api/nestjs/decorators/paging.decorator';
+import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
+import { BaseController } from '@api/controllers/base.controller';
+import { SimulationCreateForm } from '@api/dto/simulation-create.form';
+import { SimulationUpdateForm } from '@api/dto/simulation-update.form';
+import { SimulationDTOFactory, SimulationListResponse, SimulationResponse } from '@api/dto/simulation.dto';
+import { WorkerDTOFactory, WorkerListResponse } from '@api/dto/worker.dto';
 import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
-import { PagingValidationPipe } from '@api/nestjs/pipes/paging-params';
 import { PagingParams, Sort } from '@api/paging/paging-params';
+import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
+import { Paging } from '@api/paging/paging.decorator';
 import { Simulation } from '@domain/entities/simulation.entity';
 import { User } from '@domain/entities/user.entity';
 import { Worker } from '@domain/entities/worker.entity';
@@ -81,8 +77,8 @@ export class SimulationController extends BaseController {
     @ApiResponse({ status: 404, description: 'User from token not found' })
     @UseGuards(JwtAuthGuard)
     @UsePipes(ValidationPipe)
-    public async create(@Body() simulationForm: CreateSimulationDTO, @CurrentUser() user: User): Promise<SimulationResponse> {
-        const newSimulation = CreateSimulationDTO.toEntity(simulationForm, user);
+    public async create(@Body() simulationForm: SimulationCreateForm, @CurrentUser() user: User): Promise<SimulationResponse> {
+        const newSimulation = SimulationCreateForm.toEntity(simulationForm, user);
         const savedSimulation = await this.simulationService.persist(newSimulation);
 
         return SimulationDTOFactory.fromEntity(savedSimulation);
@@ -130,10 +126,10 @@ export class SimulationController extends BaseController {
     @UsePipes(ValidationPipe)
     public async update(
         @Param('id', ParseUUIDPipe) id: string,
-        @Body() updateSimulationForm: UpdateSimulationForm,
+        @Body() updateSimulationForm: SimulationUpdateForm,
     ): Promise<SimulationResponse> {
         const original = await this.simulationService.findOneByUid(id);
-        const updated = UpdateSimulationForm.toEntity(original, updateSimulationForm);
+        const updated = SimulationUpdateForm.toEntity(original, updateSimulationForm);
         const saved = await this.simulationService.persist(updated);
 
         return SimulationDTOFactory.fromEntity(saved);

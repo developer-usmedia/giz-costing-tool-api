@@ -17,22 +17,22 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
 
-import { ForgotPasswordForm } from '@api/modules/auth/form/forgot-password.form';
-import { PasswordResetForm } from '@api/modules/auth/form/password-reset-form.form';
-import { RegisterForm } from '@api/modules/auth/form/register-form.form';
-import { VerifyEmailForm } from '@api/modules/auth/form/verify-email.form';
-import { OTPService } from '@api/modules/auth/service/otp.service';
-import { BaseController } from '@api/modules/base.controller';
-import { UserDTOFactory, UserResponse } from '@api/modules/user/dto/user.dto';
+import { JwtPayload } from '@api/auth/jwt/jwt-payload.type';
+import { RefreshJwtGuard } from '@api/auth/jwt/jwt-refresh.guard';
+import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
+import { OTPService } from '@api/auth/service/otp.service';
+import { BaseController } from '@api/controllers/base.controller';
+import { ForgotPasswordForm } from '@api/dto/user-forgot-password.form';
+import { PasswordResetForm } from '@api/dto/user-password-reset.form';
+import { RegisterForm } from '@api/dto/user-register.form';
+import { VerifyEmailForm } from '@api/dto/user-verify-email.form';
+import { UserDTOFactory, UserResponse } from '@api/dto/user.dto';
 import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
 import { User } from '@domain/entities/user.entity';
 import { AuthService } from '@domain/services/auth.service';
 import { UserService } from '@domain/services/user.service';
-import { LoginForm } from '../form/login-form.form';
-import { VerifyCodeForm } from '../form/verify-code.form';
-import { JwtPayload } from '../jwt/jwt-payload.type';
-import { RefreshJwtGuard } from '../jwt/jwt-refresh.guard';
-import { JwtAuthGuard } from '../jwt/jwt.guard';
+import { LoginForm } from '../dto/user-login.form';
+import { VerifyCodeForm } from '../dto/user-verify-code.form';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -266,7 +266,7 @@ export class AuthController extends BaseController {
         @CurrentUser() user: User,
         @Res() res: Response,
     ): { success: boolean } {
-        if (!user.twoFactor.enabled || !user.twoFactor.secret) {
+        if (!user.twoFactor.enabled && !user.twoFactor.secret) {
             return this.clientError('2FA is disabled');
         }
 

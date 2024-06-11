@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsObject, IsOptional, Max, Min, ValidateNested } from 'class-validator';
 
-import { SimulationBenchmarkForm } from '@api/modules/simulation/form/simulation-benchmark.form';
-import { SimulationFacilityForm } from '@api/modules/simulation/form/simulation-facility.form';
 import { Simulation } from '@domain/entities/simulation.entity';
+import { SimulationBenchmarkForm } from './simulation-benchmark.form';
+import { SimulationFacilityForm } from './simulation-facility.form';
 
 /**
  * API layer DTO used in the updating of a user
  */
-export class UpdateSimulationForm {
+export class SimulationUpdateForm {
     @ApiProperty({ example: 2041, nullable: true })
     @IsNumber()
     @IsOptional()
@@ -46,7 +46,7 @@ export class UpdateSimulationForm {
     benchmark?: SimulationBenchmarkForm;
 
     // Convert to database entity from DTO specified above
-    public static toEntity(simulation: Simulation, form: UpdateSimulationForm): Simulation {
+    public static toEntity(simulation: Simulation, form: SimulationUpdateForm): Simulation {
         if (form.year) simulation.year = form.year;
         if (form.administrativeCosts) simulation.administrativeCosts = form.administrativeCosts;
         if (form.defaultEmployerTax) simulation.defaultEmployerTax = form.defaultEmployerTax;

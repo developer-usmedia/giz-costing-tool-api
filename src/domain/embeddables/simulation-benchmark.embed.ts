@@ -12,9 +12,6 @@ export class SimulationBenchmark {
     source?: string;
 
     @Property({ length: 50, nullable: true, default: null })
-    locality?: string;
-
-    @Property({ length: 50, nullable: true, default: null })
     region?: string;
 
     @Property({ length: 3, nullable: true, default: null })
@@ -39,7 +36,6 @@ export class SimulationBenchmark {
         this.name = props.name;
         this.year = props.year;
         this.source = props.source;
-        this.locality = props.locality;
         this.region = props.region;
 
         this.currencyCode = props.currencyCode;
