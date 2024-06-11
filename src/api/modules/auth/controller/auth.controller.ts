@@ -29,6 +29,7 @@ import { User } from '@domain/entities/user.entity';
 import { AuthService } from '@domain/services/auth.service';
 import { UserService } from '@domain/services/user.service';
 import { LoginForm } from '../form/login-form.form';
+import { VerifyCodeForm } from '../form/verify-code.form';
 import { JwtPayload } from '../jwt/jwt-payload.type';
 import { RefreshJwtGuard } from '../jwt/jwt-refresh.guard';
 import { JwtAuthGuard } from '../jwt/jwt.guard';
@@ -160,6 +161,27 @@ export class AuthController extends BaseController {
         const sent = await this.authService.startPasswordReset(user);
 
         return this.ok(res, { success: sent });
+    }
+
+
+    @Post('/verify-code')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Validate verification code' })
+    @ApiResponse({ status: 200, description: 'Validation result' })
+    @ApiResponse({ status: 400, description: 'Code verification failed' })
+    @UsePipes(ValidationPipe)
+    public async verifyCode(
+        @Body() { email, code }: VerifyCodeForm,
+        @Res() res: Response,
+    ): Promise<{ success: boolean }> {
+        const user = await this.userService.findOne({ email });
+        if (!user) {
+            return this.clientError('Code verification failed');
+        }
+
+        const correctCode = user.verifyCode(code);
+
+        return this.ok(res, { success: correctCode });
     }
 
     @Post('/reset-password')

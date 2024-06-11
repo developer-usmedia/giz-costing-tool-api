@@ -50,13 +50,22 @@ Content-Type: application/json
     "email": "debug@usmedia.nl"
 }
 
+### Verify email code
+POST http://{{host}}:{{port}}/api/{{endpoint}}/verify-code
+Content-Type: application/json
+
+{
+    "email": "debug@usmedia.nl",
+    "code": "6QGW3Q"
+}
+
 ### Reset password using resetToken
 POST http://{{host}}:{{port}}/api/{{endpoint}}/reset-password
 Content-Type: application/json
 
 {
     "email": "debug@usmedia.nl",
-    "resetToken": "K5LHC",
+    "resetToken": "6QGW3Q",
     "newPassword": "CHANGEME"
 }
 
