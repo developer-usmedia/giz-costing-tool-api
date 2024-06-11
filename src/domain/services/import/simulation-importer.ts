@@ -196,7 +196,7 @@ export class SimulationImporter {
 
     private readonly convertRowToWorkerDto = (row: Row): WorkerData => {
         return {
-            name: row.getCell(COLUMN_MAPPING_PAYROLL.category).text,
+            name: row.getCell(COLUMN_MAPPING_PAYROLL.name).text,
             gender: parseGenderCell(row.getCell(COLUMN_MAPPING_PAYROLL.gender).text),
             numberOfWorkers: parseIntCell(row.getCell(COLUMN_MAPPING_PAYROLL.numberOfWorkers).text),
             monthlyWage: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyWage).text),
