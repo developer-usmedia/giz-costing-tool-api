@@ -27,8 +27,9 @@ import { CreateSimulationDTO } from '@api/modules/simulation/form/create-simulat
 import { UpdateSimulationForm } from '@api/modules/simulation/form/update-simulation.form';
 import { WorkerDTOFactory, WorkerListResponse } from '@api/modules/worker/dto/worker.dto';
 import { Paging } from '@api/nestjs/decorators/paging.decorator';
+import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
 import { PagingValidationPipe } from '@api/nestjs/pipes/paging-params';
-import { PagingParams } from '@api/paging/paging-params';
+import { PagingParams, Sort } from '@api/paging/paging-params';
 import { Simulation } from '@domain/entities/simulation.entity';
 import { User } from '@domain/entities/user.entity';
 import { Worker } from '@domain/entities/worker.entity';
@@ -38,7 +39,6 @@ import { SimulationService } from '@domain/services/simulation.service';
 import { UserService } from '@domain/services/user.service';
 import { WorkerService } from '@domain/services/worker.service';
 import { FileHelper } from '@domain/utils/file-helper';
-import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
 
 @ApiTags('simulations')
 @Controller('simulations')
@@ -58,6 +58,7 @@ export class SimulationController extends BaseController {
     public async index(
         @Paging('Simulation', PagingValidationPipe) paging: PagingParams<Simulation>,
     ): Promise<SimulationListResponse> {
+        paging.sort = { _updatedAt: Sort.DESC };
         const [simulations, count] = await this.simulationService.findManyPaged(paging);
 
         return SimulationDTOFactory.fromCollection(simulations, count, paging);
