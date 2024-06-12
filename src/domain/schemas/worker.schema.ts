@@ -25,7 +25,7 @@ const workerSchema = (): joi.ObjectSchema => {
         gender:                     joi.string().trim().valid(...GENDER_OPTIONS).required(),
         numberOfWorkers:            joi.number().min(1).required(),
         monthlyWage:                joi.number().min(1).required(),
-        percentageOfYearsWorked:    joi.number().min(1).max(100).required(),
+        percentageOfYearsWorked:    joi.number().min(0).max(100).required(),
         ikbFood:                    joi.number().min(0).required(),
         ikbTransportation:          joi.number().min(0).required(),
         ikbHousing:                 joi.number().min(0).required(),

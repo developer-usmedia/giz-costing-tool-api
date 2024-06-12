@@ -71,11 +71,13 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: latest
-                  name: SESSION_SECRET # TODO: possibly rename in gcloud to JWT_SECRET
-            - name: SENDGRID_API_KEY
+                  name: JWT_SECRET
+            - name: BREVO_API_KEY
               valueFrom:
                 secretKeyRef:
                   key: latest
-                  name: SENDGRID_API_KEY
-            - name: EMAIL_FROM
+                  name: BREVO_API_KEY
+            - name: EMAIL_FROM_ADDRESS
               value: info@usmedia.nl
+            - name: EMAIL_FROM_NAME
+              value: GIZ         

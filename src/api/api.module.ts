@@ -6,7 +6,7 @@ import { environment } from '@app/environment';
 import { entities } from '@database/mikro-orm.config';
 import { DomainModule } from '@domain/domain.module';
 import { AuthService } from '@domain/services/auth.service';
-import { EmailService } from '@domain/services/email.service';
+import { BrevoService } from '@domain/services/email.service';
 import { EntryService } from '@domain/services/entry.service';
 import { UserService } from '@domain/services/user.service';
 import { WorkerService } from '@domain/services/worker.service';
@@ -43,7 +43,7 @@ import { UserController } from './controllers/user.controller';
         EntryService,
         UserService,
         AuthService,
-        EmailService,
+        BrevoService,
         OTPService,
         JwtStrategy,
         RefreshJwtStrategy,

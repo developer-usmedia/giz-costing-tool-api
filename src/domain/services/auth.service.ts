@@ -6,7 +6,7 @@ import { JwtPayload } from '@api/auth/jwt/jwt-payload.type';
 import { UserCreateForm } from '@api/dto/user-create.form';
 import { environment } from '@app/environment';
 import { User } from '@domain/entities/user.entity';
-import { EmailService } from '@domain/services/email.service';
+import { BrevoService } from '@domain/services/email.service';
 import { UserService } from '@domain/services/user.service';
 
 interface JwtToken {
@@ -21,7 +21,7 @@ export class AuthService {
     constructor(
         protected readonly em: EntityManager,
         protected readonly usersService: UserService,
-        private readonly emailService: EmailService,
+        private readonly emailService: BrevoService,
         private readonly jwtService: JwtService,
     ) {}
 
@@ -68,9 +68,11 @@ export class AuthService {
         }
 
         user.resetPassword(newPassword);
-        const saved = await this.usersService.persist(user);
+        const savedUser = await this.usersService.persist(user);
 
-        return !!saved;
+        await this.emailService.sendPasswordChangedEmail(savedUser);
+
+        return !!savedUser;
     }
 
     public async sendPasswordResetEmail(user: User): Promise<boolean> {

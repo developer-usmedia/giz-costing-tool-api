@@ -22,7 +22,8 @@ class Environment {
 
     public mail: {
         apiKey: string;
-        from: string;
+        fromName: string;
+        fromEmail: string;
     };
 
     public jwt: {
@@ -52,8 +53,9 @@ class Environment {
         };
 
         this.mail = {
-            apiKey: process.env.SENDGRID_API_KEY,
-            from: process.env.EMAIL_FROM,
+            apiKey: process.env.BREVO_API_KEY,
+            fromName: process.env.EMAIL_FROM_NAME ?? 'GIZ',
+            fromEmail: process.env.EMAIL_FROM_ADDRESS ?? 'ina@giz.de',
         };
 
         const envJwtExpire = process.env.JWT_EXPIRES_IN ?? '1hr';
@@ -77,8 +79,7 @@ class Environment {
             !!this.db.password &&
             !!this.api.url &&
             !!this.jwt.secret &&
-            !!this.mail.apiKey &&
-            !!this.mail.from
+            !!this.mail.apiKey
         );
     };
 

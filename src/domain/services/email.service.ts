@@ -1,57 +1,114 @@
+import * as brevo from '@getbrevo/brevo';
 import { Injectable, Logger } from '@nestjs/common';
-import * as SendGrid from '@sendgrid/mail';
-import { MailDataRequired } from '@sendgrid/mail';
 
 import { environment } from '@app/environment';
 import { User } from '@domain/entities/user.entity';
 
+export type BrevoEmail = { email: string; name?: string };
+
 @Injectable()
-export class EmailService {
-    public static readonly BASE_EMAIL = {
-        from: environment.mail.from,
+export class BrevoService {
+    private readonly logger = new Logger(BrevoService.name);
+    private readonly client: brevo.TransactionalEmailsApi;
+    private readonly from: BrevoEmail = {
+        name: environment.mail.fromName,
+        email: environment.mail.fromEmail,
     };
-    private readonly logger = new Logger(EmailService.name);
 
     constructor() {
-        SendGrid.setApiKey(environment.mail.apiKey);
+        this.client = new brevo.TransactionalEmailsApi();
+        this.client.setApiKey(brevo.TransactionalEmailsApiApiKeys.apiKey, environment.mail.apiKey);
     }
 
     public sendEmailVerificationEmail = async (user: User) => {
-        const email: MailDataRequired = {
-            ...EmailService.BASE_EMAIL,
-            to: user.email,
-            subject: 'GIZ Costing Tool Email Verification Code',
-            content: [{ type: 'text/plain', value: `Verification code: ${user.verificationCode.code}` }],
-        };
+        const emailContent = `
+        Hi,
 
-        return await this.send(email);
+        We have received a request to verify your email for the GIZ Costing Tool.
+
+        Your verification code: ${user.verificationCode.code}.
+
+        If you did not initiate this request, please ignore this email. Should the issue persist, kindly reach out to us at ina@giz.de to report it.
+
+        Kind regards,
+        GIZ`;
+
+        const smtpEmail = new brevo.SendSmtpEmail();
+        smtpEmail.subject = 'GIZ Costing Tool - Email Verification Code';
+        smtpEmail.textContent = emailContent;
+
+        return await this.sendMail(smtpEmail, { email: user.email });
     };
 
     public sendPasswordResetEmail = async (user: User) => {
-        const email: MailDataRequired = {
-            ...EmailService.BASE_EMAIL,
-            to: user.email,
-            subject: 'GIZ Costing Tool Password Reset Code',
-            content: [{ type: 'text/plain', value: `Reset code: ${user.verificationCode.code}` }],
-        };
+        const emailContent = `
+        Hi,
 
-        return await this.send(email);
+        We have received a password reset request for your GIZ Costing Tool account.
+
+        Your password reset code: ${user.verificationCode.code}.
+
+        If you did not initiate this request, please ignore this email. Should the issue persist, kindly reach out to us at ina@giz.de to report it.
+
+        Kind regards,
+        GIZ`;
+
+        const smtpEmail = new brevo.SendSmtpEmail();
+        smtpEmail.subject = 'GIZ Costing Tool - Password Reset Code';
+        smtpEmail.textContent = emailContent;
+
+        return await this.sendMail(smtpEmail, { email: user.email });
     };
 
-    public async send(mail: MailDataRequired): Promise<boolean> {
-        try {
-            this.logger.log(`Sending email to ${mail.to as string}`);
+    public sendPasswordChangedEmail = async (user: User) => {
+        const emailContent = `
+        Hi,
 
-            if (environment.api.isLocal) {
-                this.logger.log(mail);
-                return true;
-            }
+        This email confirms that the password for your GIZ Costing Tool account has been successfully changed.
 
-            await SendGrid.send(mail);
-            return true; // Any error will be caught below
-        } catch (error) {
-            this.logger.error(`Error while sending email to ${mail.to as string}`, error);
-            throw error;
+        If you did not initiate this change, please contact us immediately at ina@giz.de to report unauthorized access.
+
+        For your reference, we recommend storing this email in a secure location.
+
+        Kind regards,
+
+        GIZ`;
+
+        const smtpEmail = new brevo.SendSmtpEmail();
+        smtpEmail.subject = 'GIZ Costing Tool - Your password has been changed';
+        smtpEmail.textContent = emailContent;
+
+        return await this.sendMail(smtpEmail, { email: user.email });
+    };
+
+    private async sendMail(
+        smtpEmail: brevo.SendSmtpEmail,
+        to: BrevoEmail,
+        data?: Record<string, any>,
+    ): Promise<boolean> {
+        smtpEmail.sender = { email: environment.mail.fromEmail, name: environment.mail.fromName };
+        smtpEmail.to = [{ email: to.email, name: to.name }];
+
+        if (data) {
+            smtpEmail.params = data;
         }
+
+        this.logger.debug('Sending email with params', smtpEmail.params);
+
+        if (environment.api.isLocal) {
+            this.logger.log(smtpEmail.textContent);
+            return true;
+        }
+
+        return this.client
+            .sendTransacEmail(smtpEmail)
+            .then((info) => {
+                this.logger.debug(`Email sent succesfully ${info.response.statusCode}`);
+                return true;
+            })
+            .catch((error) => {
+                this.logger.error('Email API error: ', error);
+                return false;
+            });
     }
 }
