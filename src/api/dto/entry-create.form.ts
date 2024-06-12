@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString } from 'class-validator';
 
-import { SimulationFacility } from '@domain/embeddables/simulation-facility.embed';
-import { Simulation } from '@domain/entities/simulation.entity';
+import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
+import { Entry } from '@domain/entities/entry.entity';
 import { User } from '@domain/entities/user.entity';
 
 /**
  * API layer DTO used in the creation of a user
  */
-export class SimulationCreateForm {
+export class EntryCreateForm {
     @ApiProperty({ example: 'My Facility', required: true })
     @IsString()
     facilityName: string;
@@ -22,11 +22,11 @@ export class SimulationCreateForm {
     countryCode: string;
 
     // Convert to database entity from DTO specification above
-    public static toEntity(form: SimulationCreateForm, user: User): Simulation {
-        return new Simulation({
+    public static toEntity(form: EntryCreateForm, user: User): Entry {
+        return new Entry({
             year: form.year,
             user: user,
-            facility: new SimulationFacility({
+            facility: new EntryFacility({
                 name: form.facilityName,
                 countryCode: form.countryCode,
             }),

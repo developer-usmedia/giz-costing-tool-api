@@ -7,7 +7,7 @@ import { entities } from '@database/mikro-orm.config';
 import { DomainModule } from '@domain/domain.module';
 import { AuthService } from '@domain/services/auth.service';
 import { EmailService } from '@domain/services/email.service';
-import { SimulationService } from '@domain/services/simulation.service';
+import { EntryService } from '@domain/services/entry.service';
 import { UserService } from '@domain/services/user.service';
 import { WorkerService } from '@domain/services/worker.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
@@ -17,7 +17,7 @@ import { RefreshJwtStrategy } from './auth/jwt/jwt-refresh.strategy';
 import { JwtStrategy } from './auth/jwt/jwt.strategy';
 import { OTPService } from './auth/service/otp.service';
 import { AuthController } from './controllers/auth.controller';
-import { SimulationController } from './controllers/simulation.controller';
+import { EntryController } from './controllers/entry.controller';
 import { UserController } from './controllers/user.controller';
 
 @Module({
@@ -36,11 +36,11 @@ import { UserController } from './controllers/user.controller';
     controllers: [
       AuthController,
       UserController,
-      SimulationController,
+      EntryController,
     ],
     providers: [
         WorkerService,
-        SimulationService,
+        EntryService,
         UserService,
         AuthService,
         EmailService,

@@ -2,14 +2,14 @@ import { Embedded, Entity, Enum, ManyToOne, Property } from '@mikro-orm/core';
 
 import { WorkerIKB } from '@domain/embeddables/worker-ikb.embed';
 import { AbstractEntity } from '@domain/entities/base/abstract.entity';
-import { Simulation } from '@domain/entities/simulation.entity';
+import { Entry } from '@domain/entities/entry.entity';
 import { Gender } from '@domain/enums/gender.enum';
 import { Guard } from '@domain/utils/guard';
 
 @Entity()
 export class Worker extends AbstractEntity<Worker> {
-    @ManyToOne(() => Simulation, { deleteRule: 'cascade', eager: true })
-    private _simulation: Simulation;
+    @ManyToOne(() => Entry, { deleteRule: 'cascade', eager: true })
+    private _entry: Entry;
 
     @Property({ length: 100 })
     private _name: string;
@@ -39,7 +39,7 @@ export class Worker extends AbstractEntity<Worker> {
     private _inKindBenefits?: WorkerIKB;
 
     constructor(props: {
-        simulation: Simulation;
+        entry: Entry;
         name: string;
         gender: Gender;
         numberOfWorkers: number;
@@ -52,7 +52,7 @@ export class Worker extends AbstractEntity<Worker> {
     }) {
         super();
 
-        this.simulation = props.simulation;
+        this.entry = props.entry;
 
         this.name = props.name;
         this.gender = props.gender;
@@ -65,8 +65,8 @@ export class Worker extends AbstractEntity<Worker> {
         this.inKindBenefits = this.inKindBenefits ?? new WorkerIKB({});
     }
 
-    get simulation() {
-        return this._simulation;
+    get entry() {
+        return this._entry;
     }
     get name() {
         return this._name;
@@ -96,9 +96,9 @@ export class Worker extends AbstractEntity<Worker> {
         return this._inKindBenefits;
     }
 
-    set simulation(value: Simulation) {
+    set entry(value: Entry) {
         Guard.check(value, { type: 'object' });
-        this._simulation = value;
+        this._entry = value;
     }
     set name(value: string) {
         Guard.check(value, { type: 'string' });
@@ -141,7 +141,7 @@ export class Worker extends AbstractEntity<Worker> {
     }
 
     public isBelowLW(): boolean {
-        return (this.simulation.benchmark.localValue ?? 0) > this.getTotalRenumeration();
+        return (this.entry.benchmark.localValue ?? 0) > this.getTotalRenumeration();
     }
 
     public getTotalRenumeration(): number {

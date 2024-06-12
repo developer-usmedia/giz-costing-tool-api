@@ -2,16 +2,16 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
-import { Simulation } from '@domain/entities/simulation.entity';
+import { Entry } from '@domain/entities/entry.entity';
 import { BaseService } from '@domain/services/base/base.service';
 
 @Injectable()
-export class SimulationService extends BaseService<Simulation> {
-    protected readonly entityName = Simulation;
+export class EntryService extends BaseService<Entry> {
+    protected readonly entityName = Entry;
 
     constructor(
         protected readonly em: EntityManager,
-        @InjectRepository(Simulation) protected readonly repository: EntityRepository<Simulation>,
+        @InjectRepository(Entry) protected readonly repository: EntityRepository<Entry>,
     ) {
         super(em, repository);
     }

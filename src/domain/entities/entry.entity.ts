@@ -1,15 +1,15 @@
 import { Collection, Embedded, Entity, Enum, ManyToOne, OneToMany, Property } from '@mikro-orm/core';
 
-import { SimulationBenchmark } from '@domain/embeddables/simulation-benchmark.embed';
-import { SimulationFacility } from '@domain/embeddables/simulation-facility.embed';
+import { EntryBenchmark } from '@domain/embeddables/entry-benchmark.embed';
+import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
 import { AbstractEntity } from '@domain/entities/base/abstract.entity';
 import { User } from '@domain/entities/user.entity';
 import { Worker } from '@domain/entities/worker.entity';
-import { SimulationStatus } from '@domain/enums/simulation-status.enum';
+import { EntryStatus } from '@domain/enums/entry-status.enum';
 import { Guard } from '@domain/utils/guard';
 
 @Entity()
-export class Simulation extends AbstractEntity<Simulation> {
+export class Entry extends AbstractEntity<Entry> {
     @Property({ nullable: true })
     private _matrixId: string;
 
@@ -19,17 +19,17 @@ export class Simulation extends AbstractEntity<Simulation> {
     @ManyToOne(() => User, { deleteRule: 'cascade', eager: true })
     private _user: User;
 
-    @Enum({ items: () => SimulationStatus, default: SimulationStatus.OPEN })
-    private _status: SimulationStatus;
+    @Enum({ items: () => EntryStatus, default: EntryStatus.OPEN })
+    private _status: EntryStatus;
 
-    @Embedded({ entity: () => SimulationFacility, prefix: 'facility_' })
-    private _facility: SimulationFacility;
+    @Embedded({ entity: () => EntryFacility, prefix: 'facility_' })
+    private _facility: EntryFacility;
 
-    @Embedded({ entity: () => SimulationBenchmark, prefix: 'benchmark_' })
-    private _benchmark: SimulationBenchmark;
+    @Embedded({ entity: () => EntryBenchmark, prefix: 'benchmark_' })
+    private _benchmark: EntryBenchmark;
 
     // eslint-disable-next-line @typescript-eslint/dot-notation
-    @OneToMany({ entity: () => Worker, mappedBy: (worker) => worker['_simulation'], nullable: true, eager: true })
+    @OneToMany({ entity: () => Worker, mappedBy: (worker) => worker['_entry'], nullable: true, eager: true })
     private readonly _workers? = new Collection<Worker>(this); // For now fetch eager to populate table, think of a different way
 
     @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
@@ -41,14 +41,13 @@ export class Simulation extends AbstractEntity<Simulation> {
     @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
     private _administrativeCosts: number;
 
-
     constructor(props: {
         year: number;
         user: User;
-        facility: SimulationFacility;
+        facility: EntryFacility;
         matrixId?: string;
-        status?: SimulationStatus;
-        benchmark?: SimulationBenchmark;
+        status?: EntryStatus;
+        benchmark?: EntryBenchmark;
     }) {
         super();
         this.matrixId = props.matrixId;
@@ -56,8 +55,8 @@ export class Simulation extends AbstractEntity<Simulation> {
         this.user = props.user;
         this.facility = props.facility;
 
-        this.status = props.status ?? SimulationStatus.OPEN;
-        this.benchmark = props.benchmark ?? new SimulationBenchmark({});
+        this.status = props.status ?? EntryStatus.OPEN;
+        this.benchmark = props.benchmark ?? new EntryBenchmark({});
     }
 
     get matrixId() {
@@ -106,20 +105,20 @@ export class Simulation extends AbstractEntity<Simulation> {
         this._user = value;
     }
 
-    set facility(value: SimulationFacility) {
+    set facility(value: EntryFacility) {
         Guard.check(value, { type: 'object' });
         this._facility = value;
     }
 
-    set status(value: SimulationStatus) {
+    set status(value: EntryStatus) {
         Guard.check(value, { type: 'string' });
-        if (!Object.values(SimulationStatus).includes(value)) {
-            throw new Error(`Status (${value}} is not a SimulationStatus`);
+        if (!Object.values(EntryStatus).includes(value)) {
+            throw new Error(`Status (${value}} is not a EntryStatus`);
         }
         this._status = value;
     }
 
-    set benchmark(value: SimulationBenchmark) {
+    set benchmark(value: EntryBenchmark) {
         Guard.check(value, { type: 'object' });
         this._benchmark = value;
     }

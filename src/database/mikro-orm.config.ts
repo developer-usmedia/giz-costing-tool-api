@@ -8,21 +8,21 @@ import { join } from 'path';
 import { UserAwareArgs } from '@api/nestjs/interceptors/user-aware.interceptor';
 import { environment } from '@app/environment';
 import { GizNamingStrategy } from '@database/naming/database.naming-strategy';
-import { SimulationBenchmark } from '@domain/embeddables/simulation-benchmark.embed';
-import { SimulationFacility } from '@domain/embeddables/simulation-facility.embed';
+import { EntryBenchmark } from '@domain/embeddables/entry-benchmark.embed';
+import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
 import { VerificationCode } from '@domain/embeddables/verification-code.embed';
 import { WorkerIKB } from '@domain/embeddables/worker-ikb.embed';
 import { Benchmark } from '@domain/entities/benchmark.entity';
-import { Simulation } from '@domain/entities/simulation.entity';
+import { Entry } from '@domain/entities/entry.entity';
 import { User } from '@domain/entities/user.entity';
 import { Worker } from '@domain/entities/worker.entity';
 
 export const entities = [
     User,
     VerificationCode,
-    Simulation,
-    SimulationBenchmark,
-    SimulationFacility,
+    Entry,
+    EntryBenchmark,
+    EntryFacility,
     Worker,
     WorkerIKB,
     Benchmark,
@@ -77,7 +77,7 @@ export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
     filters: {
         [MikroFilters.USER_AWARE]: {
             cond: (args: UserAwareArgs) => (args.enable ? { _user: args.userId } : {}),
-            entity: [ 'Simulation' ],
+            entity: [ 'Entry' ],
         },
     },
 };

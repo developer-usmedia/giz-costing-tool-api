@@ -3,20 +3,20 @@ import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
 import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
-import { Simulation } from '@domain/entities/simulation.entity';
-import { SimulationBenchmarkDTO, SimulationBenchmarkDTOFactory } from './simulation-benchmark.dto';
-import { SimulationFacilityDTO, SimulationFacilityDTOFactory } from './simulation-facility.dto';
-import { SIMULATION_LINKS } from './simulation.links';
+import { Entry } from '@domain/entities/entry.entity';
+import { EntryBenchmarkDTO, EntryBenchmarkDTOFactory } from './entry-benchmark.dto';
+import { EntryFacilityDTO, EntryFacilityDTOFactory } from './entry-facility.dto';
+import { ENTRY_LINKS } from './entry.links';
 
 /**
- * API layer DTO used in the request response for simulation endpoint
+ * API layer DTO used in the request response for entry endpoint
  *
  * - Defines DTO
  * - Defines interface of response with DTO
  * - Contains factory class that converts DB layer entity to response
  */
 
-export interface SimulationDTO extends HalResponse {
+export interface EntryDTO extends HalResponse {
     id: string;
     matrixId: string;
     verified: boolean;
@@ -25,8 +25,8 @@ export interface SimulationDTO extends HalResponse {
     administrativeCosts: number;
     defaultEmployerTax: number;
     defaultEmployeeTax: number;
-    facility: SimulationFacilityDTO;
-    benchmark: SimulationBenchmarkDTO;
+    facility: EntryFacilityDTO;
+    benchmark: EntryBenchmarkDTO;
     nrOfJobcategories: number;
     nrOfWorkers: number;
     nrOfWorkersBelowLW: number;
@@ -38,28 +38,28 @@ export interface SimulationDTO extends HalResponse {
     };
 }
 
-export interface SimulationListResponse extends CollectionResponse<{ simulations: SimulationDTO[] }> {}
-export interface SimulationResponse extends EntityResponse<SimulationDTO> {}
+export interface EntryListResponse extends CollectionResponse<{ entries: EntryDTO[] }> {}
+export interface EntryResponse extends EntityResponse<EntryDTO> {}
 
-export class SimulationDTOFactory {
-    public static fromEntity(entity: Simulation): SimulationResponse {
+export class EntryDTOFactory {
+    public static fromEntity(entity: Entry): EntryResponse {
         return mapEntityToDTO(entity);
     }
 
     public static fromCollection(
-        collection: Simulation[],
+        collection: Entry[],
         count: number,
-        paging: PagingParams<Simulation>,
-    ): SimulationListResponse {
+        paging: PagingParams<Entry>,
+    ): EntryListResponse {
         return {
-            _embedded: { simulations: collection.map(mapEntityToDTO) },
-            _links: generatePaginationLinks(SIMULATION_LINKS.simulations, count, paging),
+            _embedded: { entries: collection.map(mapEntityToDTO) },
+            _links: generatePaginationLinks(ENTRY_LINKS.entries, count, paging),
             paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: Math.ceil(count / paging.size) },
         };
     }
 }
 
-const mapEntityToDTO = (entity: Simulation): SimulationDTO => {
+const mapEntityToDTO = (entity: Entry): EntryDTO => {
     return {
         id: entity.id,
         matrixId: entity.matrixId ?? null,
@@ -69,16 +69,16 @@ const mapEntityToDTO = (entity: Simulation): SimulationDTO => {
         administrativeCosts: entity.administrativeCosts,
         defaultEmployeeTax: entity.defaultEmployeeTax,
         defaultEmployerTax: entity.defaultEmployerTax,
-        facility: SimulationFacilityDTOFactory.fromEntity(entity.facility),
-        benchmark: SimulationBenchmarkDTOFactory.fromEntity(entity.benchmark),
+        facility: EntryFacilityDTOFactory.fromEntity(entity.facility),
+        benchmark: EntryBenchmarkDTOFactory.fromEntity(entity.benchmark),
         nrOfWorkers: entity.workers.reduce((counter, worker ) => worker.numberOfWorkers + counter, 0),
         nrOfJobcategories: entity.workers.length,
         nrOfWorkersBelowLW: entity.workers.filter((w) => w.isBelowLW()).length,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
         _links: {
-            self: { href: resolveLink(SIMULATION_LINKS.simulation, { simulationId: entity.id }) },
-            workers: { href: resolveLink(SIMULATION_LINKS.workers, { simulationId: entity.id }) },
+            self: { href: resolveLink(ENTRY_LINKS.entry, { entryId: entity.id }) },
+            workers: { href: resolveLink(ENTRY_LINKS.workers, { entryId: entity.id }) },
         },
     };
 };

@@ -1,6 +1,6 @@
-import { SimulationFacility } from '@domain/embeddables/simulation-facility.embed';
+import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
 
-export interface SimulationFacilityDTO {
+export interface EntryFacilityDTO {
     id: string;
     name: string;
     countryCode: string;
@@ -12,13 +12,13 @@ export interface SimulationFacilityDTO {
     buyerProportion: number;
 }
 
-export class SimulationFacilityDTOFactory {
-    public static fromEntity(entity: SimulationFacility): SimulationFacilityDTO {
+export class EntryFacilityDTOFactory {
+    public static fromEntity(entity: EntryFacility): EntryFacilityDTO {
         return mapEntityToDTO(entity);
     }
 }
 
-const mapEntityToDTO = (entity: SimulationFacility): SimulationFacilityDTO => {
+const mapEntityToDTO = (entity: EntryFacility): EntryFacilityDTO => {
     return {
         id: entity.id,
         name: entity.name,

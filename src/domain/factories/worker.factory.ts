@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { WorkerIKB } from '@domain/embeddables/worker-ikb.embed';
-import { Simulation } from '@domain/entities/simulation.entity';
+import { Entry } from '@domain/entities/entry.entity';
 import { Worker } from '@domain/entities/worker.entity';
 import { EntityValidationError } from '@domain/errors/entity-validation.error';
 import { ValidationResult } from '@domain/schemas/error/schema-validation.error';
@@ -11,11 +11,11 @@ import { validate } from '@domain/utils/validate';
 export class WorkerFactory {
     private static readonly LOGGER = new Logger(WorkerFactory.name);
 
-    public static createEntity(data: Record<string, any>, simulation: Simulation): Worker {
+    public static createEntity(data: Record<string, any>, entry: Entry): Worker {
         const { value } = WorkerFactory.validate(data);
 
         return new Worker({
-            simulation: simulation,
+            entry: entry,
             name: value.name,
             gender: value.gender,
             numberOfWorkers: value.numberOfWorkers,

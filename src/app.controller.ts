@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/terminus';
 
-import { SIMULATION_LINKS } from '@api/dto/simulation.links';
+import { ENTRY_LINKS } from '@api/dto/entry.links';
 import { USER_LINKS } from '@api/dto/user.links';
 import { WORKER_LINKS } from '@api/dto/worker.links';
 import { environment } from './environment';
@@ -16,7 +16,7 @@ export class AppController {
             _links: {
                 self: { href: `${ environment.api.url }/` },
                 users: USER_LINKS.users,
-                simulations: SIMULATION_LINKS.simulations,
+                entries: ENTRY_LINKS.entries,
                 workers: WORKER_LINKS.workers,
             },
         };

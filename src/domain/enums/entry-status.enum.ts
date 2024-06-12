@@ -1,4 +1,4 @@
-export enum SimulationStatus {
+export enum EntryStatus {
     OPEN = 'STATUS_OPEN',
     FINALIZED = 'STATUS_FINALIZED',
 }

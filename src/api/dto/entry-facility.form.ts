@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { SimulationFacility } from '@domain/embeddables/simulation-facility.embed';
+import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
 
-export class SimulationFacilityForm {
+export class EntryFacilityForm {
     @ApiProperty({ example: 'My Banana Facility', nullable: true })
     @IsString()
     @IsOptional()
@@ -44,7 +44,7 @@ export class SimulationFacilityForm {
     @IsOptional()
     buyerProportion?: number;
 
-    public static toEntity(facility: SimulationFacility, form: SimulationFacilityForm): SimulationFacility {
+    public static toEntity(facility: EntryFacility, form: EntryFacilityForm): EntryFacility {
         if (form.name) facility.name = form.name;
         if (form.countryCode) facility.countryCode = form.countryCode;
         if (form.currencyCode) facility.currencyCode = form.currencyCode;

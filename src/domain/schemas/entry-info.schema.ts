@@ -2,7 +2,7 @@ import * as joi from 'joi';
 
 let schema: joi.ObjectSchema;
 
-export interface SimulationInfo {
+export interface EntryInfo {
     matrixId: string;
     facilityName: string;
     facilityId: string;
@@ -18,7 +18,7 @@ export interface SimulationInfo {
     currencyCode: string;
 }
 
-const simulationInfoSchema = (): joi.ObjectSchema => {
+const entryInfoSchema = (): joi.ObjectSchema => {
     schema = joi.object({
         facilityName:           joi.string().trim().max(255).required(),
         facilityId:             joi.string().trim().max(255).required(),
@@ -38,4 +38,4 @@ const simulationInfoSchema = (): joi.ObjectSchema => {
     return schema;
 };
 
-export const getSimulationInfoSchema = (): joi.ObjectSchema => schema || simulationInfoSchema();
+export const getEntryInfoSchema = (): joi.ObjectSchema => schema || entryInfoSchema();

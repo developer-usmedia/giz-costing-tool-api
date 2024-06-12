@@ -26,7 +26,7 @@ export interface ImportValidationErrorDto {
     errorType: CellValidationError;
 }
 
-export class SimulationImportException extends HttpException {
+export class EntryImportException extends HttpException {
     public readonly errors: ImportValidationErrorDto[];
 
     constructor(errors: ImportValidationErrorDto[]) {

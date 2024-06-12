@@ -17,7 +17,7 @@ import { WORKER_LINKS } from './worker.links';
 
 export interface WorkerDTO extends HalResponse {
     id: string;
-    simulationId: string;
+    entryId: string;
     name: string;
     gender: Gender;
     numberOfWorkers: number;
@@ -57,7 +57,7 @@ export class WorkerDTOFactory {
 const mapEntityToDTO = (entity: Worker): WorkerDTO => {
     return {
         id: entity.id,
-        simulationId: entity.simulation.id,
+        entryId: entity.entry.id,
         name: entity.name,
         gender: entity.gender,
         numberOfWorkers: entity.numberOfWorkers,

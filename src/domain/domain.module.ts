@@ -6,13 +6,13 @@ import { EmailService } from '@domain/services/email.service';
 import { UserService } from '@domain/services/user.service';
 import { WorkerService } from '@domain/services/worker.service';
 import { AuthService } from './services/auth.service';
-import { SimulationService } from './services/simulation.service';
+import { EntryService } from './services/entry.service';
 
 Module({
     imports: [MikroOrmModule.forFeature(entities)],
     exports: [
         WorkerService,
-        SimulationService,
+        EntryService,
           UserService,
           AuthService,
           EmailService,
@@ -22,7 +22,7 @@ Module({
     ],
     providers: [
         WorkerService,
-        SimulationService,
+        EntryService,
           UserService,
           AuthService,
           EmailService,

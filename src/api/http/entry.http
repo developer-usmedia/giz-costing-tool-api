@@ -1,7 +1,7 @@
 @host=localhost
 @port=3000
-@endpoint=simulations
-@simulationId=641f4bc6-9392-44a1-b3eb-141e284a1c42
+@endpoint=entries
+@entryId=641f4bc6-9392-44a1-b3eb-141e284a1c42
 
 ### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 ### Patch
-PATCH http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
+PATCH http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -54,13 +54,13 @@ Content-Type: application/json
 }
 
 ### Get
-GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
+GET http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}
 Authorization: Bearer {{token}}
 
 ### Delete 
-DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}
+DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}
 Authorization: Bearer {{token}}
 
 ### Get workers
-GET http://{{host}}:{{port}}/api/{{endpoint}}/{{simulationId}}/workers
+GET http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}/workers
 Authorization: Bearer {{token}}

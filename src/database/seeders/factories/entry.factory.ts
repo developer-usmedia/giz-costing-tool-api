@@ -1,18 +1,18 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from '@mikro-orm/seeder';
 
-import { Simulation } from '@domain/entities/simulation.entity';
-import { SimulationStatus } from '@domain/enums/simulation-status.enum';
+import { Entry } from '@domain/entities/entry.entity';
+import { EntryStatus } from '@domain/enums/entry-status.enum';
 
-export class SimulationFactory extends Factory<Simulation> {
-    model = Simulation;
+export class EntryFactory extends Factory<Entry> {
+    model = Entry;
 
-    definition(): Partial<Simulation> {
+    definition(): Partial<Entry> {
         const now = new Date();
 
         return {
             year: faker.date.between({ from: new Date(now).setFullYear(now.getFullYear() - 8), to: now }).getFullYear(),
-            status: SimulationStatus.OPEN,
+            status: EntryStatus.OPEN,
             facility: {
                 name: faker.airline.airport().name,
                 countryCode: faker.location.countryCode(),

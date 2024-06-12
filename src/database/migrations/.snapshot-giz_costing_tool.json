@@ -548,17 +548,6 @@
           "default": "null",
           "mappedType": "string"
         },
-        "benchmark_locality": {
-          "name": "benchmark_locality",
-          "type": "varchar(50)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "length": 50,
-          "default": "null",
-          "mappedType": "string"
-        },
         "benchmark_region": {
           "name": "benchmark_region",
           "type": "varchar(50)",
@@ -641,11 +630,11 @@
           "mappedType": "decimal"
         }
       },
-      "name": "giz_simulation",
+      "name": "giz_entry",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "giz_simulation_pkey",
+          "keyName": "giz_entry_pkey",
           "columnNames": [
             "id"
           ],
@@ -657,12 +646,12 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "giz_simulation_user_id_foreign": {
-          "constraintName": "giz_simulation_user_id_foreign",
+        "giz_entry_user_id_foreign": {
+          "constraintName": "giz_entry_user_id_foreign",
           "columnNames": [
             "user_id"
           ],
-          "localTableName": "public.giz_simulation",
+          "localTableName": "public.giz_entry",
           "referencedColumnNames": [
             "id"
           ],
@@ -717,8 +706,8 @@
           "default": "1",
           "mappedType": "integer"
         },
-        "simulation_id": {
-          "name": "simulation_id",
+        "entry_id": {
+          "name": "entry_id",
           "type": "uuid",
           "unsigned": false,
           "autoincrement": false,
@@ -893,16 +882,16 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "giz_worker_simulation_id_foreign": {
-          "constraintName": "giz_worker_simulation_id_foreign",
+        "giz_worker_entry_id_foreign": {
+          "constraintName": "giz_worker_entry_id_foreign",
           "columnNames": [
-            "simulation_id"
+            "entry_id"
           ],
           "localTableName": "public.giz_worker",
           "referencedColumnNames": [
             "id"
           ],
-          "referencedTableName": "public.giz_simulation",
+          "referencedTableName": "public.giz_entry",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         }

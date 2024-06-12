@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Row, Workbook } from 'exceljs';
 
-import { Simulation } from '@domain/entities/simulation.entity';
+import { Entry } from '@domain/entities/entry.entity';
 import { User } from '@domain/entities/user.entity';
 import { Worker } from '@domain/entities/worker.entity';
 import {
@@ -12,9 +12,9 @@ import {
     SHEET_PAYROLL_START_ROW,
 } from '@domain/enums/import-column-mapping.enum';
 import { EntityValidationError } from '@domain/errors/entity-validation.error';
-import { SimulationFactory } from '@domain/factories/simulation.factory';
+import { EntryFactory } from '@domain/factories/entry.factory';
 import { WorkerFactory } from '@domain/factories/worker.factory';
-import { SimulationInfo } from '@domain/schemas/simulation-info.schema';
+import { EntryInfo } from '@domain/schemas/entry-info.schema';
 import { WorkerData } from '@domain/schemas/worker.schema';
 import { FileHelper } from '@domain/utils/file-helper';
 import { ImportValidationErrorDTOFactory, ImportValidationErrorDto } from './dto/import-validation.dto';
@@ -25,13 +25,13 @@ const TWO_MB = 2 * 1024 * 1024; // WordPress
 // const TEN_MB = 10 * 1024 * 1024; // Trello
 // const TWENTY_FIVE_MB = 25 * 1024 * 1024; // Gmail
 
-export class SimulationImporter {
+export class EntryImporter {
     public static readonly ACCEPTED_FILE_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; // .xlsx
     public static readonly FILE_SIZE_LIMIT = TWO_MB;
-    public simulation: Simulation;
+    public entry: Entry;
     public errors: ImportValidationErrorDto[] = [];
 
-    private readonly logger = new Logger(SimulationImporter.name);
+    private readonly logger = new Logger(EntryImporter.name);
     private readonly CHUNK_SIZE = 100;
     private readonly N_OF_ERRORS_BREAKPOINT = 25;
     // TODO: Storing the full file buffer in the fileBuffer attribute still stores the whole file. Refactor
@@ -49,11 +49,11 @@ export class SimulationImporter {
         this.user = user;
     }
 
-    public async doImport(): Promise<Simulation> {
-        this.logger.debug(`Starting SimulationImporter for file ${this.fileName}`);
+    public async doImport(): Promise<Entry> {
+        this.logger.debug(`Starting EntryImporter for file ${this.fileName}`);
 
         // All errors will be pushed to this.errors
-        this.simulation = this.createSimulation();
+        this.entry = this.createEntry();
 
         if (this.errors.length > 0) {
             return;
@@ -63,12 +63,12 @@ export class SimulationImporter {
 
         // Temp way to get benchmark value from sheet.
         // Sheet has value set for each worker instead of on the information sheet. A change to the excel is required
-        this.simulation.benchmark.localValue = this.benchmarkValue;
+        this.entry.benchmark.localValue = this.benchmarkValue;
 
         // This is also missing form the excel sheet
-        this.simulation.benchmark.region = this.simulation.facility.countryCode;
+        this.entry.benchmark.region = this.entry.facility.countryCode;
 
-        return this.simulation;
+        return this.entry;
     }
 
     public async loadWorkbook(): Promise<Workbook> {
@@ -113,7 +113,7 @@ export class SimulationImporter {
                 const worker = this.createWorker(row);
 
                 if (worker) {
-                    this.simulation.addWorker(worker);
+                    this.entry.addWorker(worker);
                 }
             }
         });
@@ -123,7 +123,7 @@ export class SimulationImporter {
         try {
             const workerData = this.convertRowToWorkerDto(row);
 
-            return WorkerFactory.createEntity(workerData, this.simulation);
+            return WorkerFactory.createEntity(workerData, this.entry);
         } catch (error: any) {
             if (error instanceof EntityValidationError) {
                 const errors = ImportValidationErrorDTOFactory.fromWorkerValidationErrors(
@@ -143,22 +143,22 @@ export class SimulationImporter {
         }
     }
 
-    private createSimulation(): Simulation {
-        const simulationInfo = this.parseSimulationInfo();
+    private createEntry(): Entry {
+        const entryInfo = this.parseEntryInfo();
 
         try {
-            const simulation = SimulationFactory.createEntity(simulationInfo, this.user);
-            this.simulation = simulation;
+            const entry = EntryFactory.createEntity(entryInfo, this.user);
+            this.entry = entry;
 
-            return simulation;
+            return entry;
         } catch (error: any) {
             if (error instanceof EntityValidationError) {
                 const errors = ImportValidationErrorDTOFactory.fromInformationSheetError(
-                    error as EntityValidationError<Simulation>,
+                    error as EntityValidationError<Entry>,
                 );
                 this.errors.push(...errors);
             } else {
-                this.logger.debug('Entity creation error while creating simulation from import');
+                this.logger.debug('Entity creation error while creating entry from import');
                 this.logger.error(error);
                 throw error;
             }
@@ -174,7 +174,7 @@ export class SimulationImporter {
             startRow: SHEET_PAYROLL_START_ROW,
         });
     }
-    private parseSimulationInfo(): SimulationInfo {
+    private parseEntryInfo(): EntryInfo {
         const infoSheet = this.workbook.getWorksheet(SHEET_MAPPING.info);
 
         // TODO: Both null values need to be added to the info sheet of idh excel import

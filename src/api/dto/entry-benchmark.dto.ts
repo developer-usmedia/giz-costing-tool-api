@@ -1,6 +1,6 @@
-import { SimulationBenchmark } from '@domain/embeddables/simulation-benchmark.embed';
+import { EntryBenchmark } from '@domain/embeddables/entry-benchmark.embed';
 
-export interface SimulationBenchmarkDTO {
+export interface EntryBenchmarkDTO {
     year: number;
     source: string;
     region: string;
@@ -9,13 +9,13 @@ export interface SimulationBenchmarkDTO {
     localValue: number;
 }
 
-export class SimulationBenchmarkDTOFactory {
-    public static fromEntity(entity: SimulationBenchmark): SimulationBenchmarkDTO {
+export class EntryBenchmarkDTOFactory {
+    public static fromEntity(entity: EntryBenchmark): EntryBenchmarkDTO {
         return mapEntityToDTO(entity);
     }
 }
 
-const mapEntityToDTO = (entity: SimulationBenchmark): SimulationBenchmarkDTO => {
+const mapEntityToDTO = (entity: EntryBenchmark): EntryBenchmarkDTO => {
     return {
         year: entity.year,
         source: entity.source,

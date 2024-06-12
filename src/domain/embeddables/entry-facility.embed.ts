@@ -1,7 +1,7 @@
 import { Embeddable, Property } from '@mikro-orm/core';
 
 @Embeddable()
-export class SimulationFacility {
+export class EntryFacility {
     @Property({ length: 100 })
     name: string;
 

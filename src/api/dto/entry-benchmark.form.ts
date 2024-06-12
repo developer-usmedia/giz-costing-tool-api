@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
-import { SimulationBenchmark } from '@domain/embeddables/simulation-benchmark.embed';
-import { SimulationFacility } from '@domain/embeddables/simulation-facility.embed';
+import { EntryBenchmark } from '@domain/embeddables/entry-benchmark.embed';
+import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
 
 /**
- * API layer DTO used in the updating of a benchmark on a simulation
+ * API layer DTO used in the updating of a benchmark on a entry
  */
-export class SimulationBenchmarkForm {
+export class EntryBenchmarkForm {
     @ApiProperty({ example: 'São Paulo', maxLength: 50 })
     @IsString()
     region: string;
@@ -23,10 +23,10 @@ export class SimulationBenchmarkForm {
 
     // Convert to database entity from DTO specified above
     public static toEntity(
-        benchmark: SimulationBenchmark,
-        form: SimulationBenchmarkForm,
-        facility: SimulationFacility,
-    ): SimulationBenchmark {
+        benchmark: EntryBenchmark,
+        form: EntryBenchmarkForm,
+        facility: EntryFacility,
+    ): EntryBenchmark {
         benchmark.region = form.region;
         benchmark.localValue = form.localValue;
         benchmark.currencyCode = facility.currencyCode;

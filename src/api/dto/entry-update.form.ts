@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsObject, IsOptional, Max, Min, ValidateNested } from 'class-validator';
 
-import { Simulation } from '@domain/entities/simulation.entity';
-import { SimulationBenchmarkForm } from './simulation-benchmark.form';
-import { SimulationFacilityForm } from './simulation-facility.form';
+import { Entry } from '@domain/entities/entry.entity';
+import { EntryBenchmarkForm } from './entry-benchmark.form';
+import { EntryFacilityForm } from './entry-facility.form';
 
 /**
  * API layer DTO used in the updating of a user
  */
-export class SimulationUpdateForm {
+export class EntryUpdateForm {
     @ApiProperty({ example: 2041, nullable: true })
     @IsNumber()
     @IsOptional()
@@ -37,29 +37,29 @@ export class SimulationUpdateForm {
     @IsObject()
     @IsOptional()
     @ValidateNested({ each: true })
-    facility?: SimulationFacilityForm;
+    facility?: EntryFacilityForm;
 
     @ApiProperty({ nullable: true })
     @IsObject()
     @IsOptional()
     @ValidateNested({ each: true })
-    benchmark?: SimulationBenchmarkForm;
+    benchmark?: EntryBenchmarkForm;
 
     // Convert to database entity from DTO specified above
-    public static toEntity(simulation: Simulation, form: SimulationUpdateForm): Simulation {
-        if (form.year) simulation.year = form.year;
-        if (form.administrativeCosts) simulation.administrativeCosts = form.administrativeCosts;
-        if (form.defaultEmployerTax) simulation.defaultEmployerTax = form.defaultEmployerTax;
-        if (form.defaultEmployeeTax) simulation.defaultEmployeeTax = form.defaultEmployeeTax;
+    public static toEntity(entry: Entry, form: EntryUpdateForm): Entry {
+        if (form.year) entry.year = form.year;
+        if (form.administrativeCosts) entry.administrativeCosts = form.administrativeCosts;
+        if (form.defaultEmployerTax) entry.defaultEmployerTax = form.defaultEmployerTax;
+        if (form.defaultEmployeeTax) entry.defaultEmployeeTax = form.defaultEmployeeTax;
 
-        if (form.facility) simulation.facility = SimulationFacilityForm.toEntity(simulation.facility, form.facility);
+        if (form.facility) entry.facility = EntryFacilityForm.toEntity(entry.facility, form.facility);
         if (form.benchmark)
-            simulation.benchmark = SimulationBenchmarkForm.toEntity(
-                simulation.benchmark,
+            entry.benchmark = EntryBenchmarkForm.toEntity(
+                entry.benchmark,
                 form.benchmark,
-                simulation.facility,
+                entry.facility,
             );
 
-        return simulation;
+        return entry;
     }
 }

@@ -1,7 +1,7 @@
 import { Embeddable, Property } from '@mikro-orm/core';
 
 @Embeddable()
-export class SimulationBenchmark {
+export class EntryBenchmark {
     @Property({ nullable: true, default: null })
     name?: string;
 
