@@ -34,7 +34,7 @@ export class AuthService {
         return saved;
     }
 
-    public validCredentials(user: User, password: string): boolean {
+    public validateCredentials(user: User, password: string): boolean {
         const isMatch = user?.comparePasswords(password);
 
         return user && isMatch;

@@ -98,7 +98,7 @@ export class AuthController extends BaseController {
             }
         }
 
-        const validCredentials = this.authService.validCredentials(user, loginForm.password)
+        const validCredentials = this.authService.validateCredentials(user, loginForm.password)
         if(!validCredentials) {
             user.increaseFailedLoginAttempts()
             await this.userService.persist(user)

@@ -6,6 +6,8 @@ import { VerificationCode } from '@domain/embeddables/verification-code.embed';
 import { AbstractEntity } from '@domain/entities/base/abstract.entity';
 import { Guard, GuardRegex } from '@domain/utils/guard';
 
+const FAILED_LOGIN_LOCK_THRESHOLD = 5;
+
 @Entity()
 export class User extends AbstractEntity<User> {
     @Property({ unique: true })
@@ -156,7 +158,7 @@ export class User extends AbstractEntity<User> {
     }
 
     public isLocked(): boolean {
-        return this._failedLoginAttempts >= 5;
+        return this._failedLoginAttempts >= FAILED_LOGIN_LOCK_THRESHOLD;
     }
 
     public resetFailedLoginAttempts() {
@@ -170,5 +172,4 @@ export class User extends AbstractEntity<User> {
     private generateSalt(): string {
         return bcrypt.genSaltSync(10);
     }
-    
 }
