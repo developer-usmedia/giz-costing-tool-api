@@ -1,5 +1,5 @@
 import { EntityManager } from '@mikro-orm/postgresql';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { JwtPayload } from '@api/auth/jwt/jwt-payload.type';
@@ -34,12 +34,10 @@ export class AuthService {
         return saved;
     }
 
-    public login(user: User, password: string): JwtToken {
+    public validCredentials(user: User, password: string): boolean {
         const isMatch = user?.comparePasswords(password);
 
-        if (!user || !isMatch) throw new UnauthorizedException('Invalid credentials');
-
-        return this.generateJwt(user, false);
+        return user && isMatch;
     }
 
     public generateJwt(user: User, saveRefreshToken = true): JwtToken {

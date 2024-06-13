@@ -10,6 +10,7 @@ import {
     Post,
     Req,
     Res,
+    UnauthorizedException,
     UseGuards,
     UsePipes,
     ValidationPipe,
@@ -74,7 +75,6 @@ export class AuthController extends BaseController {
         @Body() loginForm: LoginForm,
     ): Promise<{ accessToken: string; refreshToken: string; user: UserResponse }> {
         const user = await this.userService.findOne({ email: loginForm.email });
-        const jwt = this.authService.login(user, loginForm.password);
 
         this.validate2FAForUser(user, loginForm.twoFactorCode);
 
@@ -94,7 +94,17 @@ export class AuthController extends BaseController {
             }
         }
 
-        user.refreshToken = jwt.refreshToken;
+        const validCredentials = this.authService.validCredentials(user, loginForm.password)
+        if(!validCredentials) {
+            user.increaseFailedLoginAttempts()
+            await this.userService.persist(user)
+
+            throw new UnauthorizedException('Invalid credentials');
+        }
+
+
+        const jwt = this.authService.generateJwt(user);
+        user.resetFailedLoginAttempts();
         await this.userService.persist(user);
 
         return {

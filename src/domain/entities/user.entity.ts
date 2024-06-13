@@ -33,6 +33,9 @@ export class User extends AbstractEntity<User> {
     @Property({ columnType: 'varchar(400)', nullable: true })
     private _refreshToken: string;
 
+    @Property({ columnType: 'number', default: 0 })
+    private _failedLoginAttempts: number;
+    
     constructor(props: { email: string; password: string }) {
         super();
 
@@ -66,6 +69,9 @@ export class User extends AbstractEntity<User> {
     }
     get refreshToken() {
         return this._refreshToken;
+    }
+    get failedLoginAttempts() {
+        return this._failedLoginAttempts;
     }
 
     set email(value: string) {
@@ -145,6 +151,14 @@ export class User extends AbstractEntity<User> {
         this.twoFactor.secret = secret;
     }
 
+    public increaseFailedLoginAttempts() {
+        this._failedLoginAttempts += 1;
+    }
+
+    public resetFailedLoginAttempts() {
+        this._failedLoginAttempts = 0;
+    }
+
     private hashPassword(password: string, salt: string): string {
         return bcrypt.hashSync(password, salt);
     }
@@ -152,4 +166,5 @@ export class User extends AbstractEntity<User> {
     private generateSalt(): string {
         return bcrypt.genSaltSync(10);
     }
+    
 }

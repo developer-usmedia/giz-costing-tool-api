@@ -308,6 +308,16 @@
           "primary": false,
           "nullable": true,
           "mappedType": "string"
+        },
+        "failed_login_attempts": {
+          "name": "failed_login_attempts",
+          "type": "number",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "0",
+          "mappedType": "integer"
         }
       },
       "name": "giz_user",
