@@ -32,4 +32,12 @@ export class WorkerIKB {
         this.ikbChildcare = props.ikbChildcare ?? 0;
         this.ikbHealthcare = props.ikbHealthcare ?? 0;
     }
+
+    public getTotal(): number {
+        return this.ikbFood + 
+                this.ikbTransportation + 
+                this.ikbHousing + 
+                this.ikbHealthcare + 
+                this.ikbChildcare;
+    }
 }

@@ -145,6 +145,7 @@ export class Worker extends AbstractEntity<Worker> {
     }
 
     public getTotalRenumeration(): number {
-        return this.monthlyWage + this.monthlyBonus;
+        // Total monthly bonus + total monthly IKB + total monthly wage
+        return this.monthlyWage + this.monthlyBonus + this.inKindBenefits.getTotal();
     }
 }
