@@ -76,6 +76,10 @@ export class AuthController extends BaseController {
     ): Promise<{ accessToken: string; refreshToken: string; user: UserResponse }> {
         const user = await this.userService.findOne({ email: loginForm.email });
 
+        if(user.isLocked()) {
+            throw new BadRequestException('User login is locked');
+        }
+
         this.validate2FAForUser(user, loginForm.twoFactorCode);
 
         if (!user.emailVerified) {

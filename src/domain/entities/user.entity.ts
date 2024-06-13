@@ -33,7 +33,7 @@ export class User extends AbstractEntity<User> {
     @Property({ columnType: 'varchar(400)', nullable: true })
     private _refreshToken: string;
 
-    @Property({ columnType: 'number', default: 0 })
+    @Property({ columnType: 'integer', default: 0 })
     private _failedLoginAttempts: number;
     
     constructor(props: { email: string; password: string }) {
@@ -153,6 +153,10 @@ export class User extends AbstractEntity<User> {
 
     public increaseFailedLoginAttempts() {
         this._failedLoginAttempts += 1;
+    }
+
+    public isLocked(): boolean {
+        return this._failedLoginAttempts >= 5;
     }
 
     public resetFailedLoginAttempts() {
