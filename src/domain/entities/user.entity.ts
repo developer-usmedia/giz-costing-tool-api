@@ -7,6 +7,7 @@ import { AbstractEntity } from '@domain/entities/base/abstract.entity';
 import { Guard, GuardRegex } from '@domain/utils/guard';
 
 const FAILED_LOGIN_LOCK_THRESHOLD = 5;
+const FAILED_LOGIN_LOCKOUT_TIME = 1000 * 60 * 60 * 24; // 1 Day
 
 @Entity()
 export class User extends AbstractEntity<User> {
@@ -37,6 +38,9 @@ export class User extends AbstractEntity<User> {
 
     @Property({ columnType: 'integer', default: 0, unsigned: true })
     private _failedLoginAttempts: number;
+
+    @Property({ columnType: 'timestamp', nullable: true })
+    private _failedLoginLockUntil?: Date;
     
     constructor(props: { email: string; password: string }) {
         super();
@@ -74,6 +78,9 @@ export class User extends AbstractEntity<User> {
     }
     get failedLoginAttempts() {
         return this._failedLoginAttempts;
+    }
+    get failedLoginLockUntil() {
+        return this._failedLoginLockUntil;
     }
 
     set email(value: string) {
@@ -154,15 +161,21 @@ export class User extends AbstractEntity<User> {
     }
 
     public saveFailedLogin() {
+        // Q: set directly property or use a setter with guard?
         this._failedLoginAttempts += 1;
+
+        if(this._failedLoginAttempts >= FAILED_LOGIN_LOCK_THRESHOLD) {
+            this._failedLoginLockUntil = new Date(Date.now() + FAILED_LOGIN_LOCKOUT_TIME);
+        }
     }
 
     public isLoginLocked(): boolean {
-        return this._failedLoginAttempts >= FAILED_LOGIN_LOCK_THRESHOLD;
+        return this.failedLoginLockUntil > new Date();
     }
 
-    public resetFailedLoginAttempts() {
+    public resetLoginLock() {
         this._failedLoginAttempts = 0;
+        this._failedLoginLockUntil = null;
     }
 
     private hashPassword(password: string, salt: string): string {

@@ -77,7 +77,7 @@ export class AuthController extends BaseController {
         const user = await this.userService.findOne({ email: loginForm.email });
 
         if (user.isLoginLocked()) {
-            throw new BadRequestException('User login is locked');
+            throw new BadRequestException(`User login is locked until ${user.failedLoginLockUntil}`);
         }
 
         this.validate2FAForUser(user, loginForm.twoFactorCode);
@@ -106,7 +106,7 @@ export class AuthController extends BaseController {
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        user.resetFailedLoginAttempts();
+        user.resetLoginLock();
         const jwt = this.authService.generateJwt(user);
         await this.userService.persist(user);
 

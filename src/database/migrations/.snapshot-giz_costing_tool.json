@@ -318,6 +318,16 @@
           "nullable": false,
           "default": "0",
           "mappedType": "integer"
+        },
+        "failed_login_lock_until": {
+          "name": "failed_login_lock_until",
+          "type": "timestamp",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "mappedType": "datetime"
         }
       },
       "name": "giz_user",
