@@ -106,7 +106,10 @@ export class AuthController extends BaseController {
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        user.resetLoginLock();
+        if(user.isLoginLocked()) {
+            user.resetLoginLock();
+        }
+
         const jwt = this.authService.generateJwt(user);
         await this.userService.persist(user);
 
