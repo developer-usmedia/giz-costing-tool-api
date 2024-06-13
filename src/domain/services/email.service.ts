@@ -68,8 +68,6 @@ export class BrevoService {
 
         If you did not initiate this change, please contact us immediately at ina@giz.de to report unauthorized access.
 
-        For your reference, we recommend storing this email in a secure location.
-
         Kind regards,
 
         GIZ`;
