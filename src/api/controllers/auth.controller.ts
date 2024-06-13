@@ -77,7 +77,7 @@ export class AuthController extends BaseController {
         const user = await this.userService.findOne({ email: loginForm.email });
 
         if (user.isLoginLocked()) {
-            throw new BadRequestException(`User login is locked until ${user.failedLoginLockUntil}`);
+            throw new BadRequestException(`User login is locked until ${user.failedLoginLockUntil.toDateString()}`);
         }
 
         this.validate2FAForUser(user, loginForm.twoFactorCode);
@@ -137,6 +137,10 @@ export class AuthController extends BaseController {
         @Res() res: Response,
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const user = await this.userService.findOneByUid(currentUser.userId);
+
+        if (user.isLoginLocked()) {
+            throw new BadRequestException(`User login is locked until ${user.failedLoginLockUntil.toDateString()}`);
+        }
 
         if (user?.refreshToken !== req.body.refreshToken) {
             throw new BadRequestException('Invalid refresh token');
