@@ -76,7 +76,7 @@ export class AuthController extends BaseController {
     ): Promise<{ accessToken: string; refreshToken: string; user: UserResponse }> {
         const user = await this.userService.findOne({ email: loginForm.email });
 
-        if(user.isLocked()) {
+        if (user.isLoginLocked()) {
             throw new BadRequestException('User login is locked');
         }
 
@@ -98,17 +98,16 @@ export class AuthController extends BaseController {
             }
         }
 
-        const validCredentials = this.authService.validateCredentials(user, loginForm.password)
-        if(!validCredentials) {
-            user.increaseFailedLoginAttempts()
-            await this.userService.persist(user)
+        const validCredentials = this.authService.validateCredentials(user, loginForm.password);
+        if (!validCredentials) {
+            user.saveFailedLogin();
+            await this.userService.persist(user);
 
             throw new UnauthorizedException('Invalid credentials');
         }
 
-
-        const jwt = this.authService.generateJwt(user);
         user.resetFailedLoginAttempts();
+        const jwt = this.authService.generateJwt(user);
         await this.userService.persist(user);
 
         return {

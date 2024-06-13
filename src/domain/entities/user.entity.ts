@@ -35,7 +35,7 @@ export class User extends AbstractEntity<User> {
     @Property({ columnType: 'varchar(400)', nullable: true })
     private _refreshToken: string;
 
-    @Property({ columnType: 'integer', default: 0 })
+    @Property({ columnType: 'integer', default: 0, unsigned: true })
     private _failedLoginAttempts: number;
     
     constructor(props: { email: string; password: string }) {
@@ -153,11 +153,11 @@ export class User extends AbstractEntity<User> {
         this.twoFactor.secret = secret;
     }
 
-    public increaseFailedLoginAttempts() {
+    public saveFailedLogin() {
         this._failedLoginAttempts += 1;
     }
 
-    public isLocked(): boolean {
+    public isLoginLocked(): boolean {
         return this._failedLoginAttempts >= FAILED_LOGIN_LOCK_THRESHOLD;
     }
 

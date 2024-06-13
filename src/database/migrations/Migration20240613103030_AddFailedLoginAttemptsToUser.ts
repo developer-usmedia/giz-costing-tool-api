@@ -1,6 +1,6 @@
 import { Migration } from '@mikro-orm/migrations';
 
-export class Migration20240613101824_AddFailedLoginAttemptsToUser extends Migration {
+export class Migration20240613103030_AddFailedLoginAttemptsToUser extends Migration {
 
   async up(): Promise<void> {
     this.addSql('alter table "giz_user" add column "failed_login_attempts" integer not null default 0;');

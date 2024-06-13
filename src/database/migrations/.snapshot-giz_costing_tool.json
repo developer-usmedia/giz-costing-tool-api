@@ -312,7 +312,7 @@
         "failed_login_attempts": {
           "name": "failed_login_attempts",
           "type": "integer",
-          "unsigned": false,
+          "unsigned": true,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
