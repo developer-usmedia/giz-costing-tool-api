@@ -175,13 +175,13 @@ export class AuthController extends BaseController {
         @Res() res: Response,
     ): Promise<{ success: boolean }> {
         const user = await this.userService.findOne({ email });
-        if (!user) {
+        const correctCode = user.verifyCode(code);
+
+        if (!correctCode) {
             return this.clientError('Code verification failed');
         }
 
-        const correctCode = user.verifyCode(code);
-
-        return this.ok(res, { success: correctCode });
+        return this.ok(res, { success: true });
     }
 
     @Post('/reset-password')
