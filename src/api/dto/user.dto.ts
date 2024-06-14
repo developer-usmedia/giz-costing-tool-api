@@ -17,6 +17,7 @@ export interface UserDTO extends HalResponse {
     id: string;
     email: string;
     emailVerified: boolean;
+    passwordCreatedAt: Date;
     twoFactorEnabled: boolean;
     _links: {
         self: Link;
@@ -47,6 +48,7 @@ const mapEntityToDTO = (entity: User): UserDTO => {
         id: entity.id,
         email: entity.email,
         emailVerified: entity.emailVerified,
+        passwordCreatedAt: entity.passwordCreatedAt,
         twoFactorEnabled: entity.twoFactor.enabled,
         _links: {
             self: { href: resolveLink(USER_LINKS.user, { userId: entity.id }) },

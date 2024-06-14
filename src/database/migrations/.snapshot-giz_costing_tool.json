@@ -231,6 +231,17 @@
           "nullable": false,
           "mappedType": "string"
         },
+        "password_created_at": {
+          "name": "password_created_at",
+          "type": "timestamp",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "'now'",
+          "mappedType": "datetime"
+        },
         "salt": {
           "name": "salt",
           "type": "varchar(255)",

@@ -15,6 +15,9 @@ export class User extends AbstractEntity<User> {
     @Property({ hidden: true })
     private _password: string;
 
+    @Property({ columnType: 'timestamp', default: 'now'})
+    private _passwordCreatedAt: Date;
+
     @Property()
     private _salt: string;
 
@@ -46,6 +49,9 @@ export class User extends AbstractEntity<User> {
     get password() {
         return this._password;
     }
+    get passwordCreatedAt() {
+        return this._passwordCreatedAt;
+    }
     get salt() {
         return this._salt;
     }
@@ -73,6 +79,11 @@ export class User extends AbstractEntity<User> {
             throw new Error('[User] No salt');
         }
         this._password = this.hashPassword(value, this.salt);
+    }
+
+    set passwordCreatedAt(value: Date) {
+        Guard.check(value, { type: 'date' });
+        this._passwordCreatedAt = value;
     }
 
     set salt(value: string) {
@@ -116,6 +127,7 @@ export class User extends AbstractEntity<User> {
         const hashedPassword = this.hashPassword(newPassword, this.salt);
 
         this.password = hashedPassword;
+        this.passwordCreatedAt = new Date();
         this.verificationCode = new VerificationCode();
 
         return true;
