@@ -17,4 +17,9 @@ export class LoginForm {
     @IsString()
     @IsOptional()
     emailVerificationCode?: string;
+
+    @ApiProperty({ example: 'A3FK2Q' })
+    @IsString()
+    @IsOptional()
+    twoFactorCode?: string;
 }

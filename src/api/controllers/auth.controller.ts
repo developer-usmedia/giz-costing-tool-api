@@ -2,6 +2,7 @@ import {
     BadRequestException,
     Body,
     Controller,
+    Delete,
     Get,
     HttpCode,
     Logger,
@@ -22,6 +23,7 @@ import { RefreshJwtGuard } from '@api/auth/jwt/jwt-refresh.guard';
 import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
 import { OTPService } from '@api/auth/service/otp.service';
 import { BaseController } from '@api/controllers/base.controller';
+import { TwoFactorForm } from '@api/dto/two-factor.form';
 import { ForgotPasswordForm } from '@api/dto/user-forgot-password.form';
 import { PasswordResetForm } from '@api/dto/user-password-reset.form';
 import { RegisterForm } from '@api/dto/user-register.form';
@@ -73,6 +75,8 @@ export class AuthController extends BaseController {
     ): Promise<{ accessToken: string; refreshToken: string; user: UserResponse }> {
         const user = await this.userService.findOne({ email: loginForm.email });
         const jwt = this.authService.login(user, loginForm.password);
+
+        this.validate2FAForUser(user, loginForm.twoFactorCode);
 
         if (!user.emailVerified) {
             if (!loginForm.emailVerificationCode) {
@@ -144,6 +148,18 @@ export class AuthController extends BaseController {
         return this.ok(res, { success: !!saved });
     }
 
+    @Delete('/account')
+    @ApiOperation({ summary: 'Delete authenticated user from app' })
+    @ApiResponse({ status: 200, description: 'The deleted user' })
+    @ApiResponse({ status: 400, description: 'Missing or invalid two-factor code for user' })
+    @UseGuards(JwtAuthGuard)
+    public async deleteAccount(@Body() twoFactorForm: TwoFactorForm, @CurrentUser() user: User): Promise<UserResponse> {
+        this.validate2FAForUser(user, twoFactorForm.twoFactorCode);
+
+        const removed = await this.userService.remove(user);
+        return UserDTOFactory.fromEntity(removed);
+    }
+
     @Post('/forgot-password')
     @ApiOperation({ summary: 'Start a password reset for a user' })
     @ApiResponse({ status: 201, description: 'Password reset started' })
@@ -162,7 +178,6 @@ export class AuthController extends BaseController {
 
         return this.ok(res, { success: sent });
     }
-
 
     @Post('/verify-code')
     @HttpCode(200)
@@ -291,5 +306,18 @@ export class AuthController extends BaseController {
         const disabled = await this.authService.disable2FA(user);
 
         return this.ok(res, { success: disabled });
+    }
+
+    private validate2FAForUser(user: User, code: string) {
+        if (user.twoFactor.enabled) {
+            if (!code) {
+                throw new BadRequestException('Two-factor is enabled, missing code in request');
+            }
+
+            const verified = this.otpService.verify2FACode(user.twoFactor.secret, code);
+            if (!verified) {
+                throw new BadRequestException('Two-factor code is invalid');
+            }
+        }
     }
 }

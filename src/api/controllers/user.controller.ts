@@ -1,19 +1,9 @@
-import {
-    Controller,
-    Delete,
-    Get,
-    Param,
-    ParseUUIDPipe,
-    UseGuards,
-    UsePipes,
-    ValidationPipe,
-} from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
 import { BaseController } from '@api/controllers/base.controller';
 import { UserDTOFactory, UserListResponse, UserResponse } from '@api/dto/user.dto';
-import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
 import { PagingParams } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Paging } from '@api/paging/paging.decorator';
@@ -48,17 +38,5 @@ export class UserController extends BaseController {
         const user = await this.userService.findOneByUid(id);
 
         return UserDTOFactory.fromEntity(user);
-    }
-
-    @Delete('/:id')
-    @ApiOperation({ summary: 'Delete a user' })
-    @ApiResponse({ status: 200, description: 'Deleted user' })
-    @ApiResponse({ status: 404, description: 'User not found' })
-    @UseGuards(JwtAuthGuard)
-    @UsePipes(ValidationPipe)
-    public async destroy(@CurrentUser() user: User): Promise<UserResponse> {
-        const deleted = await this.userService.remove(user);
-
-        return UserDTOFactory.fromEntity(deleted);
     }
 }
