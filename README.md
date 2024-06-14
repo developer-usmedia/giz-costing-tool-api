@@ -55,6 +55,9 @@ cp .env.sample .env
 # PostgreSQL Database
 npm run start:db
 
+# Only on very first start (create db schema etc...)
+npm run db:fresh
+
 # NestJS App
 npm run start
 ```
