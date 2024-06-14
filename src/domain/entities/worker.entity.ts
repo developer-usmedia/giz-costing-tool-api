@@ -141,7 +141,8 @@ export class Worker extends AbstractEntity<Worker> {
     }
 
     public isBelowLW(): boolean {
-        return (this.entry.benchmark.localValue ?? 0) > this.getTotalRenumeration();
+        // Is called after deleten to render repsonse -> fix
+        return (this.entry?.benchmark?.localValue ?? 0) > this.getTotalRenumeration();
     }
 
     public getTotalRenumeration(): number {
