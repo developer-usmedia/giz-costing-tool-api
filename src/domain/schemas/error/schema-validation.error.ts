@@ -8,4 +8,5 @@ export interface ValidationError {
     path: string;
     message: string;
     value: any;
+    type: string;
 }

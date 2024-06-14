@@ -17,6 +17,7 @@ export const validate = <R = any>(schema: joi.ObjectSchema, data: Record<string,
                     path: key,
                     message: detail.message.replace(/"/g, '\''),
                     value: result.error._original[key] ?? null,
+                    type: detail.type,
                 };
             }),
         };

@@ -9,8 +9,23 @@ import {
 } from '@domain/enums/import-column-mapping.enum';
 import { EntityValidationError } from '@domain/errors/entity-validation.error';
 
+// https://github.com/hapijs/joi/blob/master/lib/types/string.js#L704
+// https://github.com/hapijs/joi/blob/master/lib/types/number.js#L310
+// 'number.base': '{{#label}} must be a number',
+// 'number.max': '{{#label}} must be less than or equal to {{#limit}}',
+// 'number.min': '{{#label}} must be greater than or equal to {{#limit}}',
+// 'string.max': '{{#label}} length must be less than or equal to {{#limit}} characters long',
+// 'string.min': '{{#label}} length must be at least {{#limit}} characters long',
+// 'string.trim': '{{#label}} must not have leading or trailing whitespace',
 export enum CellValidationError {
-    TODO = 'TODO',
+    NUMBER_BASE = 'number.base',
+    NUMBER_MIN = 'number.min',
+    NUMBER_MAX = 'number.max',
+    STRING_BASE = 'string.base',
+    STRING_MIN = 'string.min',
+    STRING_MAX = 'string.max',
+    STRING_TRIM = 'string.trim',
+    REQUIRED = 'any.required',
     MISSING_INFO_SHEET = 'MISSING_INFO_SHEET',
     MISSING_PAYROLL_SHEET = 'MISSING_PAYROLL_SHEET',
     VERSION_MISMATCH = 'VERSION_MISMATCH',
@@ -51,7 +66,7 @@ export class ImportValidationErrorDTOFactory {
                 property: workerError.path,
                 message: workerError.message,
                 value: workerError.value ?? null,
-                errorType: CellValidationError.TODO,
+                errorType: workerError.type as CellValidationError,
             });
         }
 
@@ -69,7 +84,7 @@ export class ImportValidationErrorDTOFactory {
                 property: infoError.path,
                 message: infoError.message,
                 value: infoError.value ?? null,
-                errorType: CellValidationError.TODO, // TODO: update with other error types
+                errorType: infoError.type as CellValidationError,
             });
         }
 
