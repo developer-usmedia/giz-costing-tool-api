@@ -23,7 +23,7 @@ import { EntryUpdateForm } from '@api/dto/entry-update.form';
 import { EntryDTOFactory, EntryListResponse, EntryResponse } from '@api/dto/entry.dto';
 import { WorkerDTOFactory, WorkerListResponse } from '@api/dto/worker.dto';
 import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
-import { PagingParams, Sort } from '@api/paging/paging-params';
+import { PagingParams } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Paging } from '@api/paging/paging.decorator';
 import { Entry } from '@domain/entities/entry.entity';
@@ -54,7 +54,6 @@ export class EntryController extends BaseController {
     public async index(
         @Paging('Entry', PagingValidationPipe) paging: PagingParams<Entry>,
     ): Promise<EntryListResponse> {
-        paging.sort = { _updatedAt: Sort.DESC };
         const [entries, count] = await this.entryService.findManyPaged(paging);
 
         return EntryDTOFactory.fromCollection(entries, count, paging);
