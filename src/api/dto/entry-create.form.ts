@@ -17,9 +17,9 @@ export class EntryCreateForm {
     @IsNumber()
     year: number;
 
-    @ApiProperty({ example: 'NLD', minLength: 2, maxLength: 3, required: true })
+    @ApiProperty({ example: 'Nederland', required: true })
     @IsString()
-    countryCode: string;
+    country: string;
 
     // Convert to database entity from DTO specification above
     public static toEntity(form: EntryCreateForm, user: User): Entry {
@@ -28,7 +28,7 @@ export class EntryCreateForm {
             user: user,
             facility: new EntryFacility({
                 name: form.facilityName,
-                countryCode: form.countryCode,
+                country: form.country,
             }),
         });
     }

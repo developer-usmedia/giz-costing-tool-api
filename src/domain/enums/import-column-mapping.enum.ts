@@ -17,7 +17,7 @@ export const INFO_SHEET_MAPPING = {
     benchmarkName: 'B19',
     country: 'B6',
     region: 'B7',
-    annualProduction: 'B12',
+    annualProduction: 'B10',
     unitOfProduction: 'B13',
     productName: 'B16',
     year: 'B17',
@@ -30,6 +30,7 @@ export const COLUMN_MAPPING_PAYROLL = {
     gender: 'D',
     numberOfWorkers: 'E',
     monthlyWage: 'AQ',
+    monthlyBonus: 'AR',
     percentageOfYearsWorked: 'AT',
 
     ikbFood: 'AB',

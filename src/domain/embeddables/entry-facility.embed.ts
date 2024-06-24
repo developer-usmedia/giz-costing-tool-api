@@ -8,8 +8,11 @@ export class EntryFacility {
     @Property({ nullable: true })
     id?: string; // When imported from Salary Matrix tool
 
-    @Property({ length: 3 })
-    countryCode: string;
+    @Property({ nullable: true })
+    country: string;
+
+    @Property({ length: 3, nullable: true })
+    countryCode?: string;
 
     @Property({ length: 3, nullable: true, default: null })
     currencyCode?: string;
@@ -31,7 +34,8 @@ export class EntryFacility {
 
     constructor(props: {
         name: string;
-        countryCode: string;
+        countryCode?: string;
+        country: string;
         id?: string;
         currencyCode?: string;
         product?: string;
@@ -39,10 +43,11 @@ export class EntryFacility {
         annualProduction?: number;
     }) {
         this.name = props.name;
-        this.countryCode = props.countryCode;
+        this.country = props.country;
 
         this.id = props.id;
         this.currencyCode = props.currencyCode;
+        this.countryCode = props.countryCode;
         this.product = props.product;
         this.unitOfProduction = props.unitOfProduction;
         this.annualProduction = props.annualProduction;

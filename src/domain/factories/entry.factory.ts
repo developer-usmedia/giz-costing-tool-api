@@ -21,7 +21,7 @@ export class EntryFactory {
             user: user,
             facility: new EntryFacility({
                 name: value.facilityName,
-                countryCode: value.countryCode,
+                country: value.country,
                 id: value.facilityId,
                 currencyCode: value.currencyCode,
                 product: value.productName,
@@ -32,6 +32,7 @@ export class EntryFactory {
                 name: value.benchmarkName,
                 currencyCode: value.currencyCode,
                 localValue: value.benchmarkValue,
+                region: value.region,
             }),
         });
     }

@@ -20,7 +20,7 @@ export class WorkerFactory {
             gender: value.gender,
             numberOfWorkers: value.numberOfWorkers,
             monthlyWage: value.monthlyWage,
-            monthlyBonus: value.monthlyWage,
+            monthlyBonus: value.monthlyBonus,
             percentageOfYearWorked: value.percentageOfYearsWorked,
             employeeTax: value.employeeTax,
             employerTax: value.employeeTax,

@@ -137,8 +137,20 @@ export class Entry extends AbstractEntity<Entry> {
         Guard.check(value, { type: 'number', min: 0 });
         this._administrativeCosts = value;
     }
-    
+
     public addWorker(worker: Worker): void {
         this._workers.add(worker);
+    }
+
+    public getNOfJobCategories(): number {
+        return new Set(this.workers?.map((worker) => worker.name)).size;
+    }
+
+    public getNOfWorkersBelowLW(): number {
+        return this.workers?.filter((w) => w.isBelowLW()).length;
+    }
+
+    public getNOfWorkers(): number {
+        return this.workers?.reduce((counter, worker) => worker.numberOfWorkers + counter, 0) ?? 0;
     }
 }

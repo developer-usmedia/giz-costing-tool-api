@@ -22,7 +22,7 @@ Content-Type: application/json
 
 {
     "facilityName": "My facility",
-    "countryCode": "FRA",
+    "country": "Nederland",
     "year": 2031
 }
 

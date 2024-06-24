@@ -452,13 +452,22 @@
           "nullable": true,
           "mappedType": "string"
         },
+        "facility_country": {
+          "name": "facility_country",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "string"
+        },
         "facility_country_code": {
           "name": "facility_country_code",
           "type": "varchar(3)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": false,
+          "nullable": true,
           "length": 3,
           "mappedType": "string"
         },

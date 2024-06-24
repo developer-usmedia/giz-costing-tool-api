@@ -15,6 +15,7 @@ export class EntryFactory extends Factory<Entry> {
             status: EntryStatus.OPEN,
             facility: {
                 name: faker.airline.airport().name,
+                country: faker.location.country(),
                 countryCode: faker.location.countryCode(),
                 currencyCode: faker.finance.currencyCode(),
                 product: faker.commerce.product(),

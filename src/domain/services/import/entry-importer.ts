@@ -65,9 +65,6 @@ export class EntryImporter {
         // Sheet has value set for each worker instead of on the information sheet. A change to the excel is required
         this.entry.benchmark.localValue = this.benchmarkValue;
 
-        // This is also missing form the excel sheet
-        this.entry.benchmark.region = this.entry.facility.countryCode;
-
         return this.entry;
     }
 
@@ -146,6 +143,7 @@ export class EntryImporter {
     private createEntry(): Entry {
         const entryInfo = this.parseEntryInfo();
 
+
         try {
             const entry = EntryFactory.createEntity(entryInfo, this.user);
             this.entry = entry;
@@ -183,7 +181,6 @@ export class EntryImporter {
             facilityName: infoSheet.getCell(INFO_SHEET_MAPPING.facilityName).text,
             facilityId: infoSheet.getCell(INFO_SHEET_MAPPING.facilityId).text,
             benchmarkName: infoSheet.getCell(INFO_SHEET_MAPPING.benchmarkName).text,
-            countryCode: null,
             country: infoSheet.getCell(INFO_SHEET_MAPPING.country).text,
             region: infoSheet.getCell(INFO_SHEET_MAPPING.region).text,
             annualProduction: parseIntCell(infoSheet.getCell(INFO_SHEET_MAPPING.annualProduction).text),
@@ -200,6 +197,7 @@ export class EntryImporter {
             gender: parseGenderCell(row.getCell(COLUMN_MAPPING_PAYROLL.gender).text),
             numberOfWorkers: parseIntCell(row.getCell(COLUMN_MAPPING_PAYROLL.numberOfWorkers).text),
             monthlyWage: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyWage).text),
+            monthlyBonus: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyBonus).text),
             percentageOfYearsWorked: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.percentageOfYearsWorked).text),
             ikbFood: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbFood).text),
             ikbTransportation: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbTransportation).text),

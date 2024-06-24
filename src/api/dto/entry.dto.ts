@@ -71,9 +71,9 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
         defaultEmployerTax: entity.defaultEmployerTax,
         facility: EntryFacilityDTOFactory.fromEntity(entity.facility),
         benchmark: EntryBenchmarkDTOFactory.fromEntity(entity.benchmark),
-        nrOfWorkers: entity.workers.reduce((counter, worker ) => worker.numberOfWorkers + counter, 0),
-        nrOfJobcategories: entity.workers.length,
-        nrOfWorkersBelowLW: entity.workers.filter((w) => w.isBelowLW()).length,
+        nrOfWorkers: entity.getNOfWorkers(),
+        nrOfJobcategories: entity.getNOfJobCategories(),
+        nrOfWorkersBelowLW: entity.getNOfWorkersBelowLW(),
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
         _links: {
