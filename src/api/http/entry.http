@@ -1,7 +1,7 @@
 @host=localhost
 @port=3000
 @endpoint=entries
-@entryId=641f4bc6-9392-44a1-b3eb-141e284a1c42
+@entryId=4cb01f9e-9506-4d52-9d4e-0eb7e329114a
 
 ### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}
@@ -63,4 +63,37 @@ Authorization: Bearer {{token}}
 
 ### Get workers
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}/workers
+Authorization: Bearer {{token}}
+
+### Set a scenario
+POST http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}/scenario
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "type": "TYPE_ABSOLUTE_INCREASE",
+    "specifications": {
+        "employeeTax": 4,
+        "employerTax": 1,
+        "absoluteIncrease": 500
+    }
+}
+
+
+### Update scenario
+PATCH http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}/scenario
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "specifications": {
+        "employeeTax": 3,
+        "employerTax": 1,
+        "absoluteIncrease": 300
+    }
+}
+
+
+### Delete a scenario
+DELETE http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}/scenario
 Authorization: Bearer {{token}}

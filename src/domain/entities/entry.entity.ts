@@ -1,4 +1,4 @@
-import { Collection, Embedded, Entity, Enum, ManyToOne, OneToMany, Property } from '@mikro-orm/core';
+import { Collection, Embedded, Entity, Enum, ManyToOne, OneToMany, OneToOne, Property } from '@mikro-orm/core';
 
 import { EntryBenchmark } from '@domain/embeddables/entry-benchmark.embed';
 import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
@@ -7,6 +7,7 @@ import { User } from '@domain/entities/user.entity';
 import { Worker } from '@domain/entities/worker.entity';
 import { EntryStatus } from '@domain/enums/entry-status.enum';
 import { Guard } from '@domain/utils/guard';
+import { Scenario } from './scenario.entity';
 
 @Entity()
 export class Entry extends AbstractEntity<Entry> {
@@ -30,7 +31,11 @@ export class Entry extends AbstractEntity<Entry> {
 
     // eslint-disable-next-line @typescript-eslint/dot-notation
     @OneToMany({ entity: () => Worker, mappedBy: (worker) => worker['_entry'], nullable: true, eager: true })
-    private readonly _workers? = new Collection<Worker>(this); // For now fetch eager to populate table, think of a different way
+    private readonly _workers? = new Collection<Worker>(this);
+
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    @OneToOne({ entity: () => Scenario, mappedBy: (scenario) => scenario['_entry'], nullable: true, eager: true })
+    private _scenario: Scenario;
 
     @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
     private _defaultEmployerTax?: number; //  Percentage (0 - 100)
@@ -40,6 +45,12 @@ export class Entry extends AbstractEntity<Entry> {
 
     @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
     private _administrativeCosts: number;
+
+    @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true })
+    private _averageLwGap: number;
+
+    @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true })
+    private _largestLwGap: number;
 
     constructor(props: {
         year: number;
@@ -57,6 +68,8 @@ export class Entry extends AbstractEntity<Entry> {
 
         this.status = props.status ?? EntryStatus.OPEN;
         this.benchmark = props.benchmark ?? new EntryBenchmark({});
+
+        this.calculcateLwGaps();
     }
 
     get matrixId() {
@@ -80,6 +93,9 @@ export class Entry extends AbstractEntity<Entry> {
     get workers() {
         return this._workers;
     }
+    get scenario() {
+        return this._scenario;
+    }
     get defaultEmployerTax() {
         return this._defaultEmployerTax;
     }
@@ -88,6 +104,12 @@ export class Entry extends AbstractEntity<Entry> {
     }
     get administrativeCosts() {
         return this._administrativeCosts;
+    }
+    get averageLwGap() {
+        return this._averageLwGap;
+    }
+    get largestLwGap() {
+        return this._largestLwGap;
     }
 
     set matrixId(value: string) {
@@ -138,8 +160,27 @@ export class Entry extends AbstractEntity<Entry> {
         this._administrativeCosts = value;
     }
 
-    public addWorker(worker: Worker): void {
+    set averageLwGap(value: number) {
+        Guard.check(value, { type: 'number', min: 0 });
+        this._averageLwGap = value;
+    }
+
+    set largestLwGap(value: number) {
+        Guard.check(value, { type: 'number', min: 0 });
+        this._largestLwGap = value;
+    }
+
+    set scenario(value: Scenario) {
+        Guard.check(value, { type: 'object', optional: true });
+        this._scenario = value;
+    }
+
+    public addWorker(worker: Worker, { recalculateLwGaps = true }): void {
         this._workers.add(worker);
+
+        if (recalculateLwGaps) {
+            this.calculcateLwGaps();
+        }
     }
 
     public getNOfJobCategories(): number {
@@ -152,5 +193,22 @@ export class Entry extends AbstractEntity<Entry> {
 
     public getNOfWorkers(): number {
         return this.workers?.reduce((counter, worker) => worker.numberOfWorkers + counter, 0) ?? 0;
+    }
+    public calculcateLwGaps(): void {
+        if (!this.workers.length) {
+            return;
+        }
+
+        const benchmarkValue = this.benchmark.localValue ?? 0;
+        const lwGaps = this.workers
+            ?.map((worker) => worker.getTotalRenumeration())
+            .filter((value) => value < benchmarkValue)
+            .map((value) => benchmarkValue - value);
+
+        const avg = lwGaps?.reduce((counter, value) => value + counter, 0) ?? 0;
+        const largest = [...lwGaps].sort().at(lwGaps.length - 1) ?? 0;
+
+        this.averageLwGap = avg;
+        this.largestLwGap = largest;
     }
 }

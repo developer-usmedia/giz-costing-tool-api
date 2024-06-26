@@ -60,6 +60,7 @@ export class EntryImporter {
         }
 
         await this.processRows();
+        this.entry.calculcateLwGaps();
 
         // Temp way to get benchmark value from sheet.
         // Sheet has value set for each worker instead of on the information sheet. A change to the excel is required
@@ -102,15 +103,15 @@ export class EntryImporter {
                     return;
                 }
 
-                
-                if(!this.benchmarkValue) {
+                if (!this.benchmarkValue) {
+                    // SM Export does not have a single field for this. Get the value from first worker
                     this.benchmarkValue = parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.benchmarkValue).text);
                 }
 
                 const worker = this.createWorker(row);
 
                 if (worker) {
-                    this.entry.addWorker(worker);
+                    this.entry.addWorker(worker, { recalculateLwGaps: false });
                 }
             }
         });
@@ -142,7 +143,6 @@ export class EntryImporter {
 
     private createEntry(): Entry {
         const entryInfo = this.parseEntryInfo();
-
 
         try {
             const entry = EntryFactory.createEntity(entryInfo, this.user);

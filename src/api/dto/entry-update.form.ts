@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { IsNumber, IsObject, IsOptional, Max, Min, ValidateNested } from 'class-validator';
 
 import { Entry } from '@domain/entities/entry.entity';
@@ -36,13 +37,15 @@ export class EntryUpdateForm {
     @ApiProperty({ nullable: true })
     @IsObject()
     @IsOptional()
-    @ValidateNested({ each: true })
+    @ValidateNested()
+    @Type(() => EntryFacilityForm)
     facility?: EntryFacilityForm;
 
     @ApiProperty({ nullable: true })
     @IsObject()
     @IsOptional()
-    @ValidateNested({ each: true })
+    @ValidateNested()
+    @Type(() => EntryBenchmarkForm)
     benchmark?: EntryBenchmarkForm;
 
     // Convert to database entity from DTO specified above

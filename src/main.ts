@@ -1,5 +1,5 @@
 import { MikroORM } from '@mikro-orm/postgresql';
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
@@ -59,6 +59,7 @@ async function bootstrap() {
     });
     app.use(cookieParser());
     app.use(passport.initialize());
+    app.useGlobalPipes(new ValidationPipe());
     
     setupSwagger(app);
 

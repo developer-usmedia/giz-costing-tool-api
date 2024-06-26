@@ -10,10 +10,12 @@ import { environment } from '@app/environment';
 import { GizNamingStrategy } from '@database/naming/database.naming-strategy';
 import { EntryBenchmark } from '@domain/embeddables/entry-benchmark.embed';
 import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
+import { ScenarioSpecification } from '@domain/embeddables/scenario-specification.embed';
 import { VerificationCode } from '@domain/embeddables/verification-code.embed';
 import { WorkerIKB } from '@domain/embeddables/worker-ikb.embed';
 import { Benchmark } from '@domain/entities/benchmark.entity';
 import { Entry } from '@domain/entities/entry.entity';
+import { Scenario } from '@domain/entities/scenario.entity';
 import { User } from '@domain/entities/user.entity';
 import { Worker } from '@domain/entities/worker.entity';
 
@@ -23,6 +25,8 @@ export const entities = [
     Entry,
     EntryBenchmark,
     EntryFacility,
+    Scenario,
+    ScenarioSpecification,
     Worker,
     WorkerIKB,
     Benchmark,

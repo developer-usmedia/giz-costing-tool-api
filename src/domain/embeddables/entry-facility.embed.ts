@@ -30,7 +30,9 @@ export class EntryFacility {
     buyerName?: string;
 
     @Property({ nullable: true, unsigned: true, default: null })
-    buyerProportion?: number; // Percentage (0 - 100) -> prime candidate for the Guard validation
+    buyerProportion?: number;
+
+    // TODO: add a buyerProportionUnit
 
     constructor(props: {
         name: string;

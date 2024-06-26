@@ -11,8 +11,6 @@ import {
     Req,
     Res,
     UseGuards,
-    UsePipes,
-    ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
@@ -53,7 +51,6 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Register as a new user' })
     @ApiResponse({ status: 201, description: 'User registered' })
     @ApiResponse({ status: 400, description: 'User already registered' })
-    @UsePipes(ValidationPipe)
     public async register(@Body() registerForm: RegisterForm): Promise<UserResponse> {
         const existingUser = await this.userService.findOne({ email: registerForm.email }, {}, false);
         if (existingUser) {
@@ -69,7 +66,6 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Login using user credentials' })
     @ApiResponse({ status: 401, description: 'Invalid credentials' })
     @ApiResponse({ status: 200, description: 'Successfull login' })
-    @UsePipes(ValidationPipe)
     public async login(
         @Body() loginForm: LoginForm,
     ): Promise<{ accessToken: string; refreshToken: string; user: UserResponse }> {
@@ -108,7 +104,6 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Get user of currently signed in user' })
     @ApiResponse({ status: 200, description: 'Currently logged in user from session' })
     @UseGuards(JwtAuthGuard)
-    @UsePipes(ValidationPipe)
     public current(@CurrentUser() currentUser: User): UserResponse {
         return UserDTOFactory.fromEntity(currentUser);
     }
@@ -164,7 +159,6 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Start a password reset for a user' })
     @ApiResponse({ status: 201, description: 'Password reset started' })
     @ApiResponse({ status: 400, description: 'Password reset failed' })
-    @UsePipes(ValidationPipe)
     public async forgotPassword(
         @Body() { email }: ForgotPasswordForm,
         @Res() res: Response,
@@ -184,7 +178,6 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Validate verification code' })
     @ApiResponse({ status: 200, description: 'Validation result' })
     @ApiResponse({ status: 400, description: 'Code verification failed' })
-    @UsePipes(ValidationPipe)
     public async verifyCode(
         @Body() { email, code }: VerifyCodeForm,
         @Res() res: Response,
@@ -204,7 +197,6 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Reset a users password' })
     @ApiResponse({ status: 201, description: 'Password reset successful' })
     @ApiResponse({ status: 400, description: 'Invalid or expired token or user not found' })
-    @UsePipes(ValidationPipe)
     public async resetPassword(
         @Body() resetPasswordForm: PasswordResetForm,
         @Res() res: Response,
@@ -235,7 +227,6 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Send the user an email with a verification code' })
     @ApiResponse({ status: 200, description: 'The email has been successfully sent' })
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
-    @UsePipes(ValidationPipe)
     public async sendEmailVerification(
         @Body() form: VerifyEmailForm,
         @Res() res: Response,
@@ -275,7 +266,6 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 200, description: '2FA enabled' })
     @ApiResponse({ status: 400, description: '2FA not setup or invalid verification code' })
     @UseGuards(JwtAuthGuard)
-    @UsePipes(ValidationPipe)
     public verify2FA(
         @Param('code') code: string,
         @CurrentUser() user: User,
@@ -299,7 +289,6 @@ export class AuthController extends BaseController {
 
     @Post('/2fa/disable')
     @UseGuards(JwtAuthGuard)
-    @UsePipes(ValidationPipe)
     @ApiOperation({ summary: 'Disable 2FA' })
     @ApiResponse({ status: 200, description: '2FA disabled or 2FA was never enabled' })
     public async disable2FA(@CurrentUser() user: User, @Res() res: Response): Promise<{ success: boolean }> {

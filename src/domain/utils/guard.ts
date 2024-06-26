@@ -17,6 +17,7 @@ export const GuardRegex = {
     POSTCODE_NL: /^\d{4}[A-Z]{2}$/,
     EMAIL: /\b[\w.-]+@[\w.-]+\.\w{2,4}\b/i,
     UUID: /[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/,
+    URL: /(?:https?):\/\/(?:www\.)?[^/\r\n]+/,
 };
 
 export interface GuardChecks {
@@ -30,6 +31,7 @@ export interface GuardChecks {
     max?: number; // Maximum value for numbers
     minDate?: Date; // Minimum value for Dates
     maxDate?: Date; // Maximum value for Dates
+    enum?: Record<string, string>; // Check string value against enum values
 }
 
 /**
@@ -84,6 +86,10 @@ export class Guard {
 
         if (checks.regex) {
             this.regex(value as string, checks.regex);
+        }
+
+        if (checks.enum && !checks.optional) {
+            this.checkEnum(value as string, checks.enum);
         }
     }
 
@@ -449,6 +455,19 @@ export class Guard {
         min = min ?? new Date();
         if (value && value < min) {
             throw new Error(`Date is too far in the past (before ${min.toISOString()})`);
+        }
+    }
+
+    /**
+     * Checks if the provided string is a valid enum entry
+     *
+     * @param value - The string to be checked.
+     * @param enumObj - The emum object to check the string against
+     * @throws {Error} - Throws an error if the string is not a valid entry in the provided enum
+     */
+    public static checkEnum(value: string, enumObj: Record<string, string>): void {
+        if (!Object.values(enumObj).includes(value)) {
+            throw new Error(`Value ${value} is not present in enum ${Object.values(enumObj).toString()}`);
         }
     }
 }

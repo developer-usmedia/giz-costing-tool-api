@@ -8,6 +8,7 @@ import { DomainModule } from '@domain/domain.module';
 import { AuthService } from '@domain/services/auth.service';
 import { BrevoService } from '@domain/services/email.service';
 import { EntryService } from '@domain/services/entry.service';
+import { ScenarioService } from '@domain/services/scenario.service';
 import { UserService } from '@domain/services/user.service';
 import { WorkerService } from '@domain/services/worker.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
@@ -46,6 +47,7 @@ import { UserController } from './controllers/user.controller';
         BrevoService,
         OTPService,
         JwtStrategy,
+        ScenarioService,
         RefreshJwtStrategy,
         {
             provide: APP_INTERCEPTOR,

@@ -7,27 +7,30 @@ import { UserService } from '@domain/services/user.service';
 import { WorkerService } from '@domain/services/worker.service';
 import { AuthService } from './services/auth.service';
 import { EntryService } from './services/entry.service';
+import { ScenarioService } from './services/scenario.service';
 
 Module({
     imports: [MikroOrmModule.forFeature(entities)],
     exports: [
-        WorkerService,
-        EntryService,
-        UserService,
         AuthService,
         BrevoService,
-        UserService,
         BrevoService,
+        EntryService,
+        ScenarioService,
+        UserService,
+        UserService,
+        WorkerService,
         WorkerService,
     ],
     providers: [
-        WorkerService,
-        EntryService,
-        UserService,
         AuthService,
         BrevoService,
-        UserService,
         BrevoService,
+        EntryService,
+        ScenarioService,
+        UserService,
+        UserService,
+        WorkerService,
         WorkerService,
     ],
 });

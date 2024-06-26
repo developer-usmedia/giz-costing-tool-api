@@ -7,6 +7,7 @@ import { Entry } from '@domain/entities/entry.entity';
 import { EntryBenchmarkDTO, EntryBenchmarkDTOFactory } from './entry-benchmark.dto';
 import { EntryFacilityDTO, EntryFacilityDTOFactory } from './entry-facility.dto';
 import { ENTRY_LINKS } from './entry.links';
+import { ScenarioDTO, ScenarioDTOFactory } from './scenario.dto';
 
 /**
  * API layer DTO used in the request response for entry endpoint
@@ -27,9 +28,12 @@ export interface EntryDTO extends HalResponse {
     defaultEmployeeTax: number;
     facility: EntryFacilityDTO;
     benchmark: EntryBenchmarkDTO;
+    scenario: ScenarioDTO;
     nrOfJobcategories: number;
     nrOfWorkers: number;
     nrOfWorkersBelowLW: number;
+    averageLwGap: number;
+    largestLwGap: number;
     createdAt: Date;
     updatedAt: Date;
     _links: {
@@ -62,7 +66,7 @@ export class EntryDTOFactory {
 const mapEntityToDTO = (entity: Entry): EntryDTO => {
     return {
         id: entity.id,
-        matrixId: entity.matrixId ?? null,
+        matrixId: entity.matrixId,
         verified: false,
         year: entity.year.toString(),
         status: entity.status,
@@ -71,9 +75,12 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
         defaultEmployerTax: entity.defaultEmployerTax,
         facility: EntryFacilityDTOFactory.fromEntity(entity.facility),
         benchmark: EntryBenchmarkDTOFactory.fromEntity(entity.benchmark),
+        scenario: ScenarioDTOFactory.fromEntity(entity.scenario),
         nrOfWorkers: entity.getNOfWorkers(),
         nrOfJobcategories: entity.getNOfJobCategories(),
         nrOfWorkersBelowLW: entity.getNOfWorkersBelowLW(),
+        averageLwGap: entity.averageLwGap,
+        largestLwGap: entity.largestLwGap,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
         _links: {

@@ -1,0 +1,4 @@
+export enum ScenarioType {
+    CLOSE_GAP = 'TYPE_CLOSE_GAP',
+    ABSOLUTE_INCREASE = 'TYPE_ABSOLUTE_INCREASE',
+}
