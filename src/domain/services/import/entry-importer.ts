@@ -1,9 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { Row, Workbook } from 'exceljs';
 
+import { EntryWorker } from '@domain/entities/entry-worker.entity';
 import { Entry } from '@domain/entities/entry.entity';
 import { User } from '@domain/entities/user.entity';
-import { Worker } from '@domain/entities/worker.entity';
 import {
     COLUMN_MAPPING_PAYROLL,
     INFO_SHEET_MAPPING,
@@ -13,9 +13,9 @@ import {
 } from '@domain/enums/import-column-mapping.enum';
 import { EntityValidationError } from '@domain/errors/entity-validation.error';
 import { EntryFactory } from '@domain/factories/entry.factory';
-import { WorkerFactory } from '@domain/factories/worker.factory';
+import { EntryWorkerFactory } from '@domain/factories/entry-worker.factory';
 import { EntryInfo } from '@domain/schemas/entry-info.schema';
-import { WorkerData } from '@domain/schemas/worker.schema';
+import { EntryWorkerData } from '@domain/schemas/entry-worker.schema';
 import { FileHelper } from '@domain/utils/file-helper';
 import { ImportValidationErrorDTOFactory, ImportValidationErrorDto } from './dto/import-validation.dto';
 import { parseFloatCell, parseGenderCell, parseIntCell } from './workbook-parse-helpers';
@@ -117,15 +117,15 @@ export class EntryImporter {
         });
     }
 
-    private createWorker(row: Row): Worker {
+    private createWorker(row: Row): EntryWorker {
         try {
             const workerData = this.convertRowToWorkerDto(row);
 
-            return WorkerFactory.createEntity(workerData, this.entry);
+            return EntryWorkerFactory.createEntity(workerData, this.entry);
         } catch (error: any) {
             if (error instanceof EntityValidationError) {
                 const errors = ImportValidationErrorDTOFactory.fromWorkerValidationErrors(
-                    error as EntityValidationError<Worker>,
+                    error as EntityValidationError<EntryWorker>,
                     SHEET_MAPPING.payroll,
                     row,
                 );
@@ -191,7 +191,7 @@ export class EntryImporter {
         };
     }
 
-    private readonly convertRowToWorkerDto = (row: Row): WorkerData => {
+    private readonly convertRowToWorkerDto = (row: Row): EntryWorkerData => {
         return {
             name: row.getCell(COLUMN_MAPPING_PAYROLL.name).text,
             gender: parseGenderCell(row.getCell(COLUMN_MAPPING_PAYROLL.gender).text),

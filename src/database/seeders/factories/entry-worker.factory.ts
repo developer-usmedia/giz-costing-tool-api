@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker';
 import { Factory } from '@mikro-orm/seeder';
 
-import { Worker } from '@domain/entities/worker.entity';
+import { EntryWorker } from '@domain/entities/entry-worker.entity';
 import { Gender } from '@domain/enums/gender.enum';
 
-export class WorkerFactory extends Factory<Worker> {
-    model = Worker;
+export class EntryWorkerFactory extends Factory<EntryWorker> {
+    model = EntryWorker;
 
-    definition(): Partial<Worker> {
+    definition(): Partial<EntryWorker> {
         return {
             name: faker.person.jobTitle(),
             gender: Math.random() < 0.5 ? Gender.Men : Gender.Women,

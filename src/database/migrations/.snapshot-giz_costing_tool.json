@@ -1053,11 +1053,11 @@
           "mappedType": "decimal"
         }
       },
-      "name": "giz_worker",
+      "name": "giz_entry_worker",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "giz_worker_pkey",
+          "keyName": "giz_entry_worker_pkey",
           "columnNames": [
             "id"
           ],
@@ -1069,12 +1069,12 @@
       ],
       "checks": [],
       "foreignKeys": {
-        "giz_worker_entry_id_foreign": {
-          "constraintName": "giz_worker_entry_id_foreign",
+        "giz_entry_worker_entry_id_foreign": {
+          "constraintName": "giz_entry_worker_entry_id_foreign",
           "columnNames": [
             "entry_id"
           ],
-          "localTableName": "public.giz_worker",
+          "localTableName": "public.giz_entry_worker",
           "referencedColumnNames": [
             "id"
           ],

@@ -7,10 +7,10 @@ import { entities } from '@database/mikro-orm.config';
 import { DomainModule } from '@domain/domain.module';
 import { AuthService } from '@domain/services/auth.service';
 import { BrevoService } from '@domain/services/email.service';
+import { EntryWorkerService } from '@domain/services/entry-worker.service';
 import { EntryService } from '@domain/services/entry.service';
 import { ScenarioService } from '@domain/services/scenario.service';
 import { UserService } from '@domain/services/user.service';
-import { WorkerService } from '@domain/services/worker.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -40,7 +40,7 @@ import { UserController } from './controllers/user.controller';
       EntryController,
     ],
     providers: [
-        WorkerService,
+        EntryWorkerService,
         EntryService,
         UserService,
         AuthService,

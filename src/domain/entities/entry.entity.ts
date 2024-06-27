@@ -4,7 +4,7 @@ import { EntryBenchmark } from '@domain/embeddables/entry-benchmark.embed';
 import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
 import { AbstractEntity } from '@domain/entities/base/abstract.entity';
 import { User } from '@domain/entities/user.entity';
-import { Worker } from '@domain/entities/worker.entity';
+import { EntryWorker } from '@domain/entities/entry-worker.entity';
 import { EntryStatus } from '@domain/enums/entry-status.enum';
 import { Guard } from '@domain/utils/guard';
 import { Scenario } from './scenario.entity';
@@ -30,8 +30,8 @@ export class Entry extends AbstractEntity<Entry> {
     private _benchmark: EntryBenchmark;
 
     // eslint-disable-next-line @typescript-eslint/dot-notation
-    @OneToMany({ entity: () => Worker, mappedBy: (worker) => worker['_entry'], nullable: true, eager: true })
-    private readonly _workers? = new Collection<Worker>(this);
+    @OneToMany({ entity: () => EntryWorker, mappedBy: (worker) => worker['_entry'], nullable: true, eager: true })
+    private readonly _workers? = new Collection<EntryWorker>(this);
 
     // eslint-disable-next-line @typescript-eslint/dot-notation
     @OneToOne({ entity: () => Scenario, mappedBy: (scenario) => scenario['_entry'], nullable: true, eager: true })
@@ -175,7 +175,7 @@ export class Entry extends AbstractEntity<Entry> {
         this._scenario = value;
     }
 
-    public addWorker(worker: Worker, { recalculateLwGaps = true }): void {
+    public addWorker(worker: EntryWorker, { recalculateLwGaps = true }): void {
         this._workers.add(worker);
 
         if (recalculateLwGaps) {

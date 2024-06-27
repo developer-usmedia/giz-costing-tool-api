@@ -4,7 +4,7 @@ import { GENDER_OPTIONS, Gender } from '@domain/enums/gender.enum';
 
 let schema: joi.ObjectSchema;
 
-export interface WorkerData {
+export interface EntryWorkerData {
     name: string;
     gender: Gender;
     numberOfWorkers: number;
@@ -20,7 +20,7 @@ export interface WorkerData {
     employerTax?: number;
 }
 
-const workerSchema = (): joi.ObjectSchema => {
+const entryWorkerSchema = (): joi.ObjectSchema => {
     schema = joi.object({
         name:                       joi.string().trim().max(255).required(),
         gender:                     joi.string().trim().valid(...GENDER_OPTIONS).required(),
@@ -40,4 +40,4 @@ const workerSchema = (): joi.ObjectSchema => {
     return schema;
 };
 
-export const getWorkerSchema = (): joi.ObjectSchema => schema || workerSchema();
+export const getEntryWorkerSchema = (): joi.ObjectSchema => schema || entryWorkerSchema();

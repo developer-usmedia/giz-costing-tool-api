@@ -1,20 +1,20 @@
 import { Logger } from '@nestjs/common';
 
 import { WorkerIKB } from '@domain/embeddables/worker-ikb.embed';
+import { EntryWorker } from '@domain/entities/entry-worker.entity';
 import { Entry } from '@domain/entities/entry.entity';
-import { Worker } from '@domain/entities/worker.entity';
 import { EntityValidationError } from '@domain/errors/entity-validation.error';
+import { EntryWorkerData, getEntryWorkerSchema } from '@domain/schemas/entry-worker.schema';
 import { ValidationResult } from '@domain/schemas/error/schema-validation.error';
-import { WorkerData, getWorkerSchema } from '@domain/schemas/worker.schema';
 import { validate } from '@domain/utils/validate';
 
-export class WorkerFactory {
-    private static readonly LOGGER = new Logger(WorkerFactory.name);
+export class EntryWorkerFactory {
+    private static readonly LOGGER = new Logger(EntryWorkerFactory.name);
 
-    public static createEntity(data: Record<string, any>, entry: Entry): Worker {
-        const { value } = WorkerFactory.validate(data);
+    public static createEntity(data: Record<string, any>, entry: Entry): EntryWorker {
+        const { value } = EntryWorkerFactory.validate(data);
 
-        return new Worker({
+        return new EntryWorker({
             entry: entry,
             name: value.name,
             gender: value.gender,
@@ -34,14 +34,14 @@ export class WorkerFactory {
         });
     }
 
-    public static validate(data: Record<string, any>): ValidationResult<WorkerData> {
-        const schema = getWorkerSchema();
-        const result = validate<WorkerData>(schema, data);
+    public static validate(data: Record<string, any>): ValidationResult<EntryWorkerData> {
+        const schema = getEntryWorkerSchema();
+        const result = validate<EntryWorkerData>(schema, data);
 
         if (!result.isValid && result.errors?.length) {
 
-            WorkerFactory.LOGGER.error('Validation failed ', data);
-            WorkerFactory.LOGGER.debug('Errors: ', result.errors);
+            EntryWorkerFactory.LOGGER.error('Validation failed ', data);
+            EntryWorkerFactory.LOGGER.debug('Errors: ', result.errors);
 
             throw new EntityValidationError('Worker entity validation failed', result);
         }

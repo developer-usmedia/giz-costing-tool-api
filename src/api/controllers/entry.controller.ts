@@ -18,23 +18,23 @@ import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
 import { BaseController } from '@api/controllers/base.controller';
 import { EntryCreateForm } from '@api/dto/entry-create.form';
 import { EntryUpdateForm } from '@api/dto/entry-update.form';
+import { EntryWorkerDTOFactory, EntryWorkerListResponse } from '@api/dto/entry-worker.dto';
 import { EntryDTOFactory, EntryListResponse, EntryResponse } from '@api/dto/entry.dto';
 import { ScenarioCreateForm } from '@api/dto/scenario-create.form';
 import { ScenarioUpdateForm } from '@api/dto/scenario-update.form';
-import { WorkerDTOFactory, WorkerListResponse } from '@api/dto/worker.dto';
 import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
 import { PagingParams, Sort } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Paging } from '@api/paging/paging.decorator';
+import { EntryWorker } from '@domain/entities/entry-worker.entity';
 import { Entry } from '@domain/entities/entry.entity';
 import { User } from '@domain/entities/user.entity';
-import { Worker } from '@domain/entities/worker.entity';
+import { EntryWorkerService } from '@domain/services/entry-worker.service';
 import { EntryService } from '@domain/services/entry.service';
 import { EntryImportException } from '@domain/services/import/dto/import-validation.dto';
 import { EntryImporter } from '@domain/services/import/entry-importer';
 import { ScenarioService } from '@domain/services/scenario.service';
 import { UserService } from '@domain/services/user.service';
-import { WorkerService } from '@domain/services/worker.service';
 import { FileHelper } from '@domain/utils/file-helper';
 
 @ApiTags('entries')
@@ -43,7 +43,7 @@ export class EntryController extends BaseController {
     constructor(
         private readonly userService: UserService,
         private readonly entryService: EntryService,
-        private readonly workerService: WorkerService,
+        private readonly workerService: EntryWorkerService,
         private readonly scenarioService: ScenarioService,
     ) {
         super();
@@ -120,14 +120,14 @@ export class EntryController extends BaseController {
     @UseGuards(JwtAuthGuard)
     public async workers(
         @Param('id', ParseUUIDPipe) entryId: string,
-        @Paging('Worker', PagingValidationPipe) paging: PagingParams<Worker>,
-    ): Promise<WorkerListResponse> {
+        @Paging('EntryWorker', PagingValidationPipe) paging: PagingParams<EntryWorker>,
+    ): Promise<EntryWorkerListResponse> {
         const entry = await this.entryService.findOneByUid(entryId);
         paging.filter = { ...paging.filter, _entry: entry.id } as any; // TODO: this needs fixing
         const [workers, count] = await this.workerService.findManyPaged(paging);
 
         // TODO: check hateaos links on this endpoint
-        return WorkerDTOFactory.fromCollection(workers, count, paging);
+        return EntryWorkerDTOFactory.fromCollection(workers, count, paging);
     }
 
     @Post('/:id/scenario')

@@ -3,7 +3,6 @@ import { HealthCheck, HealthCheckResult, HealthCheckService } from '@nestjs/term
 
 import { ENTRY_LINKS } from '@api/dto/entry.links';
 import { USER_LINKS } from '@api/dto/user.links';
-import { WORKER_LINKS } from '@api/dto/worker.links';
 import { environment } from './environment';
 
 @Controller()
@@ -17,7 +16,6 @@ export class AppController {
                 self: { href: `${ environment.api.url }/` },
                 users: USER_LINKS.users,
                 entries: ENTRY_LINKS.entries,
-                workers: WORKER_LINKS.workers,
             },
         };
     }

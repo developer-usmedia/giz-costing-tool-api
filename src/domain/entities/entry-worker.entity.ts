@@ -7,7 +7,7 @@ import { Gender } from '@domain/enums/gender.enum';
 import { Guard } from '@domain/utils/guard';
 
 @Entity()
-export class Worker extends AbstractEntity<Worker> {
+export class EntryWorker extends AbstractEntity<EntryWorker> {
     @ManyToOne(() => Entry, { deleteRule: 'cascade', eager: true })
     private _entry: Entry;
 

@@ -3,9 +3,9 @@ import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
 import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
-import { Worker } from '@domain/entities/worker.entity';
+import { EntryWorker } from '@domain/entities/entry-worker.entity';
 import { Gender } from '@domain/enums/gender.enum';
-import { WORKER_LINKS } from './worker.links';
+import { ENTRY_WORKER_LINKS } from './entry-worker.links';
 
 /**
  * API layer DTO used in the request response for the workers endpoint
@@ -15,7 +15,7 @@ import { WORKER_LINKS } from './worker.links';
  * - Contains factory class that converts DB layer entity to response
  */
 
-export interface WorkerDTO extends HalResponse {
+export interface EntryWorkerDTO extends HalResponse {
     id: string;
     entryId: string;
     name: string;
@@ -31,30 +31,30 @@ export interface WorkerDTO extends HalResponse {
     };
 }
 
-export interface WorkerListResponse extends CollectionResponse<{ workers: WorkerDTO[] }> {}
-export interface WorkerResponse extends EntityResponse<WorkerDTO> {}
+export interface EntryWorkerListResponse extends CollectionResponse<{ workers: EntryWorkerDTO[] }> {}
+export interface EntryWorkerResponse extends EntityResponse<EntryWorkerDTO> {}
 
-export class WorkerDTOFactory {
-    public static fromEntity(entity: Worker): WorkerResponse {
+export class EntryWorkerDTOFactory {
+    public static fromEntity(entity: EntryWorker): EntryWorkerResponse {
         return mapEntityToDTO(entity);
     }
 
     public static fromCollection(
-        collection: Worker[],
+        collection: EntryWorker[],
         count: number,
-        paging: PagingParams<Worker>,
-    ): WorkerListResponse {
+        paging: PagingParams<EntryWorker>,
+    ): EntryWorkerListResponse {
         return {
             _embedded: {
                 workers: collection.map(mapEntityToDTO),
             },
-            _links: generatePaginationLinks(WORKER_LINKS.workers, count, paging),
+            _links: generatePaginationLinks(ENTRY_WORKER_LINKS.workers, count, paging),
             paging: { index: paging.index, size: paging.size, totalEntities: count, totalPages: Math.ceil(count / paging.size) },
         };
     }
 }
 
-const mapEntityToDTO = (entity: Worker): WorkerDTO => {
+const mapEntityToDTO = (entity: EntryWorker): EntryWorkerDTO => {
     return {
         id: entity.id,
         entryId: entity.entry.id,
@@ -67,7 +67,7 @@ const mapEntityToDTO = (entity: Worker): WorkerDTO => {
         employeeTax: entity.employeeTax,
         employerTax: entity.employerTax,
         _links: {
-            self: { href: resolveLink(WORKER_LINKS.worker, { workerId: entity.id }) },
+            self: { href: resolveLink(ENTRY_WORKER_LINKS.worker, { workerId: entity.id }) },
         },
     };
 };

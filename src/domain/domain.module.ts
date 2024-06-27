@@ -3,8 +3,8 @@ import { Module } from '@nestjs/common';
 
 import { entities } from '@database/mikro-orm.config';
 import { BrevoService } from '@domain/services/email.service';
+import { EntryWorkerService } from '@domain/services/entry-worker.service';
 import { UserService } from '@domain/services/user.service';
-import { WorkerService } from '@domain/services/worker.service';
 import { AuthService } from './services/auth.service';
 import { EntryService } from './services/entry.service';
 import { ScenarioService } from './services/scenario.service';
@@ -16,22 +16,20 @@ Module({
         BrevoService,
         BrevoService,
         EntryService,
+        EntryWorkerService,
         ScenarioService,
         UserService,
         UserService,
-        WorkerService,
-        WorkerService,
     ],
     providers: [
         AuthService,
         BrevoService,
         BrevoService,
         EntryService,
+        EntryWorkerService,
         ScenarioService,
         UserService,
         UserService,
-        WorkerService,
-        WorkerService,
     ],
 });
 export class DomainModule {}

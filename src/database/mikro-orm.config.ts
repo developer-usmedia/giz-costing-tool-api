@@ -14,10 +14,10 @@ import { ScenarioSpecification } from '@domain/embeddables/scenario-specificatio
 import { VerificationCode } from '@domain/embeddables/verification-code.embed';
 import { WorkerIKB } from '@domain/embeddables/worker-ikb.embed';
 import { Benchmark } from '@domain/entities/benchmark.entity';
+import { EntryWorker } from '@domain/entities/entry-worker.entity';
 import { Entry } from '@domain/entities/entry.entity';
 import { Scenario } from '@domain/entities/scenario.entity';
 import { User } from '@domain/entities/user.entity';
-import { Worker } from '@domain/entities/worker.entity';
 
 export const entities = [
     User,
@@ -25,9 +25,9 @@ export const entities = [
     Entry,
     EntryBenchmark,
     EntryFacility,
+    EntryWorker,
     Scenario,
     ScenarioSpecification,
-    Worker,
     WorkerIKB,
     Benchmark,
 ];
