@@ -1,10 +1,11 @@
-import { Embedded, Entity, Enum, OneToOne } from '@mikro-orm/core';
+import { Collection, Embedded, Entity, Enum, OneToMany, OneToOne, Property } from '@mikro-orm/core';
 
 import { ScenarioSpecification } from '@domain/embeddables/scenario-specification.embed';
 import { AbstractEntity } from '@domain/entities/base/abstract.entity';
 import { ScenarioType } from '@domain/enums/scenario-type.enum';
 import { Guard } from '@domain/utils/guard';
 import { Entry } from './entry.entity';
+import { ScenarioWorker } from './scenario-worker.entity';
 
 @Entity()
 export class Scenario extends AbstractEntity<Scenario> {
@@ -18,7 +19,16 @@ export class Scenario extends AbstractEntity<Scenario> {
     private _specifications: ScenarioSpecification;
 
     // Distribution specs embed
-    // ScenarioWorkers collecion
+
+    @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true }) // TODO: fix double underscore in column name
+    private _averageLwGap: number;
+
+    @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true })
+    private _largestLwGap: number;
+
+    // eslint-disable-next-line @typescript-eslint/dot-notation
+    @OneToMany({ entity: () => ScenarioWorker, mappedBy: (worker) => worker['_scenario'], eager: true })
+    private readonly _workers? = new Collection<ScenarioWorker>(this);
 
     constructor(props: {
         type: ScenarioType;
@@ -36,7 +46,7 @@ export class Scenario extends AbstractEntity<Scenario> {
             this._specifications = new ScenarioSpecification({});
         }
 
-        // Take over 'Workers' to create ScenarioWorkers
+        this.importWorkers();
     }
 
     get entry() {
@@ -47,6 +57,12 @@ export class Scenario extends AbstractEntity<Scenario> {
     }
     get specifications() {
         return this._specifications;
+    }
+    get averageLwGap() {
+        return this._averageLwGap;
+    }
+    get largestLwGap() {
+        return this._largestLwGap;
     }
 
     set entry(value: Entry) {
@@ -62,5 +78,31 @@ export class Scenario extends AbstractEntity<Scenario> {
     set specifications(value: ScenarioSpecification) {
         Guard.check(value, { type: 'object', optional: true, allowEmpty: true });
         this._specifications = value;
+    }
+
+    set averageLwGap(value: number) {
+        Guard.check(value, { type: 'number', min: 0 });
+        this._averageLwGap = value;
+    }
+
+    set largestLwGap(value: number) {
+        Guard.check(value, { type: 'number', min: 0 });
+        this._largestLwGap = value;
+    }
+
+    // TODO: move to service and instantiate with scenario calculation value
+    public importWorkers(): void {
+        if (this.entry.workers.length <= 0) {
+            return;
+        }
+
+        for (const worker of this.entry.workers) {
+            const scenarioWorker = new ScenarioWorker({
+                scenario: this,
+                worker: worker,
+            });
+
+            this._workers.add(scenarioWorker);
+        }
     }
 }

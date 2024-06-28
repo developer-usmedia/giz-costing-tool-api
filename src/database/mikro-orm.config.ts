@@ -16,6 +16,7 @@ import { WorkerIKB } from '@domain/embeddables/worker-ikb.embed';
 import { Benchmark } from '@domain/entities/benchmark.entity';
 import { EntryWorker } from '@domain/entities/entry-worker.entity';
 import { Entry } from '@domain/entities/entry.entity';
+import { ScenarioWorker } from '@domain/entities/scenario-worker.entity';
 import { Scenario } from '@domain/entities/scenario.entity';
 import { User } from '@domain/entities/user.entity';
 
@@ -28,6 +29,7 @@ export const entities = [
     EntryWorker,
     Scenario,
     ScenarioSpecification,
+    ScenarioWorker,
     WorkerIKB,
     Benchmark,
 ];

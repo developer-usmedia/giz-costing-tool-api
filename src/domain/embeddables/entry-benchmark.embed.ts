@@ -20,8 +20,8 @@ export class EntryBenchmark {
     @Property({ length: 100, nullable: true, default: null })
     currencyName?: string;
 
-    @Property({ columnType: 'numeric(19,4)', nullable: true, default: null })
-    localValue?: number;
+    @Property({ columnType: 'numeric(19,4)' })
+    localValue: number;
 
     constructor(props: {
         name?: string;
@@ -40,6 +40,6 @@ export class EntryBenchmark {
 
         this.currencyCode = props.currencyCode;
         this.currencyName = props.currencyName;
-        this.localValue = props.localValue;
+        this.localValue = props.localValue ?? 0;
     }
 }

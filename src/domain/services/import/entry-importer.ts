@@ -12,8 +12,8 @@ import {
     SHEET_PAYROLL_START_ROW,
 } from '@domain/enums/import-column-mapping.enum';
 import { EntityValidationError } from '@domain/errors/entity-validation.error';
-import { EntryFactory } from '@domain/factories/entry.factory';
 import { EntryWorkerFactory } from '@domain/factories/entry-worker.factory';
+import { EntryFactory } from '@domain/factories/entry.factory';
 import { EntryInfo } from '@domain/schemas/entry-info.schema';
 import { EntryWorkerData } from '@domain/schemas/entry-worker.schema';
 import { FileHelper } from '@domain/utils/file-helper';
@@ -60,11 +60,11 @@ export class EntryImporter {
         }
 
         await this.processRows();
-        this.entry.calculcateLwGaps();
 
         // Temp way to get benchmark value from sheet.
         // Sheet has value set for each worker instead of on the information sheet. A change to the excel is required
         this.entry.benchmark.localValue = this.benchmarkValue;
+        this.entry.finalizeImport();
 
         return this.entry;
     }

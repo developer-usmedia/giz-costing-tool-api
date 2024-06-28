@@ -1,7 +1,7 @@
 @host=localhost
 @port=3000
 @endpoint=entries
-@entryId=4cb01f9e-9506-4d52-9d4e-0eb7e329114a
+@entryId=297eaab9-dd81-481c-a3a5-d63596ccd663
 
 ### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}

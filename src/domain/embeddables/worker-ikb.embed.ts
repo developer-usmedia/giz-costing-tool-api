@@ -4,20 +4,23 @@ import { Embeddable, Property } from '@mikro-orm/core';
 
 @Embeddable()
 export class WorkerIKB {
-    @Property({ default: 0, columnType: 'numeric(19,4)', nullable: true })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true })
     ikbFood?: number;
 
-    @Property({ default: 0, columnType: 'numeric(19,4)', nullable: true })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true })
     ikbTransportation?: number;
 
-    @Property({ default: 0, columnType: 'numeric(19,4)', nullable: true })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true })
     ikbHousing?: number;
 
-    @Property({ default: 0, columnType: 'numeric(19,4)', nullable: true })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true })
     ikbHealthcare?: number;
 
-    @Property({ default: 0, columnType: 'numeric(19,4)', nullable: true })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true })
     ikbChildcare?: number;
+
+    @Property({ columnType: 'numeric(12,4)', unsigned: true })
+    ikbChildEducation?: number;
 
     constructor(props: {
         ikbFood?: number;
@@ -25,19 +28,22 @@ export class WorkerIKB {
         ikbHousing?: number;
         ikbHealthcare?: number;
         ikbChildcare?: number;
+        ikbChildEducation?: number;
     }) {
         this.ikbFood = props.ikbFood ?? 0;
         this.ikbTransportation = props.ikbTransportation ?? 0;
         this.ikbHousing = props.ikbHousing ?? 0;
-        this.ikbChildcare = props.ikbChildcare ?? 0;
         this.ikbHealthcare = props.ikbHealthcare ?? 0;
+        this.ikbChildcare = props.ikbChildcare ?? 0;
+        this.ikbChildEducation = props.ikbChildEducation ?? 0;
     }
 
-    public getTotal(): number {
+    get sumAll(): number {
         return this.ikbFood + 
                 this.ikbTransportation + 
                 this.ikbHousing + 
                 this.ikbHealthcare + 
-                this.ikbChildcare;
+                this.ikbChildcare + 
+                this.ikbChildEducation;
     }
 }

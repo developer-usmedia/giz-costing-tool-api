@@ -607,10 +607,9 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
           "precision": 19,
           "scale": 4,
-          "default": "null",
           "mappedType": "decimal"
         },
         "default_employer_tax": {
@@ -805,6 +804,28 @@
           "scale": 4,
           "default": "0",
           "mappedType": "decimal"
+        },
+        "average_lw_gap": {
+          "name": "average_lw_gap",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "mappedType": "decimal"
+        },
+        "largest_lw_gap": {
+          "name": "largest_lw_gap",
+          "type": "numeric(19,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 19,
+          "scale": 4,
+          "mappedType": "decimal"
         }
       },
       "name": "giz_scenario",
@@ -994,62 +1015,68 @@
         },
         "ikb_food": {
           "name": "ikb_food",
-          "type": "numeric(19,4)",
+          "type": "numeric(12,4)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
-          "precision": 19,
+          "nullable": false,
+          "precision": 12,
           "scale": 4,
-          "default": "0",
           "mappedType": "decimal"
         },
         "ikb_transportation": {
           "name": "ikb_transportation",
-          "type": "numeric(19,4)",
+          "type": "numeric(12,4)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
-          "precision": 19,
+          "nullable": false,
+          "precision": 12,
           "scale": 4,
-          "default": "0",
           "mappedType": "decimal"
         },
         "ikb_housing": {
           "name": "ikb_housing",
-          "type": "numeric(19,4)",
+          "type": "numeric(12,4)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
-          "precision": 19,
+          "nullable": false,
+          "precision": 12,
           "scale": 4,
-          "default": "0",
           "mappedType": "decimal"
         },
         "ikb_healthcare": {
           "name": "ikb_healthcare",
-          "type": "numeric(19,4)",
+          "type": "numeric(12,4)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
-          "precision": 19,
+          "nullable": false,
+          "precision": 12,
           "scale": 4,
-          "default": "0",
           "mappedType": "decimal"
         },
         "ikb_childcare": {
           "name": "ikb_childcare",
-          "type": "numeric(19,4)",
+          "type": "numeric(12,4)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
-          "precision": 19,
+          "nullable": false,
+          "precision": 12,
           "scale": 4,
-          "default": "0",
+          "mappedType": "decimal"
+        },
+        "ikb_child_education": {
+          "name": "ikb_child_education",
+          "type": "numeric(12,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "precision": 12,
+          "scale": 4,
           "mappedType": "decimal"
         }
       },
@@ -1079,6 +1106,125 @@
             "id"
           ],
           "referencedTableName": "public.giz_entry",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        }
+      },
+      "nativeEnums": {}
+    },
+    {
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "uuid_generate_v4()",
+          "mappedType": "uuid"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
+        "version": {
+          "name": "version",
+          "type": "int",
+          "unsigned": true,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "default": "1",
+          "mappedType": "integer"
+        },
+        "scenario_id": {
+          "name": "scenario_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "original_id": {
+          "name": "original_id",
+          "type": "uuid",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": false,
+          "mappedType": "uuid"
+        },
+        "remuneration_increase": {
+          "name": "remuneration_increase",
+          "type": "numeric(12,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 12,
+          "scale": 4,
+          "mappedType": "decimal"
+        }
+      },
+      "name": "giz_scenario_worker",
+      "schema": "public",
+      "indexes": [
+        {
+          "keyName": "giz_scenario_worker_pkey",
+          "columnNames": [
+            "id"
+          ],
+          "composite": false,
+          "constraint": true,
+          "primary": true,
+          "unique": true
+        }
+      ],
+      "checks": [],
+      "foreignKeys": {
+        "giz_scenario_worker_scenario_id_foreign": {
+          "constraintName": "giz_scenario_worker_scenario_id_foreign",
+          "columnNames": [
+            "scenario_id"
+          ],
+          "localTableName": "public.giz_scenario_worker",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.giz_scenario",
+          "deleteRule": "cascade",
+          "updateRule": "cascade"
+        },
+        "giz_scenario_worker_original_id_foreign": {
+          "constraintName": "giz_scenario_worker_original_id_foreign",
+          "columnNames": [
+            "original_id"
+          ],
+          "localTableName": "public.giz_scenario_worker",
+          "referencedColumnNames": [
+            "id"
+          ],
+          "referencedTableName": "public.giz_entry_worker",
           "deleteRule": "cascade",
           "updateRule": "cascade"
         }

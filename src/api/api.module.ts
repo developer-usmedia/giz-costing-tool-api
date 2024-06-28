@@ -9,6 +9,7 @@ import { AuthService } from '@domain/services/auth.service';
 import { BrevoService } from '@domain/services/email.service';
 import { EntryWorkerService } from '@domain/services/entry-worker.service';
 import { EntryService } from '@domain/services/entry.service';
+import { ScenarioWorkerService } from '@domain/services/scenario-worker.service';
 import { ScenarioService } from '@domain/services/scenario.service';
 import { UserService } from '@domain/services/user.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
@@ -19,6 +20,7 @@ import { JwtStrategy } from './auth/jwt/jwt.strategy';
 import { OTPService } from './auth/service/otp.service';
 import { AuthController } from './controllers/auth.controller';
 import { EntryController } from './controllers/entry.controller';
+import { ScenarioController } from './controllers/scenario.controller';
 import { UserController } from './controllers/user.controller';
 
 @Module({
@@ -38,6 +40,7 @@ import { UserController } from './controllers/user.controller';
       AuthController,
       UserController,
       EntryController,
+      ScenarioController,
     ],
     providers: [
         EntryWorkerService,
@@ -48,6 +51,7 @@ import { UserController } from './controllers/user.controller';
         OTPService,
         JwtStrategy,
         ScenarioService,
+        ScenarioWorkerService,
         RefreshJwtStrategy,
         {
             provide: APP_INTERCEPTOR,

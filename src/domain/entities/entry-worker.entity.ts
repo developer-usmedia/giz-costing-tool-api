@@ -26,17 +26,17 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
     @Property({ columnType: 'numeric(8,2)' })
     private _monthlyBonus: number;
 
-    @Property({ columnType: 'numeric(5,2)', length: 3 })
+    @Property({ columnType: 'numeric(5,2)' })
     private _percentageOfYearWorked: number;
 
-    @Property({ columnType: 'numeric(5,2)', length: 3 })
+    @Property({ columnType: 'numeric(5,2)' })
     private _employeeTax: number;
 
-    @Property({ columnType: 'numeric(5,2)', length: 3 })
+    @Property({ columnType: 'numeric(5,2)' })
     private _employerTax: number;
 
     @Embedded({ entity: () => WorkerIKB, prefix: false })
-    private _inKindBenefits?: WorkerIKB;
+    private _monthlyIkb?: WorkerIKB;
 
     constructor(props: {
         entry: Entry;
@@ -93,7 +93,13 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
         return this._employerTax;
     }
     get inKindBenefits() {
-        return this._inKindBenefits;
+        return this._monthlyIkb;
+    }
+    get totalRenumeration(): number {
+        return this.monthlyWage + this.monthlyBonus + this.inKindBenefits.sumAll;
+    }
+    get isBelowLW(): boolean {
+        return this.entry?.benchmark?.localValue > this.totalRenumeration;
     }
 
     set entry(value: Entry) {
@@ -137,16 +143,6 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
     }
     set inKindBenefits(value: WorkerIKB) {
         Guard.check(value, { type: 'object' });
-        this._inKindBenefits = value;
-    }
-
-    public isBelowLW(): boolean {
-        // Is called after deleten to render repsonse -> fix
-        return (this.entry?.benchmark?.localValue ?? 0) > this.getTotalRenumeration();
-    }
-
-    public getTotalRenumeration(): number {
-        // Total monthly bonus + total monthly IKB + total monthly wage
-        return this.monthlyWage + this.monthlyBonus + this.inKindBenefits.getTotal();
+        this._monthlyIkb = value;
     }
 }

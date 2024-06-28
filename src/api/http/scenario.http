@@ -1,0 +1,16 @@
+@host=localhost
+@port=3000
+@endpoint=scenarios
+@scenarioId=f79ee8ad-0fce-40f7-acc9-096be6450c45
+@workerId=85ea12f6-ec8b-4a6c-8fa0-a447276c84f9
+
+# TODO use url from rest client settings
+
+### Get workers
+GET http://{{host}}:{{port}}/api/{{endpoint}}/{{scenarioId}}/workers
+Authorization: Bearer {{token}}
+
+
+### Get worker by id
+GET http://{{host}}:{{port}}/api/{{endpoint}}/{{scenarioId}}/workers/{{workerId}}
+Authorization: Bearer {{token}}

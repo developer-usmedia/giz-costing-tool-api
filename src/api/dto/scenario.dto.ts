@@ -12,6 +12,16 @@ export interface ScenarioDTO extends HalResponse {
         absoluteIncrease: number;
     };
     distributions?: Record<string, any>; // Implemented later
+    calculations?: {
+        // TODO: implemented & verified later-> data is used in report page
+        wageGap: number;
+        labourCosts: number;
+        overheadCosts: number;
+        totalAdditionalCosts: number;
+        additionalCostsPerUnit: number;
+        employeesBelowLw: number;
+        averageLwGap: number;
+    };
     createdAt: Date;
     updatedAt: Date;
 }
@@ -23,8 +33,8 @@ export class ScenarioDTOFactory {
 }
 
 const mapEntityToDTO = (entity: Scenario): ScenarioDTO => {
-    if(!entity) return null;
-    
+    if (!entity) return null;
+
     const specs = entity.specifications;
 
     return {
@@ -37,6 +47,7 @@ const mapEntityToDTO = (entity: Scenario): ScenarioDTO => {
             absoluteIncrease: specs.absoluteIncrease,
         },
         distributions: null,
+        calculations: null,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
         _links: {

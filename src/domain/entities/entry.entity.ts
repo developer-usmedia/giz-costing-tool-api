@@ -3,8 +3,8 @@ import { Collection, Embedded, Entity, Enum, ManyToOne, OneToMany, OneToOne, Pro
 import { EntryBenchmark } from '@domain/embeddables/entry-benchmark.embed';
 import { EntryFacility } from '@domain/embeddables/entry-facility.embed';
 import { AbstractEntity } from '@domain/entities/base/abstract.entity';
-import { User } from '@domain/entities/user.entity';
 import { EntryWorker } from '@domain/entities/entry-worker.entity';
+import { User } from '@domain/entities/user.entity';
 import { EntryStatus } from '@domain/enums/entry-status.enum';
 import { Guard } from '@domain/utils/guard';
 import { Scenario } from './scenario.entity';
@@ -46,7 +46,7 @@ export class Entry extends AbstractEntity<Entry> {
     @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true, default: 0 })
     private _administrativeCosts: number;
 
-    @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true })
+    @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true }) // TODO: fix double underscore in column name
     private _averageLwGap: number;
 
     @Property({ columnType: 'numeric(19,4)', unsigned: true, nullable: true })
@@ -59,6 +59,8 @@ export class Entry extends AbstractEntity<Entry> {
         matrixId?: string;
         status?: EntryStatus;
         benchmark?: EntryBenchmark;
+        averageLwGap?: number;
+        largestLwGap?: number;
     }) {
         super();
         this.matrixId = props.matrixId;
@@ -68,6 +70,9 @@ export class Entry extends AbstractEntity<Entry> {
 
         this.status = props.status ?? EntryStatus.OPEN;
         this.benchmark = props.benchmark ?? new EntryBenchmark({});
+
+        this._averageLwGap = props.averageLwGap;
+        this._largestLwGap = props.largestLwGap;
 
         this.calculcateLwGaps();
     }
@@ -160,6 +165,11 @@ export class Entry extends AbstractEntity<Entry> {
         this._administrativeCosts = value;
     }
 
+    set scenario(value: Scenario) {
+        Guard.check(value, { type: 'object', optional: true });
+        this._scenario = value;
+    }
+
     set averageLwGap(value: number) {
         Guard.check(value, { type: 'number', min: 0 });
         this._averageLwGap = value;
@@ -170,11 +180,6 @@ export class Entry extends AbstractEntity<Entry> {
         this._largestLwGap = value;
     }
 
-    set scenario(value: Scenario) {
-        Guard.check(value, { type: 'object', optional: true });
-        this._scenario = value;
-    }
-
     public addWorker(worker: EntryWorker, { recalculateLwGaps = true }): void {
         this._workers.add(worker);
 
@@ -183,25 +188,27 @@ export class Entry extends AbstractEntity<Entry> {
         }
     }
 
+    // These are calculations that loop over relation -> move to service
     public getNOfJobCategories(): number {
         return new Set(this.workers?.map((worker) => worker.name)).size;
     }
 
     public getNOfWorkersBelowLW(): number {
-        return this.workers?.filter((w) => w.isBelowLW()).length;
+        return this.workers?.filter((w) => w.isBelowLW).length;
     }
 
     public getNOfWorkers(): number {
         return this.workers?.reduce((counter, worker) => worker.numberOfWorkers + counter, 0) ?? 0;
     }
+
     public calculcateLwGaps(): void {
         if (!this.workers.length) {
             return;
         }
 
-        const benchmarkValue = this.benchmark.localValue ?? 0;
+        const benchmarkValue = this.benchmark.localValue;
         const lwGaps = this.workers
-            ?.map((worker) => worker.getTotalRenumeration())
+            ?.map((worker) => worker.totalRenumeration)
             .filter((value) => value < benchmarkValue)
             .map((value) => benchmarkValue - value);
 
@@ -210,5 +217,9 @@ export class Entry extends AbstractEntity<Entry> {
 
         this.averageLwGap = avg;
         this.largestLwGap = largest;
+    }
+
+    public finalizeImport(): void {
+        this.calculcateLwGaps();
     }
 }
