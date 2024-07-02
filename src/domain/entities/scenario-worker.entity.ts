@@ -33,7 +33,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
 
         this._scenario = props.scenario;
         this._original = props.worker;
-        this.remunerationIncrease = props.remunerationIncrease;
+        this.remunerationIncrease = props.remunerationIncrease ?? 0;
     }
 
     get scenario() {
