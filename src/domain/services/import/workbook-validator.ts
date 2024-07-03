@@ -37,7 +37,7 @@ export class WorkbookValidator {
         }
 
         const templateVersion = infoSheet.getCell(INFO_SHEET_MAPPING.templateVersion);
-        if (templateVersion.value !== this.ACCEPTED_VERSION) {
+        if (templateVersion.text !== this.ACCEPTED_VERSION) {
             this.errors.push({
                 sheetIndex: SHEET_MAPPING.info,
                 rowIndex: Number(templateVersion.row),

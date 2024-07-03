@@ -19,6 +19,7 @@ export interface EntryInfo {
 
 const entryInfoSchema = (): joi.ObjectSchema => {
     schema = joi.object({
+        matrixId:               joi.string().trim().max(255).required(),
         facilityName:           joi.string().trim().max(255).required(),
         facilityId:             joi.string().trim().max(255).required(),
         benchmarkName:          joi.string().trim().max(255).required(),

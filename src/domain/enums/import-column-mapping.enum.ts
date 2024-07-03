@@ -11,17 +11,18 @@ export const INFO_SHEET_COLUMN = 'B';
 // and column string gives me an error while reading
 // This means that info sheet errors will have the 'B' in their row index
 export const INFO_SHEET_MAPPING = {
-    templateVersion: 'B21',
-    facilityName: 'B1',
-    facilityId: 'B2',
-    benchmarkName: 'B19',
-    country: 'B6',
-    region: 'B7',
-    annualProduction: 'B10',
-    unitOfProduction: 'B13',
-    productName: 'B16',
-    year: 'B17',
-    currencyCode: 'B18',
+    matrixId: 'B1',
+    facilityName: 'B2',
+    facilityId: 'B3',
+    templateVersion: 'B22',
+    benchmarkName: 'B20',
+    country: 'B7',
+    region: 'B8',
+    annualProduction: 'B11',
+    unitOfProduction: 'B14',
+    productName: 'B17',
+    year: 'B18',
+    currencyCode: 'B19',
     countryCode: '-1',
 } as const;
 

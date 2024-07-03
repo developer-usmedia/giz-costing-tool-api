@@ -177,7 +177,7 @@ export class EntryImporter {
 
         // TODO: Both null values need to be added to the info sheet of idh excel import
         return {
-            matrixId: null,
+            matrixId: infoSheet.getCell(INFO_SHEET_MAPPING.matrixId).text,
             facilityName: infoSheet.getCell(INFO_SHEET_MAPPING.facilityName).text,
             facilityId: infoSheet.getCell(INFO_SHEET_MAPPING.facilityId).text,
             benchmarkName: infoSheet.getCell(INFO_SHEET_MAPPING.benchmarkName).text,
