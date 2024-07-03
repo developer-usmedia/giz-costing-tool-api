@@ -1,7 +1,7 @@
 import { HalResponse } from '@api/paging/paging-response';
-import { Scenario } from '@domain/entities/scenario.entity';
-import { ScenarioType } from '@domain/enums/scenario-type.enum';
+import { Scenario, ScenarioType } from '@domain/entities';
 
+// TODO: This DTO needs an update
 export interface ScenarioDTO extends HalResponse {
     id: string;
     type: ScenarioType;
@@ -35,16 +35,16 @@ export class ScenarioDTOFactory {
 const mapEntityToDTO = (entity: Scenario): ScenarioDTO => {
     if (!entity) return null;
 
-    const specs = entity.specifications;
+    const specs = entity.specs;
 
     return {
         id: entity.id,
         type: entity.type,
         entryId: entity.entry.id,
         specifications: {
-            employeeTax: specs.employeeTax,
-            employerTax: specs.employerTax,
-            absoluteIncrease: specs.absoluteIncrease,
+            employeeTax: specs.taxEmployee,
+            employerTax: specs.taxEmployer,
+            absoluteIncrease: specs.remunerationIncrease,
         },
         distributions: null,
         calculations: null,

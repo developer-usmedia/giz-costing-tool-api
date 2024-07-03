@@ -5,7 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '@api/auth/jwt/jwt-payload.type';
 import { UserCreateForm } from '@api/dto/user-create.form';
 import { environment } from '@app/environment';
-import { User } from '@domain/entities/user.entity';
+import { User } from '@domain/entities/user/user.entity';
 import { BrevoService } from '@domain/services/email.service';
 import { UserService } from '@domain/services/user.service';
 

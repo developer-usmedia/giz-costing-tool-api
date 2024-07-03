@@ -3,7 +3,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core/constants';
 
 import { UserAwareInterceptor } from '@api/nestjs/interceptors/user-aware.interceptor';
 import { environment } from '@app/environment';
-import { entities } from '@database/mikro-orm.config';
+import { entities } from '@domain/database';
 import { DomainModule } from '@domain/domain.module';
 import { AuthService } from '@domain/services/auth.service';
 import { BrevoService } from '@domain/services/email.service';

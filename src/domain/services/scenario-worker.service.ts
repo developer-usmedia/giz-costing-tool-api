@@ -2,7 +2,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
-import { ScenarioWorker } from '@domain/entities/scenario-worker.entity';
+import { ScenarioWorker } from '@domain/entities';
 import { BaseService } from '@domain/services/base/base.service';
 
 @Injectable()
@@ -15,4 +15,7 @@ export class ScenarioWorkerService extends BaseService<ScenarioWorker> {
     ) {
         super(em, repository);
     }
+
+    // TODO: resetAllForScenario
+    // TODO: insertAllMissingForScenario
 }

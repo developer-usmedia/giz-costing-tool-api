@@ -28,7 +28,7 @@ import { RegisterForm } from '@api/dto/user-register.form';
 import { VerifyEmailForm } from '@api/dto/user-verify-email.form';
 import { UserDTOFactory, UserResponse } from '@api/dto/user.dto';
 import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
-import { User } from '@domain/entities/user.entity';
+import { User } from '@domain/entities';
 import { AuthService } from '@domain/services/auth.service';
 import { UserService } from '@domain/services/user.service';
 import { LoginForm } from '../dto/user-login.form';

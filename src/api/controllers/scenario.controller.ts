@@ -11,7 +11,7 @@ import {
 import { PagingParams } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Paging } from '@api/paging/paging.decorator';
-import { ScenarioWorker } from '@domain/entities/scenario-worker.entity';
+import { ScenarioWorker } from '@domain/entities';
 import { ScenarioWorkerService } from '@domain/services/scenario-worker.service';
 import { ScenarioService } from '@domain/services/scenario.service';
 

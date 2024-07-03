@@ -7,7 +7,7 @@ import { UserDTOFactory, UserListResponse, UserResponse } from '@api/dto/user.dt
 import { PagingParams } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Paging } from '@api/paging/paging.decorator';
-import { User } from '@domain/entities/user.entity';
+import { User } from '@domain/entities';
 import { UserService } from '@domain/services/user.service';
 
 @ApiTags('users')

@@ -2,7 +2,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
-import { User } from '@domain/entities/user.entity';
+import { User } from '@domain/entities';
 import { BaseService } from '@domain/services/base/base.service';
 
 @Injectable()

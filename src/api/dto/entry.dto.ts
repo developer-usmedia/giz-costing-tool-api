@@ -1,13 +1,10 @@
-
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
 import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
-import { Entry } from '@domain/entities/entry.entity';
-import { EntryBenchmarkDTO, EntryBenchmarkDTOFactory } from './entry-benchmark.dto';
-import { EntryFacilityDTO, EntryFacilityDTOFactory } from './entry-facility.dto';
+import { BuyerUnit, Entry, EntryStatus, ScenarioType } from '@domain/entities';
+import { cleanObject } from '@domain/utils/cleaner';
 import { ENTRY_LINKS } from './entry.links';
-import { ScenarioDTO, ScenarioDTOFactory } from './scenario.dto';
 
 /**
  * API layer DTO used in the request response for entry endpoint
@@ -19,26 +16,95 @@ import { ScenarioDTO, ScenarioDTOFactory } from './scenario.dto';
 
 export interface EntryDTO extends HalResponse {
     id: string;
-    matrixId: string;
-    verified: boolean;
-    year: string;
-    status: string;
-    administrativeCosts: number;
-    defaultEmployerTax: number;
-    defaultEmployeeTax: number;
-    facility: EntryFacilityDTO;
-    benchmark: EntryBenchmarkDTO;
-    scenario: ScenarioDTO;
-    nrOfJobcategories: number;
-    nrOfWorkers: number;
-    nrOfWorkersBelowLW: number;
-    averageLwGap: number;
-    largestLwGap: number;
+    status: EntryStatus;
+    facility: {
+        id?: string;
+        name: string;
+        country?: string;
+        products?: string;
+        production?: {
+            unit: string;
+            amount: number;
+        };
+    };
+    matrix?: {
+        id: string;
+        verified: boolean;
+    };
+    payroll: {
+        year: string;
+        currencyCode?: string;
+        nrOfJobCategories: number;
+        nrOfWorkers: number;
+    };
+    benchmark?: {
+        year: string;
+        source: string;
+        region: string;
+        locality: string;
+        value: number;
+    };
+    livingWage?: {
+        nrOfWorkersBelowLivingWage: number;
+        avgLivingWageGap: number;
+        largestLivingWageGap: number;
+        annualFacilityLivingWageGap: number;
+    };
+    buyer?: {
+        name: string;
+        proportion: {
+            amount: number;
+            unit: BuyerUnit;
+        };
+        annualCosts?: {
+            remunerationIncrease: number;
+            laborCosts: number;
+            additionalCosts: number;
+            totalCosts: number;
+            totalCostsPerUnit: number;
+        };
+    };
+    scenario?: {
+        type: ScenarioType;
+        specification?: {
+            taxEmployee: number;
+            taxEmployer: number;
+            additionalCosts: number;
+            remunerationIncrease: number;
+        };
+        distribution?: {
+            baseWagePerc: number;
+            bonusesPerc: number;
+            ikbPerc: number;
+            ikbHousingPerc: number;
+            ikbFoodPerc: number;
+            ikbTransportPerc: number;
+            ikbHealthcarePerc: number;
+            ikbChildcarePerc: number;
+            ikbChildEducationPerc: number;
+        };
+        livingWage?: {
+            nrOfWorkersBelowLivingWage: number;
+            avgLivingWageGap: number;
+            largestLivingWageGap: number;
+            annualFacilityLivingWageGap: number;
+        };
+        annualCosts?: {
+            remunerationIncrease: number;
+            laborCosts: number;
+            additionalCosts: number;
+            totalCosts: number;
+            totalCostsPerUnit: number;
+        };
+    };
     createdAt: Date;
     updatedAt: Date;
     _links: {
         self: Link;
         workers: Link;
+        // scenario
+        // buyer
+        // report
     };
 }
 
@@ -64,23 +130,75 @@ export class EntryDTOFactory {
 }
 
 const mapEntityToDTO = (entity: Entry): EntryDTO => {
-    return {
+    const dto: EntryDTO = {
         id: entity.id,
-        matrixId: entity.matrixId,
-        verified: false,
-        year: entity.year.toString(),
         status: entity.status,
-        administrativeCosts: entity.administrativeCosts,
-        defaultEmployeeTax: entity.defaultEmployeeTax,
-        defaultEmployerTax: entity.defaultEmployerTax,
-        facility: EntryFacilityDTOFactory.fromEntity(entity.facility),
-        benchmark: EntryBenchmarkDTOFactory.fromEntity(entity.benchmark),
-        scenario: ScenarioDTOFactory.fromEntity(entity.scenario),
-        nrOfWorkers: entity.getNOfWorkers(),
-        nrOfJobcategories: entity.getNOfJobCategories(),
-        nrOfWorkersBelowLW: entity.getNOfWorkersBelowLW(),
-        averageLwGap: entity.averageLwGap,
-        largestLwGap: entity.largestLwGap,
+        facility: {
+            name: entity.facility.name,
+            id: entity.facility.facilityId,
+            country: entity.facility.country,
+            products: entity.facility.products,
+            production: {
+                unit: entity.facility.productionUnit,
+                amount: entity.facility.productionAmount,
+            },
+        },
+        matrix: {
+            id: entity.matrixId,
+            verified: entity.matrixVerified,
+        },
+        payroll: {
+            year: entity.payroll.year.toString(),
+            nrOfJobCategories: entity.payroll.nrOfJobCategories,
+            nrOfWorkers: entity.payroll.nrOfWorkers,
+        },
+        benchmark: {
+            year: entity.benchmark.year?.toString(),
+            source: entity.benchmark.source,
+            region: entity.benchmark.region,
+            locality: entity.benchmark.locality,
+            value: entity.benchmark.value,
+        },
+        livingWage: {
+            nrOfWorkersBelowLivingWage: entity.payroll.nrOfWorkersWithLWGap,
+            avgLivingWageGap: entity.payroll.avgLivingWageGap,
+            largestLivingWageGap: entity.payroll.largestLivingWageGap,
+            annualFacilityLivingWageGap: entity.payroll.sumAnnualLivingWageGapAllWorkers,
+        },
+        buyer: {
+            name: entity.buyer.name,
+            proportion: {
+                unit: entity.buyer.unit,
+                amount: entity.buyer.amount,
+            },
+        },
+        scenario: {
+            type: entity.scenario?.type,
+            specification: {
+                taxEmployee: entity.scenario?.specs.taxEmployee,
+                taxEmployer: entity.scenario?.specs.taxEmployer,
+                additionalCosts: entity.scenario?.specs.overheadCosts,
+                remunerationIncrease: entity.scenario?.specs.remunerationIncrease,
+            },
+            distribution: {
+                baseWagePerc: entity.scenario?.distro.baseWagePerc,
+                bonusesPerc: entity.scenario?.distro.bonusesPerc,
+                ikbPerc: entity.scenario?.distro.ikbPerc,
+                ikbHousingPerc: entity.scenario?.distro.ikbHousingPerc,
+                ikbFoodPerc: entity.scenario?.distro.ikbFoodPerc,
+                ikbTransportPerc: entity.scenario?.distro.ikbTransportPerc,
+                ikbHealthcarePerc: entity.scenario?.distro.ikbHealthcarePerc,
+                ikbChildcarePerc: entity.scenario?.distro.ikbChildcarePerc,
+                ikbChildEducationPerc: entity.scenario?.distro.ikbChildEducationPerc,
+            },
+            livingWage: {
+                nrOfWorkersBelowLivingWage: entity.scenario?.payroll.nrOfWorkersWithLWGap,
+                avgLivingWageGap: entity.scenario?.payroll.avgLivingWageGap,
+                largestLivingWageGap: entity.scenario?.payroll.largestLivingWageGap,
+                annualFacilityLivingWageGap: entity.scenario?.payroll.sumAnnualLivingWageGapAllWorkers,
+            },
+            // TODO: Annual Costs
+        },
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
         _links: {
@@ -88,4 +206,6 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
             workers: { href: resolveLink(ENTRY_LINKS.workers, { entryId: entity.id }) },
         },
     };
+
+    return cleanObject(dto);
 };

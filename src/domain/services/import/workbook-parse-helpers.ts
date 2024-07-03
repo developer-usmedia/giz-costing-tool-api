@@ -1,11 +1,11 @@
-import { Gender } from '@domain/enums/gender.enum';
+import { Gender } from '@domain/entities';
 
 export function parseGenderCell(value: string): Gender {
     switch (value) {
         case 'Men':
-            return Gender.Men;
+            return 'MEN';
         case 'Women':
-            return Gender.Women;
+            return 'WOMEN';
         default:
             return null;
     }

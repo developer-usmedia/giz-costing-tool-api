@@ -1,7 +1,7 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 
-import { entities } from '@database/mikro-orm.config';
+import { entities } from '@domain/database/mikro-orm.config';
 import { BrevoService } from '@domain/services/email.service';
 import { EntryWorkerService } from '@domain/services/entry-worker.service';
 import { UserService } from '@domain/services/user.service';
@@ -15,7 +15,6 @@ Module({
     exports: [
         AuthService,
         BrevoService,
-        BrevoService,
         EntryService,
         EntryWorkerService,
         ScenarioService,
@@ -25,7 +24,6 @@ Module({
     ],
     providers: [
         AuthService,
-        BrevoService,
         BrevoService,
         EntryService,
         EntryWorkerService,

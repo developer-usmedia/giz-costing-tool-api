@@ -26,7 +26,8 @@ module.exports = {
   },
   ignorePatterns: [
     '.eslintrc.js',
-    '**/migrations/*.ts'
+    '**/migrations/*.ts',
+    '**/migrations-old/*.ts'
   ],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',

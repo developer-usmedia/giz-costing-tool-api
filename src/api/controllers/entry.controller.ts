@@ -18,21 +18,19 @@ import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
 import { BaseController } from '@api/controllers/base.controller';
 import { EntryCreateForm } from '@api/dto/entry-create.form';
 import { EntryUpdateForm } from '@api/dto/entry-update.form';
-import { EntryWorkerDTOFactory, EntryWorkerListResponse } from '@api/dto/entry-worker.dto';
 import { EntryDTOFactory, EntryListResponse, EntryResponse } from '@api/dto/entry.dto';
 import { ScenarioCreateForm } from '@api/dto/scenario-create.form';
 import { ScenarioUpdateForm } from '@api/dto/scenario-update.form';
+import { WorkerDTOFactory, WorkerListResponse } from '@api/dto/worker.dto';
 import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
 import { PagingParams, Sort } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Paging } from '@api/paging/paging.decorator';
-import { EntryWorker } from '@domain/entities/entry-worker.entity';
-import { Entry } from '@domain/entities/entry.entity';
-import { User } from '@domain/entities/user.entity';
-import { EntryWorkerService } from '@domain/services/entry-worker.service';
+import { Entry, ScenarioWorker, User } from '@domain/entities';
 import { EntryService } from '@domain/services/entry.service';
 import { EntryImportException } from '@domain/services/import/dto/import-validation.dto';
 import { EntryImporter } from '@domain/services/import/entry-importer';
+import { ScenarioWorkerService } from '@domain/services/scenario-worker.service';
 import { ScenarioService } from '@domain/services/scenario.service';
 import { UserService } from '@domain/services/user.service';
 import { FileHelper } from '@domain/utils/file-helper';
@@ -43,7 +41,7 @@ export class EntryController extends BaseController {
     constructor(
         private readonly userService: UserService,
         private readonly entryService: EntryService,
-        private readonly workerService: EntryWorkerService,
+        private readonly workerService: ScenarioWorkerService,
         private readonly scenarioService: ScenarioService,
     ) {
         super();
@@ -57,6 +55,7 @@ export class EntryController extends BaseController {
         if (!paging.sort) {
             paging.sort = { _updatedAt: Sort.DESC };
         }
+
         const [entries, count] = await this.entryService.findManyPaged(paging);
 
         return EntryDTOFactory.fromCollection(entries, count, paging);
@@ -64,7 +63,7 @@ export class EntryController extends BaseController {
 
     @Post('/')
     @ApiOperation({ summary: 'Create a entry' })
-    @ApiResponse({ status: 201, description: 'Created entr' })
+    @ApiResponse({ status: 201, description: 'Created entry' })
     @ApiResponse({ status: 404, description: 'User from token not found' })
     @UseGuards(JwtAuthGuard)
     public async create(@Body() entryForm: EntryCreateForm, @CurrentUser() user: User): Promise<EntryResponse> {
@@ -120,14 +119,19 @@ export class EntryController extends BaseController {
     @UseGuards(JwtAuthGuard)
     public async workers(
         @Param('id', ParseUUIDPipe) entryId: string,
-        @Paging('EntryWorker', PagingValidationPipe) paging: PagingParams<EntryWorker>,
-    ): Promise<EntryWorkerListResponse> {
+        @Paging('ScenarioWorker', PagingValidationPipe) paging: PagingParams<ScenarioWorker>,
+    ): Promise<WorkerListResponse> {
         const entry = await this.entryService.findOneByUid(entryId);
-        paging.filter = { ...paging.filter, _entry: entry.id } as any; // TODO: this needs fixing
+
+        if(!entry.scenario) {
+            throw this.clientError('First enable a scenario before getting workers');
+        }
+
+        paging.filter = { ...paging.filter, _scenario: entry.scenario } as any; // TODO: this needs fixing
         const [workers, count] = await this.workerService.findManyPaged(paging);
 
         // TODO: check hateaos links on this endpoint
-        return EntryWorkerDTOFactory.fromCollection(workers, count, paging);
+        return WorkerDTOFactory.fromCollection(workers, count, paging);
     }
 
     @Post('/:id/scenario')
@@ -175,10 +179,12 @@ export class EntryController extends BaseController {
     @ApiResponse({ status: 200, description: 'Successfully deleted scenario from entry' })
     @UseGuards(JwtAuthGuard)
     public async deleteScenario(@Param('id', ParseUUIDPipe) entryId: string): Promise<EntryResponse> {
-        const entry = await this.entryService.findOneByUid(entryId);
-        await this.scenarioService.remove(entry.scenario);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        const scenario = await this.scenarioService.findOne({ _entryId: entryId } as any);
+        await this.scenarioService.remove(scenario);
+        
 
-        return EntryDTOFactory.fromEntity(entry);
+        return EntryDTOFactory.fromEntity(scenario.entry);
     }
 
     @Post('/import')

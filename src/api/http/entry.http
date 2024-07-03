@@ -23,7 +23,8 @@ Content-Type: application/json
 {
     "facilityName": "My facility",
     "country": "Nederland",
-    "year": 2031
+    "year": 2031,
+    "currencyCode": "EUR"
 }
 
 ### Patch
@@ -33,7 +34,7 @@ Content-Type: application/json
 
 {
     "year": 2041,
-    "administrativeCosts": 200,
+    "overheadCosts": 200,
     "defaultEmployerTax": 3,
     "defaultEmployeeTax": 5,
     "facility": {
@@ -47,9 +48,11 @@ Content-Type: application/json
         "buyerProportion": 50
     },
     "benchmark": {
+        "year": 2039,
+        "country": "Nederland",
         "region": "São Paulo",
-        "locality": "Rural",
-        "localValue": 462
+        "value": 465,
+        "locality": "Rural"
     }
 }
 
@@ -71,11 +74,12 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "type": "TYPE_ABSOLUTE_INCREASE",
+    "type": "ABSOLUTE_INCREASE",
     "specifications": {
-        "employeeTax": 4,
-        "employerTax": 1,
-        "absoluteIncrease": 500
+        "taxEmployer": 4,
+        "taxEmployee": 1,
+        "remunerationIncrease": 500,
+        "overheadCosts": 500
     }
 }
 
@@ -87,9 +91,10 @@ Content-Type: application/json
 
 {
     "specifications": {
-        "employeeTax": 3,
-        "employerTax": 1,
-        "absoluteIncrease": 300
+        "taxEmployer": 3,
+        "taxEmployee": 1,
+        "overheadCosts": 200,
+        "remunerationIncrease": 300
     }
 }
 

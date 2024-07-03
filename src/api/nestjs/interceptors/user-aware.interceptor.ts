@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { Observable } from 'rxjs';
 
 import { UserDTO } from '@api/dto/user.dto';
-import { MikroFilters } from '@database/mikro-orm.config';
+import { MikroFilters } from '@domain/database/mikro-orm.config';
 
 export type UserAwareArgs = { enable: boolean; userId: string };
 

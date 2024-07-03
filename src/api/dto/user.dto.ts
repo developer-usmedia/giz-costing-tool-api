@@ -3,7 +3,7 @@ import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
 import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
-import { User } from '@domain/entities/user.entity';
+import { User } from '@domain/entities';
 
 /**
  * API layer DTO used in the request response for users endpoint

@@ -6,7 +6,7 @@ import { TerminusModule } from '@nestjs/terminus/dist/terminus.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 import { ApiModule } from '@api/api.module';
-import mikroOrmOpts from '@database/mikro-orm.config';
+import mikroOrmOpts from '@domain/database/mikro-orm.config';
 import { AppController } from './app.controller';
 
 @Module({

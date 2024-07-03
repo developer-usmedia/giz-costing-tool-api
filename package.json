@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "API for the GIZ Living Wage Costing Tool",
   "author": "UsMedia",
-  "main": "dist/main.js",
+  "private": true,
+  "engines": {
+    "node": "20"
+  },
   "scripts": {
     "build": "nest build",
     "start:prod": "node dist/main",
@@ -85,9 +88,6 @@
     "tsconfig-paths": "4.2.0",
     "typescript": "5.3.3"
   },
-  "engines": {
-    "node": "20"
-  },
   "root": true,
   "jest": {
     "moduleFileExtensions": [
@@ -109,7 +109,7 @@
   "mikro-orm": {
     "useTsNode": true,
     "configPaths": [
-      "./src/database/mikro-orm.config.ts"
+      "./src/domain/database/mikro-orm.config.ts"
     ]
   }
 }

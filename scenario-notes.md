@@ -3,26 +3,22 @@
 Q: Welke endpoint wil ik als frontender aanroepen om mijn data te fetchen?
 Q: Welke endpoint wil ik als frontender aanroepen om data te kunnen updaten?
 
-| Method            | Endpoint                      | Action                                                                           |
-| ----------------- | ----------------------------- | -------------------------------------------------------------------------------- |
-| GET               | /entries/:id                    | Entry DTO + including Scenario DTO (+ report DTO?)                               |
-| PATCH / PATCH     | /entries/:id                    | This also allows to set buyer information                                        |
-| POST              | /entries/:id/scenario           | Sets the scenario. If already selected, throw error - it requires a DELETE first |
-| DELETE            | /entries/:id/scenario           | Deletes the currently set scenario                                               |
-| PATCH             | /entries/:id/scenario           | Updates scenario specifications and distribution                                 |
-|                   |                               |                                                                                  |
-|                   |                               |                                                                                  |
-| PATCH/POST/DELETE | /scenario/:id                 | (optional) same routes /entries/:id/scenario                                       |
-| GET               | /scenario/:id/workers         | Gets ScenarioWorkers for scenario                                                |
-| GET               | /scenario/:id/workers/:id     | Get a ScenarioWorker for scenario                                               |
-| PATCH             | /scenario/:id/workers/:id     | Update a ScenarioWorker                                                          |
-| GET               | /scenario/:id/report/download | Generates report export on demand (?)                                            |
+| Method        | Endpoint                   | Action                                                                                  |
+| ------------- | -------------------------- | --------------------------------------------------------------------------------------- |
+| GET           | /entries/:id               | Entry DTO + including Scenario DTO (+ report DTO?)                                      |
+| PATCH / PATCH | /entries/:id               | This also allows to set buyer information                                               |
+| POST          | /entries/:id/scenario      | Sets the scenario. If already selected, throw error - it requires a DELETE first        |
+| DELETE        | /entries/:id/scenario      | Deletes the currently set scenario                                                      |
+| PATCH         | /entries/:id/scenario      | Updates scenario specifications and distribution                                        |
+| GET           | /entries/:id/workers       | Returns worker DTO that includes base info + renumeration + lwGapInfo + scenarioResults |
+| POST          | /entries/:id/workers/reset | Resets specification and / or distribution on all workers                               |
+|               |                            |                                                                                         |
 
 ## Endpoints that did not make it
 
-| Method | Endpoint                 | Action                               | Reason                                |
-| ------ | ------------------------ | ------------------------------------ | ------------------------------------- |
-| GET    | /scenario/:id/report     | DTO to show on report page           | Report entity is part of the EntryDTO |
+| Method | Endpoint                   | Action                               | Reason                                |
+| ------ | -------------------------- | ------------------------------------ | ------------------------------------- |
+| GET    | /scenario/:id/report       | DTO to show on report page           | Report entity is part of the EntryDTO |
 | GET    | /entries?projection=report | include report DTO in each entry DTO | Could be future improvement           |
 
 ## Select a scenario
@@ -67,3 +63,8 @@ Distribution tab overrides the default distributions
 
 -   Reset ScenarioWorker wage overrides (endpoint)
 -   Reset ScenarioWorker distribution overrides (endpoint)
+
+## Fix forms and DTO's
+
+-   Test working
+-   See if there are missing fields

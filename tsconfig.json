@@ -18,7 +18,6 @@
         "forceConsistentCasingInFileNames": false,
         "noFallthroughCasesInSwitch": false,
         "paths": {
-            "@database/*": ["src/database/*"],
             "@common/*": ["src/common/*"],
             "@domain/*": ["src/domain/*"],
             "@api/*": ["src/api/*"],

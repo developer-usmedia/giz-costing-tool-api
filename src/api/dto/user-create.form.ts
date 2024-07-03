@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-import { User } from '@domain/entities/user.entity';
+import { User } from '@domain/entities';
 
 /**
  * API layer DTO used in the creation of a user

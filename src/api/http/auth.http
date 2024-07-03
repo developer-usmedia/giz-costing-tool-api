@@ -18,7 +18,7 @@ Content-Type: application/json
 {
     "email": "debug@usmedia.nl",
     "password": "HASHME",
-    "emailVerificationCode": "XP98HC"
+    "emailVerificationCode": "FDAD57."
 }
 
 ### Refresh JWT

@@ -1,7 +1,7 @@
 import { Workbook } from 'exceljs';
 
-import { INFO_SHEET_MAPPING, SHEET_MAPPING } from '@domain/enums/import-column-mapping.enum';
 import { CellValidationError, ImportValidationErrorDto } from './dto/import-validation.dto';
+import { INFO_SHEET_MAPPING, SHEET_MAPPING } from './import-column-mapping.enum';
 
 export class WorkbookValidator {
     public errors: ImportValidationErrorDto[] = [];

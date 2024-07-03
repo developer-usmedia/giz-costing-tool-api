@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable */
 import * as _cloneDeep from 'lodash.clonedeep';
 
 /**
@@ -19,6 +19,10 @@ export const cleanObject = <T = Record<string, any>>(data: T): T => {
             }
             else if (data[key] && typeof data[key] === 'object') {
                 cleanObject(data[key]);
+
+                if (Object.keys(data[key]).length === 0) {
+                    delete data[key];
+                }
             }
             else if (data[key] === null || data[key] === undefined || data[key] === '') {
                 delete data[key];

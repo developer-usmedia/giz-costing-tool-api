@@ -7,7 +7,7 @@ import * as passport from 'passport';
 
 import { AppModule } from '@app/app.module';
 import { environment } from '@app/environment';
-import mikroOrmOpts from '@database/mikro-orm.config';
+import mikroOrmOpts from '@domain/database/mikro-orm.config';
 
 const logger = new Logger('main.ts');
 

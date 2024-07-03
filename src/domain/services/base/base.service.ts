@@ -4,7 +4,7 @@ import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { PagingParams } from '@api/paging/paging-params';
 import { toFindOptions } from '@api/paging/to-find-options';
 import { toWhereOptions } from '@api/paging/to-where-options';
-import { AbstractEntity } from '@domain/entities/base/abstract.entity';
+import { AbstractEntity } from '@domain/entities';
 
 export abstract class BaseService<T extends AbstractEntity<T>> {
     protected abstract readonly entityName: EntityName<T>;

@@ -1,16 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { Row, Workbook } from 'exceljs';
 
-import { EntryWorker } from '@domain/entities/entry-worker.entity';
-import { Entry } from '@domain/entities/entry.entity';
-import { User } from '@domain/entities/user.entity';
-import {
-    COLUMN_MAPPING_PAYROLL,
-    INFO_SHEET_MAPPING,
-    SHEET_MAPPING,
-    SHEET_PAYROLL_INDEX,
-    SHEET_PAYROLL_START_ROW,
-} from '@domain/enums/import-column-mapping.enum';
+import { Entry, EntryWorker, User } from '@domain/entities';
 import { EntityValidationError } from '@domain/errors/entity-validation.error';
 import { EntryWorkerFactory } from '@domain/factories/entry-worker.factory';
 import { EntryFactory } from '@domain/factories/entry.factory';
@@ -18,6 +9,7 @@ import { EntryInfo } from '@domain/schemas/entry-info.schema';
 import { EntryWorkerData } from '@domain/schemas/entry-worker.schema';
 import { FileHelper } from '@domain/utils/file-helper';
 import { ImportValidationErrorDTOFactory, ImportValidationErrorDto } from './dto/import-validation.dto';
+import { COLUMN_MAPPING_PAYROLL, INFO_SHEET_MAPPING, SHEET_MAPPING, SHEET_PAYROLL_INDEX, SHEET_PAYROLL_START_ROW } from './import-column-mapping.enum';
 import { parseFloatCell, parseGenderCell, parseIntCell } from './workbook-parse-helpers';
 import { WorkbookValidator } from './workbook-validator';
 
@@ -61,10 +53,19 @@ export class EntryImporter {
 
         await this.processRows();
 
-        // Temp way to get benchmark value from sheet.
-        // Sheet has value set for each worker instead of on the information sheet. A change to the excel is required
-        this.entry.benchmark.localValue = this.benchmarkValue;
-        this.entry.finalizeImport();
+        // SM Export sheet has value set for each worker instead of on the information sheet. A change to the excel is required
+        // Set new benchmark using excel benchmark value from woker's first row
+        // When benchmark value is inserted into info sheet by SM team this can be removed. (benchmark is set in creation step)
+        const matrixId = this.entry.matrixId;
+        this.entry.matrixId = null;
+        this.entry.selectBenchmark({
+            value: this.benchmarkValue,
+            country: this.entry.benchmark.country,
+            year: this.entry.benchmark.year,
+            source: this.entry.benchmark.source,
+            region: this.entry.benchmark.region,
+        });
+        this.entry.matrixId = matrixId;
 
         return this.entry;
     }
@@ -108,11 +109,7 @@ export class EntryImporter {
                     this.benchmarkValue = parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.benchmarkValue).text);
                 }
 
-                const worker = this.createWorker(row);
-
-                if (worker) {
-                    this.entry.addWorker(worker, { recalculateLwGaps: false });
-                }
+                this.createWorker(row);
             }
         });
     }
@@ -175,16 +172,14 @@ export class EntryImporter {
     private parseEntryInfo(): EntryInfo {
         const infoSheet = this.workbook.getWorksheet(SHEET_MAPPING.info);
 
-        // TODO: Both null values need to be added to the info sheet of idh excel import
         return {
             matrixId: infoSheet.getCell(INFO_SHEET_MAPPING.matrixId).text,
             facilityName: infoSheet.getCell(INFO_SHEET_MAPPING.facilityName).text,
             facilityId: infoSheet.getCell(INFO_SHEET_MAPPING.facilityId).text,
-            benchmarkName: infoSheet.getCell(INFO_SHEET_MAPPING.benchmarkName).text,
             country: infoSheet.getCell(INFO_SHEET_MAPPING.country).text,
             region: infoSheet.getCell(INFO_SHEET_MAPPING.region).text,
-            annualProduction: parseIntCell(infoSheet.getCell(INFO_SHEET_MAPPING.annualProduction).text),
-            unitOfProduction: infoSheet.getCell(INFO_SHEET_MAPPING.unitOfProduction).text,
+            productionAmount: parseIntCell(infoSheet.getCell(INFO_SHEET_MAPPING.productionAmount).text),
+            productionUnit: infoSheet.getCell(INFO_SHEET_MAPPING.productionUnit).text,
             productName: infoSheet.getCell(INFO_SHEET_MAPPING.productName).text,
             year: parseIntCell(infoSheet.getCell(INFO_SHEET_MAPPING.year).text),
             currencyCode: infoSheet.getCell(INFO_SHEET_MAPPING.currencyCode).text,
@@ -195,17 +190,16 @@ export class EntryImporter {
         return {
             name: row.getCell(COLUMN_MAPPING_PAYROLL.name).text,
             gender: parseGenderCell(row.getCell(COLUMN_MAPPING_PAYROLL.gender).text),
-            numberOfWorkers: parseIntCell(row.getCell(COLUMN_MAPPING_PAYROLL.numberOfWorkers).text),
+            nrOfWorkers: parseIntCell(row.getCell(COLUMN_MAPPING_PAYROLL.numberOfWorkers).text),
             monthlyWage: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyWage).text),
             monthlyBonus: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyBonus).text),
-            percentageOfYearsWorked: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.percentageOfYearsWorked).text),
+            percOfYearWorked: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.percentageOfYearsWorked).text),
             ikbFood: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbFood).text),
-            ikbTransportation: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbTransportation).text),
+            ikbTransport: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbTransportation).text),
             ikbHousing: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbHousing).text),
             ikbHealthcare: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbHealthcare).text),
             ikbChildcare: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbChildCare).text),
-            employeeTax: 0,
-            employerTax: 0,
+            ikbChildEducation: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbChildEducation).text),
         };
     };
 }

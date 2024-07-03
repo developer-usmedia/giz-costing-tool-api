@@ -2,7 +2,7 @@ import { MikroORM } from '@mikro-orm/core';
 import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 
 import { PagingParams } from '@api/paging/paging-params';
-import { AbstractEntity } from '@domain/entities/base/abstract.entity';
+import { AbstractEntity } from '@domain/entities/abstract.entity';
 
 @Injectable()
 export class PagingValidationPipe<T extends AbstractEntity<T>> implements PipeTransform<PagingParams<T>, PagingParams<T>> {

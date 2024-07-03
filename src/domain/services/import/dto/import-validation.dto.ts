@@ -1,13 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Row } from 'exceljs';
 
-import {
-    COLUMN_MAPPING_PAYROLL,
-    INFO_SHEET_COLUMN,
-    INFO_SHEET_MAPPING,
-    SHEET_MAPPING,
-} from '@domain/enums/import-column-mapping.enum';
 import { EntityValidationError } from '@domain/errors/entity-validation.error';
+import { COLUMN_MAPPING_PAYROLL, INFO_SHEET_COLUMN, INFO_SHEET_MAPPING, SHEET_MAPPING } from '../import-column-mapping.enum';
 
 // https://github.com/hapijs/joi/blob/master/lib/types/string.js#L704
 // https://github.com/hapijs/joi/blob/master/lib/types/number.js#L310

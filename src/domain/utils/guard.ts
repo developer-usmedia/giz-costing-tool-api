@@ -31,7 +31,7 @@ export interface GuardChecks {
     max?: number; // Maximum value for numbers
     minDate?: Date; // Minimum value for Dates
     maxDate?: Date; // Maximum value for Dates
-    enum?: Record<string, string>; // Check string value against enum values
+    options?: string[]; // Check string value against allowed options
 }
 
 /**
@@ -88,8 +88,8 @@ export class Guard {
             this.regex(value as string, checks.regex);
         }
 
-        if (checks.enum && !checks.optional) {
-            this.checkEnum(value as string, checks.enum);
+        if (checks.options) {
+            this.checkOptions(value as string, checks.options);
         }
     }
 
@@ -459,15 +459,15 @@ export class Guard {
     }
 
     /**
-     * Checks if the provided string is a valid enum entry
+     * Checks if the provided string is a valid entry
      *
      * @param value - The string to be checked.
-     * @param enumObj - The emum object to check the string against
-     * @throws {Error} - Throws an error if the string is not a valid entry in the provided enum
+     * @param allowed - The allowed options to check the string against
+     * @throws {Error} - Throws an error if the string is not a valid option
      */
-    public static checkEnum(value: string, enumObj: Record<string, string>): void {
-        if (!Object.values(enumObj).includes(value)) {
-            throw new Error(`Value ${value} is not present in enum ${Object.values(enumObj).toString()}`);
+    public static checkOptions(value: string | null | undefined, allowed: string[]): void {
+        if (value && !allowed.includes(value)) {
+            throw new Error(`Value ${value} is invalid, allowed values: ${allowed.join(', ')}`);
         }
     }
 }

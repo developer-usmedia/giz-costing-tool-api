@@ -2,7 +2,7 @@ import * as brevo from '@getbrevo/brevo';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { environment } from '@app/environment';
-import { User } from '@domain/entities/user.entity';
+import { User } from '@domain/entities';
 
 export type BrevoEmail = { email: string; name?: string };
 
