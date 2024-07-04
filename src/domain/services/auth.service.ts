@@ -1,13 +1,12 @@
-import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { JwtPayload } from '@api/auth/jwt/jwt-payload.type';
-import { UserCreateForm } from '@api/dto/user-create.form';
-import { environment } from '@app/environment';
-import { User } from '@domain/entities/user/user.entity';
-import { BrevoService } from '@domain/services/email.service';
-import { UserService } from '@domain/services/user.service';
+import { environment } from 'environment';
+import { JwtPayload } from '@api/auth';
+import { UserCreateForm } from '@api/forms';
+import { User } from '@domain/entities';
+import { UserService } from '@domain/services';
+import { BrevoService } from '@email/brevo.service';
 
 interface JwtToken {
     accessToken: string;
@@ -16,18 +15,15 @@ interface JwtToken {
 
 @Injectable()
 export class AuthService {
-    protected readonly entityName = User;
-
     constructor(
-        protected readonly em: EntityManager,
-        protected readonly usersService: UserService,
+        private readonly userService: UserService,
         private readonly emailService: BrevoService,
         private readonly jwtService: JwtService,
     ) {}
 
     public async register(email: string, password: string): Promise<User> {
         const user = UserCreateForm.toEntity({ email, password });
-        const saved = await this.usersService.persist(user);
+        const saved = await this.userService.persist(user);
 
         await this.sendVerificationEmail(user, false); // Move this to user entity lifecycle
 
@@ -55,7 +51,7 @@ export class AuthService {
     public async startPasswordReset(user: User): Promise<boolean> {
         user.refreshVerificationCode();
 
-        const updatedUser = await this.usersService.persist(user);
+        const updatedUser = await this.userService.persist(user);
 
         return await this.sendPasswordResetEmail(updatedUser);
     }
@@ -68,15 +64,15 @@ export class AuthService {
         }
 
         user.resetPassword(newPassword);
-        const savedUser = await this.usersService.persist(user);
+        const savedUser = await this.userService.persist(user);
 
-        await this.emailService.sendPasswordChangedEmail(savedUser);
+        await this.emailService.sendPasswordChangedEmail(savedUser.email);
 
         return !!savedUser;
     }
 
     public async sendPasswordResetEmail(user: User): Promise<boolean> {
-        return await this.emailService.sendPasswordResetEmail(user);
+        return await this.emailService.sendPasswordResetEmail(user.email, user.verificationCode.code);
     }
 
     public async sendVerificationEmail(user: User, refresh = true): Promise<boolean> {
@@ -84,8 +80,8 @@ export class AuthService {
             user.refreshVerificationCode();
         }
 
-        const saved = await this.usersService.persist(user);
-        const sent = await this.emailService.sendEmailVerificationEmail(user);
+        const saved = await this.userService.persist(user);
+        const sent = await this.emailService.sendEmailVerificationEmail(user.email, user.verificationCode.code);
         return saved && sent;
     }
 
@@ -103,26 +99,26 @@ export class AuthService {
         user.verificationCode = null;
         user.emailVerified = true;
 
-        return !!(await this.usersService.persist(user));
+        return !!(await this.userService.persist(user));
     }
 
     public async save2FASecret(user: User, secret: string): Promise<boolean> {
         user.set2FASecret(secret);
 
-        return !!(await this.usersService.persist(user));
+        return !!(await this.userService.persist(user));
     }
 
     public async enable2FA(user: User): Promise<boolean> {
         user.enable2FA();
 
-        return !!(await this.usersService.persist(user));
+        return !!(await this.userService.persist(user));
     }
 
     // TODO: Remove this inbetween step in service. Call user.disable2FA directly?
     public async disable2FA(user: User): Promise<boolean> {
         user.disable2FA();
 
-        return !!(await this.usersService.persist(user));
+        return !!(await this.userService.persist(user));
     }
 
     private signJwt(user: User): JwtToken {

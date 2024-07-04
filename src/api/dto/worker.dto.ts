@@ -3,7 +3,7 @@ import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
 import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
 import { Gender, ScenarioWorker } from '@domain/entities';
-import { ENTRY_WORKER_LINKS } from './entry-worker.links';
+import { WORKER_LINKS } from './worker.links';
 
 // TODO: split into two EntryWorker & ScenarioWorker?
 
@@ -34,7 +34,6 @@ export interface WorkerDTO extends HalResponse {
         ikbChildEducation: number;
         total: number;
     };
-
     livingWage?: {
         livingWageGap: number;
         annualLivingWageGap: number;
@@ -98,7 +97,7 @@ export class WorkerDTOFactory {
             _embedded: {
                 workers: collection.map(mapEntityToDTO),
             },
-            _links: generatePaginationLinks(ENTRY_WORKER_LINKS.workers, count, paging),
+            _links: generatePaginationLinks(WORKER_LINKS.workers, count, paging),
             paging: {
                 index: paging.index,
                 size: paging.size,
@@ -166,7 +165,7 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
             },
         },
         _links: {
-            self: { href: resolveLink(ENTRY_WORKER_LINKS.worker, { workerId: entity.id }) },
+            self: { href: resolveLink(WORKER_LINKS.worker, { workerId: entity.id }) },
         },
     };
 };

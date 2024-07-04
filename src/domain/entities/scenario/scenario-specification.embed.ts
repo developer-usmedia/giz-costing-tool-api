@@ -1,5 +1,5 @@
-import { Guard } from '@domain/utils/guard';
 import { Embeddable, Property } from '@mikro-orm/core';
+import { Guard } from '@domain/utils/guard';
 
 export interface ScenarioSpecificationProps {
     taxEmployee: number;

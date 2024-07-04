@@ -1,62 +1,51 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core/constants';
-
-import { UserAwareInterceptor } from '@api/nestjs/interceptors/user-aware.interceptor';
-import { environment } from '@app/environment';
-import { entities } from '@domain/database';
-import { DomainModule } from '@domain/domain.module';
-import { AuthService } from '@domain/services/auth.service';
-import { BrevoService } from '@domain/services/email.service';
-import { EntryWorkerService } from '@domain/services/entry-worker.service';
-import { EntryService } from '@domain/services/entry.service';
-import { ScenarioWorkerService } from '@domain/services/scenario-worker.service';
-import { ScenarioService } from '@domain/services/scenario.service';
-import { UserService } from '@domain/services/user.service';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
-import { RefreshJwtStrategy } from './auth/jwt/jwt-refresh.strategy';
-import { JwtStrategy } from './auth/jwt/jwt.strategy';
-import { OTPService } from './auth/service/otp.service';
-import { AuthController } from './controllers/auth.controller';
-import { EntryController } from './controllers/entry.controller';
-import { ScenarioController } from './controllers/scenario.controller';
-import { UserController } from './controllers/user.controller';
+import { TerminusModule } from '@nestjs/terminus';
+import { ThrottlerModule } from '@nestjs/throttler';
+
+import { DomainModule } from '@domain/domain.module';
+import { ImportModule } from '@import/import.module';
+import { RefreshJwtStrategy, JwtStrategy, OTPService } from '@api/auth';
+import {
+    IndexController,
+    HealthController,
+    AuthController,
+    EntryController,
+    EntryScenarioController,
+    EntryWorkerController,
+    TestController,
+} from './controllers';
 
 @Module({
     imports: [
-        MikroOrmModule.forFeature(entities), // this should come with domain module
+        ConfigModule.forRoot({ isGlobal: true }),
         DomainModule,
+        ImportModule,
+        TerminusModule,
         PassportModule.register({}),
-        JwtModule.register({
-            secret: environment.jwt.secret,
-            signOptions: { expiresIn: environment.jwt.expiresIn },
-        }),
+        ThrottlerModule.forRoot([{
+            ttl: 60 * 60 * 10000,
+            // Setting here are required to be able to override them on routes with @Throttle
+            // Found a way to set a single endpoint throttle without configuring default global settings?
+            limit: 99999999999999,
+        }]),
     ],
     exports: [
-
     ],
     controllers: [
-      AuthController,
-      UserController,
-      EntryController,
-      ScenarioController,
+        IndexController,
+        HealthController,
+        AuthController,
+        EntryController,
+        EntryScenarioController,
+        EntryWorkerController,
+        TestController,
     ],
     providers: [
-        EntryWorkerService,
-        EntryService,
-        UserService,
-        AuthService,
-        BrevoService,
         OTPService,
         JwtStrategy,
-        ScenarioService,
-        ScenarioWorkerService,
         RefreshJwtStrategy,
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: UserAwareInterceptor,
-        },
     ],
 })
 export class ApiModule {}

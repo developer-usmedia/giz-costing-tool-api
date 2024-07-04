@@ -109,12 +109,12 @@ export class Entry extends AbstractEntity<Entry> {
     }
 
     set matrixId(value: string) {
-        Guard.check(value, { type: 'string', optional: true, allowEmpty: true});
+        Guard.check(value, { type: 'string', optional: true });
         this._matrixId = value;
     }
 
     set matrixVerified(value: boolean) {
-        Guard.check(value, { type: 'boolean', optional: true, allowEmpty: true });
+        Guard.check(value, { type: 'boolean', optional: true });
         this._matrixVerified = value;
     }
 

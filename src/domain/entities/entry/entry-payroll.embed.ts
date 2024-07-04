@@ -4,7 +4,7 @@ import { Guard } from '@domain/utils/guard';
 
 export interface EntryPayrollProps {
     year: number;
-    currencyCode: string;
+    currencyCode?: string;
 }
 
 @Embeddable()
@@ -38,14 +38,14 @@ export class EntryPayroll {
     constructor(props: EntryPayrollProps) {
         this.year = props.year;
         this.currencyCode = props.currencyCode ?? null;
-        // Note: Other fields are set via a custom query (triggered via the service)
 
+        // Note: These fields are updated via a custom query (triggered via the service)
         this._nrOfJobCategories = 0;
         this._nrOfWorkers = 0;
         this._nrOfWorkersWithLWGap = 0;
         this._avgLivingWageGap = 0;
         this._largestLivingWageGap = 0;
-        this._sumAnnualLivingWageGapAllWorkers = 0; // Default 0 on property does not seem to work
+        this._sumAnnualLivingWageGapAllWorkers = 0;
     }
 
     get year() {
@@ -95,5 +95,4 @@ export class EntryPayroll {
             && !!this._currencyCode
             && (this._nrOfWorkers > 0);
     }
-
 }

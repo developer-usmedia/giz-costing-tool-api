@@ -14,35 +14,26 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
-import { BaseController } from '@api/controllers/base.controller';
-import { EntryCreateForm } from '@api/dto/entry-create.form';
-import { EntryUpdateForm } from '@api/dto/entry-update.form';
-import { EntryDTOFactory, EntryListResponse, EntryResponse } from '@api/dto/entry.dto';
-import { ScenarioCreateForm } from '@api/dto/scenario-create.form';
-import { ScenarioUpdateForm } from '@api/dto/scenario-update.form';
-import { WorkerDTOFactory, WorkerListResponse } from '@api/dto/worker.dto';
-import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
+import { JwtAuthGuard } from '@api/auth';
+import { BaseController } from '@api/controllers';
+import { EntryCreateForm, EntryUpdateForm } from '@api/forms';
+import { EntryDTOFactory, EntryListResponse, EntryResponse } from '@api/dto';
+import { CurrentUser, Paging } from '@api/decorators';
 import { PagingParams, Sort } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
-import { Paging } from '@api/paging/paging.decorator';
-import { Entry, ScenarioWorker, User } from '@domain/entities';
-import { EntryService } from '@domain/services/entry.service';
-import { EntryImportException } from '@domain/services/import/dto/import-validation.dto';
-import { EntryImporter } from '@domain/services/import/entry-importer';
-import { ScenarioWorkerService } from '@domain/services/scenario-worker.service';
-import { ScenarioService } from '@domain/services/scenario.service';
-import { UserService } from '@domain/services/user.service';
-import { FileHelper } from '@domain/utils/file-helper';
+import { Entry, User } from '@domain/entities';
+import { EntryService, UserService } from '@domain/services';
+import { EntryImportException } from '@import/dto/import-validation.dto';
+import { EntryImporter } from '@import/services/entry-importer';
+import { FileHelper } from '@import/utils/file-helper';
 
 @ApiTags('entries')
 @Controller('entries')
+@UseGuards(JwtAuthGuard)
 export class EntryController extends BaseController {
     constructor(
         private readonly userService: UserService,
         private readonly entryService: EntryService,
-        private readonly workerService: ScenarioWorkerService,
-        private readonly scenarioService: ScenarioService,
     ) {
         super();
     }
@@ -50,8 +41,9 @@ export class EntryController extends BaseController {
     @Get('/')
     @ApiOperation({ summary: 'Get a paginated list of entries' })
     @ApiResponse({ status: 200, description: 'Paged entries for the current user' })
-    @UseGuards(JwtAuthGuard)
-    public async index(@Paging('Entry', PagingValidationPipe) paging: PagingParams<Entry>): Promise<EntryListResponse> {
+    public async findMany(
+        @Paging('Entry', PagingValidationPipe) paging: PagingParams<Entry>,
+    ): Promise<EntryListResponse> {
         if (!paging.sort) {
             paging.sort = { _updatedAt: Sort.DESC };
         }
@@ -65,8 +57,10 @@ export class EntryController extends BaseController {
     @ApiOperation({ summary: 'Create a entry' })
     @ApiResponse({ status: 201, description: 'Created entry' })
     @ApiResponse({ status: 404, description: 'User from token not found' })
-    @UseGuards(JwtAuthGuard)
-    public async create(@Body() entryForm: EntryCreateForm, @CurrentUser() user: User): Promise<EntryResponse> {
+    public async create(
+        @Body() entryForm: EntryCreateForm,
+        @CurrentUser() user: User,
+    ): Promise<EntryResponse> {
         const newEntry = EntryCreateForm.toEntity(entryForm, user);
         const savedEntry = await this.entryService.persist(newEntry);
 
@@ -77,114 +71,40 @@ export class EntryController extends BaseController {
     @ApiOperation({ summary: 'Get a single entry by id' })
     @ApiResponse({ status: 404, description: 'The entry cannot be found' })
     @ApiResponse({ status: 200, description: 'The entry record' })
-    @UseGuards(JwtAuthGuard)
-    public async findBy(@Param('id', ParseUUIDPipe) id: string): Promise<EntryResponse> {
-        const entry = await this.entryService.findOneByUid(id);
+    public async findOne(
+        @Param('entryId', ParseUUIDPipe) entryId: string,
+    ): Promise<EntryResponse> {
+        const entry = await this.entryService.findOneByUid(entryId);
 
         return EntryDTOFactory.fromEntity(entry);
     }
 
-    @Patch('/:id')
+    @Patch('/:entryId')
     @ApiOperation({ summary: 'Update a entry' })
     @ApiResponse({ status: 201, description: 'Updated entry' })
     @ApiResponse({ status: 404, description: 'Entry to update not found' })
-    @UseGuards(JwtAuthGuard)
     public async update(
-        @Param('id', ParseUUIDPipe) id: string,
+        @Param('entryId', ParseUUIDPipe) entryId: string,
         @Body() updateEntryForm: EntryUpdateForm,
     ): Promise<EntryResponse> {
-        const original = await this.entryService.findOneByUid(id);
+        const original = await this.entryService.findOneByUid(entryId);
         const updated = EntryUpdateForm.toEntity(original, updateEntryForm);
         const saved = await this.entryService.persist(updated);
 
         return EntryDTOFactory.fromEntity(saved);
     }
 
-    @Delete('/:id')
+    @Delete('/:entryId')
     @ApiOperation({ summary: 'Delete a entry' })
     @ApiResponse({ status: 200, description: 'Deleted entry' })
     @ApiResponse({ status: 404, description: 'Entry not found' })
-    @UseGuards(JwtAuthGuard)
-    public async destroy(@Param('id', ParseUUIDPipe) id: string): Promise<EntryResponse> {
-        const entry = await this.entryService.findOneByUid(id);
+    public async delete(
+        @Param('entryId', ParseUUIDPipe) entryId: string,
+    ): Promise<EntryResponse> {
+        const entry = await this.entryService.findOneByUid(entryId);
         const deleted = await this.entryService.remove(entry);
 
         return EntryDTOFactory.fromEntity(deleted);
-    }
-
-    @Get('/:id/workers')
-    @ApiOperation({ summary: 'Get workers registered on a entry' })
-    @ApiResponse({ status: 404, description: 'The entry cannot be found' })
-    @ApiResponse({ status: 200, description: 'The list of workers on the entry' })
-    @UseGuards(JwtAuthGuard)
-    public async workers(
-        @Param('id', ParseUUIDPipe) entryId: string,
-        @Paging('ScenarioWorker', PagingValidationPipe) paging: PagingParams<ScenarioWorker>,
-    ): Promise<WorkerListResponse> {
-        const entry = await this.entryService.findOneByUid(entryId);
-
-        if(!entry.scenario) {
-            throw this.clientError('First enable a scenario before getting workers');
-        }
-
-        paging.filter = { ...paging.filter, _scenario: entry.scenario } as any; // TODO: this needs fixing
-        const [workers, count] = await this.workerService.findManyPaged(paging);
-
-        // TODO: check hateaos links on this endpoint
-        return WorkerDTOFactory.fromCollection(workers, count, paging);
-    }
-
-    @Post('/:id/scenario')
-    @ApiOperation({ summary: 'Set scenario for entry' })
-    @ApiResponse({ status: 404, description: 'Entry not found' })
-    @ApiResponse({ status: 400, description: 'Entry already has scenario selected' })
-    @ApiResponse({ status: 200, description: 'Succesfully set scenario' })
-    @UseGuards(JwtAuthGuard)
-    public async selectScenario(
-        @Param('id', ParseUUIDPipe) entryId: string,
-        @Body() createScenarioForm: ScenarioCreateForm,
-    ): Promise<EntryResponse> {
-        const entry = await this.entryService.findOneByUid(entryId, { populate: ['_scenario'] as any });
-
-        if (entry.scenario) {
-            return this.clientError('Entry already has a scenario selected. Delete the scenario first.');
-        }
-
-        const scenario = ScenarioCreateForm.toEntity(createScenarioForm, entry);
-        await this.scenarioService.persist(scenario);
-
-        return EntryDTOFactory.fromEntity(entry);
-    }
-
-    @Patch('/:id/scenario')
-    @ApiOperation({ summary: 'Update a scenario specifications' })
-    @ApiResponse({ status: 201, description: 'Updated scenario' })
-    @ApiResponse({ status: 404, description: 'Scenario not found' })
-    @UseGuards(JwtAuthGuard)
-    public async updateScenario(
-        @Param('id', ParseUUIDPipe) entryId: string,
-        @Body() updateScenarioForm: ScenarioUpdateForm,
-    ): Promise<EntryResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        const original = await this.scenarioService.findOne({ _entry: entryId } as any);
-        const updated = ScenarioUpdateForm.updateEntity(original, updateScenarioForm);
-        const saved = await this.scenarioService.persist(updated);
-
-        return EntryDTOFactory.fromEntity(saved.entry);
-    }
-
-    @Delete('/:id/scenario')
-    @ApiOperation({ summary: 'Delete a scenario from an entry' })
-    @ApiResponse({ status: 404, description: 'Scenario not found' })
-    @ApiResponse({ status: 200, description: 'Successfully deleted scenario from entry' })
-    @UseGuards(JwtAuthGuard)
-    public async deleteScenario(@Param('id', ParseUUIDPipe) entryId: string): Promise<EntryResponse> {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        const scenario = await this.scenarioService.findOne({ _entryId: entryId } as any);
-        await this.scenarioService.remove(scenario);
-        
-
-        return EntryDTOFactory.fromEntity(scenario.entry);
     }
 
     @Post('/import')
@@ -192,8 +112,10 @@ export class EntryController extends BaseController {
     @ApiResponse({ status: 201, description: 'Imported entry' })
     @ApiResponse({ status: 422, description: 'Errors found while importing' })
     @UseInterceptors(FileHelper.createFileInterceptor(EntryImporter.ACCEPTED_FILE_TYPE, EntryImporter.FILE_SIZE_LIMIT))
-    @UseGuards(JwtAuthGuard)
-    public async import(@UploadedFile() file: Express.Multer.File, @CurrentUser() sessionUser: User): Promise<any> {
+    public async import(
+        @UploadedFile() file: Express.Multer.File,
+        @CurrentUser() sessionUser: User,
+    ): Promise<any> {
         if (!file) {
             throw new UnprocessableEntityException('No file uploaded');
         }

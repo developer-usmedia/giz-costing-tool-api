@@ -3,10 +3,10 @@ import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 
 import { EntryWorker } from '@domain/entities';
-import { BaseService } from '@domain/services/base/base.service';
+import { DatabaseService } from '@domain/services';
 
 @Injectable()
-export class EntryWorkerService extends BaseService<EntryWorker> {
+export class EntryWorkerService extends DatabaseService<EntryWorker> {
     protected readonly entityName = EntryWorker;
 
     constructor(

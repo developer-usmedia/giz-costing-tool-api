@@ -16,23 +16,21 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
 
-import { JwtPayload } from '@api/auth/jwt/jwt-payload.type';
-import { RefreshJwtGuard } from '@api/auth/jwt/jwt-refresh.guard';
-import { JwtAuthGuard } from '@api/auth/jwt/jwt.guard';
-import { OTPService } from '@api/auth/service/otp.service';
-import { BaseController } from '@api/controllers/base.controller';
-import { TwoFactorForm } from '@api/dto/two-factor.form';
-import { ForgotPasswordForm } from '@api/dto/user-forgot-password.form';
-import { PasswordResetForm } from '@api/dto/user-password-reset.form';
-import { RegisterForm } from '@api/dto/user-register.form';
-import { VerifyEmailForm } from '@api/dto/user-verify-email.form';
-import { UserDTOFactory, UserResponse } from '@api/dto/user.dto';
-import { CurrentUser } from '@api/nestjs/decorators/user.decorator';
+import { JwtPayload, RefreshJwtGuard, JwtAuthGuard, OTPService } from '@api/auth';
+import { BaseController } from '@api/controllers';
+import {
+    TwoFactorForm,
+    ForgotPasswordForm,
+    PasswordResetForm,
+    RegisterForm,
+    VerifyEmailForm,
+    LoginForm,
+    VerifyCodeForm,
+} from '@api/forms';
+import { UserDTOFactory, UserResponse } from '@api/dto';
+import { CurrentUser } from '@api/decorators';
 import { User } from '@domain/entities';
-import { AuthService } from '@domain/services/auth.service';
-import { UserService } from '@domain/services/user.service';
-import { LoginForm } from '../dto/user-login.form';
-import { VerifyCodeForm } from '../dto/user-verify-code.form';
+import { UserService } from '@domain/services';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -40,7 +38,7 @@ export class AuthController extends BaseController {
     private readonly logger = new Logger(AuthController.name);
 
     constructor(
-        private readonly authService: AuthService,
+        // private readonly authService: AuthService,
         private readonly userService: UserService,
         private readonly otpService: OTPService,
     ) {
@@ -57,7 +55,7 @@ export class AuthController extends BaseController {
             return this.clientError('User already registered');
         }
 
-        const user = await this.authService.register(registerForm.email, registerForm.password);
+        const user = await this.userService.register(registerForm.email, registerForm.password);
 
         return UserDTOFactory.fromEntity(user);
     }
@@ -70,7 +68,7 @@ export class AuthController extends BaseController {
         @Body() loginForm: LoginForm,
     ): Promise<{ accessToken: string; refreshToken: string; user: UserResponse }> {
         const user = await this.userService.findOne({ email: loginForm.email });
-        const jwt = this.authService.login(user, loginForm.password);
+        const jwt = this.userService.login(user, loginForm.password);
 
         this.validate2FAForUser(user, loginForm.twoFactorCode);
 
@@ -82,7 +80,7 @@ export class AuthController extends BaseController {
             }
 
             // verify emailtoken with db entry and set emailVerified=true if not already verified
-            const correct = await this.authService.verifyEmailCode(user, loginForm.emailVerificationCode);
+            const correct = await this.userService.verifyEmailCode(user, loginForm.emailVerificationCode);
             if (!correct) {
                 const errorMessage = 'Invalid email verification code';
                 this.logger.debug(errorMessage);
@@ -100,7 +98,7 @@ export class AuthController extends BaseController {
         };
     }
 
-    @Get('/session')
+    @Get('/whoami')
     @ApiOperation({ summary: 'Get user of currently signed in user' })
     @ApiResponse({ status: 200, description: 'Currently logged in user from session' })
     @UseGuards(JwtAuthGuard)
@@ -124,7 +122,7 @@ export class AuthController extends BaseController {
             throw new BadRequestException('Invalid refresh token');
         }
 
-        const token = this.authService.generateJwt(user);
+        const token = this.userService.generateJwt(user);
         user.refreshToken = token.refreshToken;
         await this.userService.persist(user);
 
@@ -168,7 +166,7 @@ export class AuthController extends BaseController {
             return this.clientError('Forgot password failed');
         }
 
-        const sent = await this.authService.startPasswordReset(user);
+        const sent = await this.userService.startPasswordReset(user);
 
         return this.ok(res, { success: sent });
     }
@@ -208,7 +206,7 @@ export class AuthController extends BaseController {
             return this.clientError('Password reset failed');
         }
 
-        const saved = await this.authService.resetPassword(user, resetToken, newPassword);
+        const saved = await this.userService.resetPassword(user, resetToken, newPassword);
         if (!saved) {
             return this.clientError('Invalid or expired token');
         }
@@ -237,7 +235,7 @@ export class AuthController extends BaseController {
             return this.clientError('User email already verified');
         }
 
-        const sent = await this.authService.sendVerificationEmail(user);
+        const sent = await this.userService.sendVerificationEmail(user);
         return this.ok(res, { success: sent });
     }
 
@@ -250,12 +248,13 @@ export class AuthController extends BaseController {
         if (!user.emailVerified) {
             return this.clientError('Email verification required before enabling 2FA');
         }
+
         if (user.twoFactor.enabled) {
             return this.clientError('2FA already enabled');
         }
 
         const { secret, qrcode } = await this.otpService.generate2FASecret();
-        await this.authService.save2FASecret(user, secret.base32);
+        await this.userService.save2FASecret(user, secret.base32);
 
         // Q for J: Send secret to frontend for manual entry in authenticator?
         return this.created(res, { qrcode: qrcode });
@@ -281,7 +280,7 @@ export class AuthController extends BaseController {
         }
 
         if (!user.twoFactor.enabled) {
-            this.authService.enable2FA(user);
+            this.userService.enable2FA(user);
         }
 
         return this.ok(res, { success: verified });
@@ -292,7 +291,7 @@ export class AuthController extends BaseController {
     @ApiOperation({ summary: 'Disable 2FA' })
     @ApiResponse({ status: 200, description: '2FA disabled or 2FA was never enabled' })
     public async disable2FA(@CurrentUser() user: User, @Res() res: Response): Promise<{ success: boolean }> {
-        const disabled = await this.authService.disable2FA(user);
+        const disabled = await this.userService.disable2FA(user);
 
         return this.ok(res, { success: disabled });
     }

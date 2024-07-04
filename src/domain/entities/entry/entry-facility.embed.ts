@@ -91,17 +91,17 @@ export class EntryFacility {
     // }
 
     private set facilityId(value: string) {
-        Guard.check(value, { type: 'string', optional: true, allowEmpty: true, minLength: 3 });
+        Guard.check(value, { type: 'string', optional: true, minLength: 3 });
         this._facilityId = value;
     }
 
     private set products(value: string) {
-        Guard.check(value, { type: 'string', optional: true, allowEmpty: true, minLength: 3 });
+        Guard.check(value, { type: 'string', optional: true, minLength: 3 });
         this._products = value;
     }
 
     private set productionUnit(value: string) {
-        Guard.check(value, { type: 'string', optional: true, allowEmpty: true, minLength: 3 });
+        Guard.check(value, { type: 'string', optional: true, minLength: 3 });
         this._productionUnit = value;
     }
 

@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   cloudbeaver:
-    image: dbeaver/cloudbeaver:23.2
     container_name: giz-beaver
+    image: dbeaver/cloudbeaver:23.2
     ports:
-       - "3001:8978"
+      - 3001:8978
     environment:
       CB_ADMIN_NAME: ${CB_ADMIN_NAME}
       CB_ADMIN_PASSWORD: ${CB_ADMIN_PASSWORD}

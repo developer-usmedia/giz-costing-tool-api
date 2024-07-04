@@ -33,10 +33,15 @@ export const migrationFileName = (timestamp: string, name?: string) => {
         throw new Error('Specify migration name via `mikro-orm migration:create --name=the_migration`');
     }
 
-    return `${timestamp}_${name.toLowerCase()}`;
+    // Timestamp + KebabCase
+    return timestamp + '_' + name
+        .replace(/([a-z])([A-Z])/g, '$1-$2')
+        .replace(/[\s_]+/g, '-')
+        .toLowerCase();
 };
 
 export const seederFileName = (className: string) => {
+    // KebabCase
     return className
         .replace(/([a-z])([A-Z])/g, '$1-$2')
         .replace(/[\s_]+/g, '-')

@@ -2,22 +2,24 @@ import { Embeddable, Property } from '@mikro-orm/core';
 
 @Embeddable()
 export class ScenarioPayroll {
-    @Property({ columnType: 'integer', unsigned: true, nullable: true, fieldName: 'num_workers_lwgap' })
+    @Property({ columnType: 'integer', unsigned: true, fieldName: 'num_workers_lwgap' })
     private readonly _nrOfWorkersWithLWGap: number;
 
-    @Property({ columnType: 'numeric(12,4)', unsigned: true, nullable: true, fieldName: 'avg_lwgap' })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true, fieldName: 'avg_lwgap' })
     private readonly _avgLivingWageGap: number;
 
-    @Property({ columnType: 'numeric(12,4)', unsigned: true, nullable: true, fieldName: 'largest_lwgap' })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true, fieldName: 'largest_lwgap' })
     private readonly _largestLivingWageGap: number;
 
-    @Property({ columnType: 'numeric(12,4)', unsigned: true, nullable: true, fieldName: 'sum_lwgap_allworkers' })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true, fieldName: 'sum_lwgap_allworkers' })
     private readonly _sumAnnualLivingWageGapAllWorkers: number;
 
-    // TODO: Sums Annual Costs ?
-
     constructor() {
-        // Note: Fields are set via a custom query (triggered via the service)
+        // Note: These fields are updated via a custom query (triggered via the service)
+        this._nrOfWorkersWithLWGap = 0;
+        this._avgLivingWageGap = 0;
+        this._largestLivingWageGap = 0;
+        this._sumAnnualLivingWageGapAllWorkers = 0;
     }
 
     get nrOfWorkersWithLWGap() {

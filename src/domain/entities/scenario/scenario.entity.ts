@@ -93,7 +93,7 @@ export class Scenario extends AbstractEntity<Scenario> {
         Guard.check(value, { type: 'string', options: SCENARIO_TYPE_OPTIONS });
         this._type = value;
     }
-    
+
     public updateSpecs(specs: ScenarioSpecificationProps) {
         this._specs = new ScenarioSpecification(specs);
     }

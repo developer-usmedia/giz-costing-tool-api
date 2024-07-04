@@ -1,6 +1,7 @@
-import { Guard } from '@domain/utils/guard';
 import { Embeddable, Property } from '@mikro-orm/core';
+import { Guard } from '@domain/utils/guard';
 
+// TODO: Force source
 export interface EntryBenchmarkProps {
     country: string;
     year: number;
@@ -38,9 +39,9 @@ export class EntryBenchmark {
         if (props) {
             this.country = props.country;
             this.year = props.year;
-            this.source = props.source;
+            this.source = props.source ?? null;
             this.region = props.region;
-            this.locality = props.locality;
+            this.locality = props.locality ?? null;
             this.value = props.value;
         }
     }
@@ -75,9 +76,14 @@ export class EntryBenchmark {
     }
 
     private set country(value: string) {
-        Guard.check(value, { type:'string', optional: true, allowEmpty: true, minLength: 3 });
+        Guard.check(value, { type: 'string', optional: true, minLength: 3 });
         this._country = value;
     }
+
+    // private set countryCode(value: string) {
+    //     Guard.check(value, { type: 'string', optional: true, maxLength: 2, minLength: 2 });
+    //     this._countryCode = value;
+    // }
 
     private set year(value: number) {
         Guard.check(value, { type: 'number', optional: true, min: 2020, max: 2050 });
@@ -85,17 +91,17 @@ export class EntryBenchmark {
     }
 
     private set source(value: string) {
-        Guard.check(value, { type: 'string', optional: true, allowEmpty: true, minLength: 3 });
+        Guard.check(value, { type: 'string', optional: true, minLength: 3 });
         this._source = value;
     }
 
     private set region(value: string) {
-        Guard.check(value, { type: 'string', optional: true, allowEmpty: true, minLength: 3 });
+        Guard.check(value, { type: 'string', optional: true, minLength: 3 });
         this._region = value;
     }
 
     private set locality(value: string) {
-        Guard.check(value, { type: 'string', optional: true, allowEmpty: true, minLength: 3 });
+        Guard.check(value, { type: 'string', optional: true, minLength: 3 });
         this._locality = value;
     }
 
@@ -109,13 +115,7 @@ export class EntryBenchmark {
         return !!this._value
             && !!this._country
             && !!this._year
-            && !!this._region
-            && !!this._source;
+            && !!this._region;
+        // && !!this._source;
     }
-
-    // private set countryCode(value: string) {
-    //     Guard.check(value, { type: 'string', optional: true, maxLength: 2, minLength: 2 });
-    //     this._countryCode = value;
-    // }
-
 }

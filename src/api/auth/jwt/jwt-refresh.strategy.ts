@@ -2,7 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-import { environment } from '@app/environment';
+import { environment } from 'environment';
 import { JwtPayload } from './jwt-payload.type';
 
 export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {

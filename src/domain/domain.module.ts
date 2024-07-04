@@ -1,35 +1,46 @@
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core/constants';
+import { ConfigModule } from '@nestjs/config';
 
-import { entities } from '@domain/database/mikro-orm.config';
-import { BrevoService } from '@domain/services/email.service';
-import { EntryWorkerService } from '@domain/services/entry-worker.service';
-import { UserService } from '@domain/services/user.service';
-import { AuthService } from './services/auth.service';
-import { EntryService } from './services/entry.service';
-import { ScenarioWorkerService } from './services/scenario-worker.service';
-import { ScenarioService } from './services/scenario.service';
+import { mikroOrmOpts, entities } from '@domain/database/mikro-orm.config';
+import { UserAwareInterceptor } from '@domain/interceptors';
+import { EmailModule } from '@email/email.module';
+import {
+    EntryService,
+    EntryWorkerService,
+    ScenarioService,
+    ScenarioWorkerService,
+    UserService,
+} from '@domain/services';
+import { JwtModule } from '@nestjs/jwt';
+import { environment } from 'environment';
 
-Module({
-    imports: [MikroOrmModule.forFeature(entities)],
+@Module({
+    imports: [
+        ConfigModule.forRoot({ isGlobal: true }),
+        MikroOrmModule.forRoot(mikroOrmOpts),
+        MikroOrmModule.forFeature(entities),
+        EmailModule,
+        JwtModule.register({
+            secret: environment.jwt.secret,
+            signOptions: { expiresIn: environment.jwt.expiresIn },
+        }),
+    ],
     exports: [
-        AuthService,
-        BrevoService,
         EntryService,
+        UserService,
         EntryWorkerService,
         ScenarioService,
         ScenarioWorkerService,
-        UserService,
-        UserService,
     ],
     providers: [
-        AuthService,
-        BrevoService,
         EntryService,
+        UserService,
         EntryWorkerService,
         ScenarioService,
-        UserService,
-        UserService,
+        ScenarioWorkerService,
+        { provide: APP_INTERCEPTOR, useClass: UserAwareInterceptor },
     ],
-});
+})
 export class DomainModule {}

@@ -12,9 +12,9 @@ export class OTPService {
             name: OTP_AUTHENTICATOR_NAME,
             issuer: OTP_AUTHENTICATOR_ISSUER,
         });
-        const _qrCode = await qrcode.toDataURL(secret.otpauth_url);
+        const qrDataUrl = await qrcode.toDataURL(secret.otpauth_url);
 
-        return { secret: secret, qrcode: _qrCode };
+        return { secret: secret, qrcode: qrDataUrl };
     };
 
     public verify2FACode = (secret: string, code: string): boolean => {

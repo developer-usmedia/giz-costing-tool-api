@@ -1,8 +1,9 @@
 import { Embeddable, Property } from '@mikro-orm/core';
+import { customAlphabet } from 'nanoid';
 
-import { generateBasicToken } from '@domain/utils/generate-basic-token';
-
+const CODE_ALPHABET = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 const CODE_TTL_HOURS = 1;
+const generateBasicCode = customAlphabet(CODE_ALPHABET, 6);
 
 @Embeddable()
 export class VerificationCode {
@@ -13,7 +14,7 @@ export class VerificationCode {
     expiresAt?: Date;
 
     constructor() {
-        this.code = generateBasicToken();
+        this.code = generateBasicCode();
         this.expiresAt = new Date(this.generateNewDate());
     }
 

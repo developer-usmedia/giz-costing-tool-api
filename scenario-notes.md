@@ -1,3 +1,36 @@
+# Endpoints JP
+| Method | Endpoint                   | Notes                                                                                   |
+|--------|----------------------------|-----------------------------------------------------------------------------------------|
+| GET    | /                          | -                                                                                       |
+| GET    | /health                    | -                                                                                       |
+| GET    | /health/liveness           | -                                                                                       |
+| GET    | /health/readiness          | -                                                                                       |
+| -      | -                          | -                                                                                       |
+| POST   | /auth/register             | -                                                                                       |
+| POST   | /auth/verify-code          | -                                                                                       |
+| POST   | /auth/verify-email         | -                                                                                       |
+| POST   | /auth/forgot-password      | -                                                                                       |
+| POST   | /auth/reset-password       | -                                                                                       |
+| POST   | /auth/login                | -                                                                                       |
+| POST   | /auth/logout               | -                                                                                       |
+| POST   | /auth/refresh              | -                                                                                       |
+| DELETE | /auth/account              | Maybe rename?                                                                           |
+| POST   | /auth/2fa/enable           | -                                                                                       |
+| POST   | /auth/2fa/disable          | -                                                                                       |
+| POST   | /auth/2fa/verify/:code     | Why code in url?                                                                        |
+| GET    | /auth/whoami               | To /whoami                                                                              |
+| -      | -                          | -                                                                                       |
+| GET    | /entries/:id               | -                                                                                       |
+| PATCH  | /entries/:id               | This also allows to set buyer information                                               |
+| DELETE | /entries/:id               | -                                                                                       |
+| -      | -                          | -                                                                                       |
+| POST   | /entries/:id/scenario      | Sets the scenario. If already selected, throw error - it requires a DELETE first        |
+| DELETE | /entries/:id/scenario      | Deletes the currently set scenario                                                      |
+| PATCH  | /entries/:id/scenario      | Updates scenario specifications and distribution                                        |
+| -      | -                          | -                                                                                       |
+| GET    | /entries/:id/workers       | Returns worker DTO that includes base info + renumeration + lwGapInfo + scenarioResults |
+| POST   | /entries/:id/workers/reset | Resets specification and / or distribution on all workers                               |
+
 # Endpoint sketching
 
 Q: Welke endpoint wil ik als frontender aanroepen om mijn data te fetchen?

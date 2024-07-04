@@ -6,13 +6,15 @@ type Envs = 'development' | 'staging' | 'production';
 class Environment {
     public api: {
         url: string;
-        isLocal: boolean;
+        port: number;
         env: Envs;
-        corsOrigin: (string|RegExp)[];
+        isLocal: boolean;
+        corsOrigin: string[];
         logLevel: LogLevel;
     };
 
     public db: {
+        socket: string;
         host: string;
         name: string;
         port: number;
@@ -38,18 +40,20 @@ class Environment {
 
         this.api = {
             url: process.env.API_URL,
-            isLocal: this.isLocal(),
+            port: +process.env.API_PORT || 8080,
             env: process.env.ENV as Envs,
+            isLocal: this.isLocal(),
             corsOrigin: this.parseUrls(process.env.API_CORS_ORIGIN),
             logLevel: process.env.LOG_LEVEL as LogLevel ?? 'warn',
         };
 
         this.db = {
-            host: process.env.MIKRO_ORM_HOST,
-            name: process.env.MIKRO_ORM_DB_NAME,
-            port: +process.env.MIKRO_ORM_PORT,
-            user: process.env.MIKRO_ORM_USER,
-            password: process.env.MIKRO_ORM_PASSWORD,
+            socket: process.env.DB_SOCKET,
+            host: process.env.DB_HOST,
+            name: process.env.DB_NAME,
+            port: +process.env.DB_PORT,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
         };
 
         this.mail = {
@@ -58,23 +62,18 @@ class Environment {
             fromEmail: process.env.EMAIL_FROM_ADDRESS ?? 'ina@giz.de',
         };
 
-        const envJwtExpire = process.env.JWT_EXPIRES_IN ?? '1hr';
         this.jwt = {
-            secret: process.env.JWT_SECRET,
-            expiresIn: this.api.isLocal ? '1d' : envJwtExpire,
+            secret: process.env.JWT_SECRET ?? 'very-secret-secret',
+            expiresIn: process.env.JWT_EXPIRES_IN ?? '1hr',
             refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN ?? '7d',
-            issuer: process.env.JWT_ISSUER ?? 'UsMedia',
+            issuer: process.env.JWT_ISSUER ?? 'GIZ - Costing Tool',
         };
     }
 
-    public getPostgresConnectionString = (): string =>
-        `postgres://${this.db.user}:${this.db.password}@${this.db.host}:${this.db.port}/${this.db.name}`;
-
     public isValid = (): boolean => {
         return (
-            !!this.db.host &&
+            ((!!this.db.host && !!this.db.port) || !!this.db.socket) &&
             !!this.db.name &&
-            !!this.db.port &&
             !!this.db.user &&
             !!this.db.password &&
             !!this.api.url &&
@@ -87,20 +86,12 @@ class Environment {
         return ['development', 'test'].includes(process.env.ENV);
     };
 
-    private parseUrls(urls: string): (string | RegExp)[] {
+    private parseUrls(urls: string): string[] {
         if (!urls) {
             return [];
         }
 
-        return urls.split(',').map((u) => {
-            let url: string | RegExp = u.trim();
-            if (url.startsWith('.') || url.startsWith('-')) {
-                url = new RegExp(url);
-            } else {
-                url = url.replace(/\/$/, '');
-            }
-            return url;
-        });
+        return urls.split(',').map(u => u.trim().replace(/\/$/, ''));
     }
 }
 

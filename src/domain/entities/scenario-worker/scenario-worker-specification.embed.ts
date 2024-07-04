@@ -1,5 +1,5 @@
-import { Guard } from '@domain/utils/guard';
 import { Embeddable, Property } from '@mikro-orm/core';
+import { Guard } from '@domain/utils/guard';
 
 export interface ScenarioWorkerSpecificationProps {
     remunerationIncrease: number;
@@ -24,7 +24,7 @@ export class ScenarioWorkerSpecification {
         Guard.check(value, { type: 'number', optional: true, min: 0, max: 9999999999.99 });
         this._remunerationIncrease = value;
     }
-    
+
     public isEmpty() {
         return !this._remunerationIncrease;
     }

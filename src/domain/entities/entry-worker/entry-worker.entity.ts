@@ -6,7 +6,6 @@ import {
     EntryWorkerRemuneration, EntryWorkerRemunerationProps,
     Gender, GENDER_OPTIONS,
 } from '@domain/entities';
-import { } from '@domain/entities/entry-worker/entry-worker-remuneration.embed';
 import { Guard } from '@domain/utils/guard';
 
 export interface EntryWorkerProps {

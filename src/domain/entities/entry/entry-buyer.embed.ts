@@ -1,6 +1,6 @@
-import { BUYER_UNIT_OPTIONS, BuyerUnit, GENDER_OPTIONS } from '@domain/entities';
-import { Guard } from '@domain/utils/guard';
 import { Embeddable, Enum, Property } from '@mikro-orm/core';
+import { Guard } from '@domain/utils/guard';
+import { BUYER_UNIT_OPTIONS, BuyerUnit, GENDER_OPTIONS } from '@domain/entities';
 
 export interface EntryBuyerProps {
     name: string;
@@ -53,7 +53,7 @@ export class EntryBuyer {
         Guard.check(value, { type: 'number', optional: true, min: 1, max: 9999999.99 });
         this._amount = value;
     }
-    
+
     public isComplete(): boolean {
         return !!this._name
             && !!this._unit

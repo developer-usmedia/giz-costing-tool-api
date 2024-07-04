@@ -1,4 +1,4 @@
-import { environment } from '@app/environment';
+import { environment } from 'environment';
 
 export const ENTRY_LINKS = {
     entries: {

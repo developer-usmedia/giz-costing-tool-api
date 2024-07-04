@@ -5,8 +5,8 @@ import { SeedManager } from '@mikro-orm/seeder';
 import { NotFoundException } from '@nestjs/common';
 import { join } from 'path';
 
-import { UserAwareArgs } from '@api/nestjs/interceptors/user-aware.interceptor';
-import { environment } from '@app/environment';
+import { environment } from 'environment';
+import { UserAwareArgs } from '@domain/interceptors';
 import { DatabaseNamingStrategy, migrationFileName, seederFileName } from '@domain/database';
 import {
     Benchmark,

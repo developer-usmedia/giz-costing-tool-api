@@ -900,7 +900,8 @@
           "unsigned": true,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
+          "default": "0",
           "mappedType": "integer"
         },
         "payroll_avg_lwgap": {
@@ -909,9 +910,10 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
           "precision": 12,
           "scale": 4,
+          "default": "0",
           "mappedType": "decimal"
         },
         "payroll_largest_lwgap": {
@@ -920,9 +922,10 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
           "precision": 12,
           "scale": 4,
+          "default": "0",
           "mappedType": "decimal"
         },
         "payroll_sum_lwgap_allworkers": {
@@ -931,9 +934,10 @@
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
           "precision": 12,
           "scale": 4,
+          "default": "0",
           "mappedType": "decimal"
         }
       },
