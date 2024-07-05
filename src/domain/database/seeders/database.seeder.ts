@@ -5,6 +5,6 @@ import { BenchmarkFactory } from './factories/benchmark.factory';
 
 export class DatabaseSeeder extends Seeder {
     async run(em: EntityManager): Promise<void> {
-        await new BenchmarkFactory(em).create(2);
+        await new BenchmarkFactory(em).create(1);
     }
 }
