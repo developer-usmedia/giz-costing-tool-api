@@ -4,16 +4,16 @@ import { PassportModule } from '@nestjs/passport';
 import { TerminusModule } from '@nestjs/terminus';
 import { ThrottlerModule } from '@nestjs/throttler';
 
+import { JwtStrategy, OTPService, RefreshJwtStrategy } from '@api/auth';
 import { DomainModule } from '@domain/domain.module';
 import { ImportModule } from '@import/import.module';
-import { RefreshJwtStrategy, JwtStrategy, OTPService } from '@api/auth';
 import {
-    IndexController,
-    HealthController,
     AuthController,
     EntryController,
     EntryScenarioController,
     EntryWorkerController,
+    HealthController,
+    IndexController,
     TestController,
 } from './controllers';
 

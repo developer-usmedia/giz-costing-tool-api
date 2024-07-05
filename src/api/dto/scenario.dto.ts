@@ -1,7 +1,7 @@
 import { HalResponse } from '@api/paging/paging-response';
 import { Scenario, ScenarioType } from '@domain/entities';
 
-// TODO: This DTO needs an update
+// TODO: This DTO needs an update to look more like the entity DTO
 export interface ScenarioDTO extends HalResponse {
     id: string;
     type: ScenarioType;
@@ -11,17 +11,8 @@ export interface ScenarioDTO extends HalResponse {
         employerTax: number;
         absoluteIncrease: number;
     };
-    distributions?: Record<string, any>; // Implemented later
-    calculations?: {
-        // TODO: implemented & verified later-> data is used in report page
-        wageGap: number;
-        labourCosts: number;
-        overheadCosts: number;
-        totalAdditionalCosts: number;
-        additionalCostsPerUnit: number;
-        employeesBelowLw: number;
-        averageLwGap: number;
-    };
+    distributions?: Record<string, any>;
+    calculations?:  Record<string, any>;
     createdAt: Date;
     updatedAt: Date;
 }

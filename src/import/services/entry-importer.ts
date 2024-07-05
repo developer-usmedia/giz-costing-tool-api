@@ -3,13 +3,6 @@ import { Row, Workbook } from 'exceljs';
 
 import { Entry, EntryWorker, User } from '@domain/entities';
 
-import { EntityValidationError } from '@import/errors/entity-validation.error';
-import { EntryWorkerFactory } from '@import/factories/entry-worker.factory';
-import { EntryFactory } from '@import/factories/entry.factory';
-import { EntryInfo } from '@import/schemas/entry-info.schema';
-import { EntryWorkerData } from '@import/schemas/entry-worker.schema';
-import { FileHelper } from '@import/utils/file-helper';
-import { ImportValidationErrorDTOFactory, ImportValidationErrorDto } from '@import/dto/import-validation.dto';
 import {
     COLUMN_MAPPING_PAYROLL,
     INFO_SHEET_MAPPING,
@@ -17,6 +10,13 @@ import {
     SHEET_PAYROLL_INDEX,
     SHEET_PAYROLL_START_ROW,
 } from '@import/dto/import-column-mapping.enum';
+import { ImportValidationErrorDTOFactory, ImportValidationErrorDto } from '@import/dto/import-validation.dto';
+import { EntityValidationError } from '@import/errors/entity-validation.error';
+import { EntryWorkerFactory } from '@import/factories/entry-worker.factory';
+import { EntryFactory } from '@import/factories/entry.factory';
+import { EntryInfo } from '@import/schemas/entry-info.schema';
+import { EntryWorkerData } from '@import/schemas/entry-worker.schema';
+import { FileHelper } from '@import/utils/file-helper';
 import { parseFloatCell, parseGenderCell, parseIntCell } from './workbook-parse-helpers';
 import { WorkbookValidator } from './workbook-validator';
 
@@ -74,6 +74,8 @@ export class EntryImporter {
         });
         this.entry.matrixId = matrixId;
 
+        this.entry.finalizeImport();
+
         return this.entry;
     }
 
@@ -103,6 +105,7 @@ export class EntryImporter {
 
         await this.readChunked((chunk) => {
             this.logger.verbose(`process() - Reading new chunk (n: ${chunk.length})`);
+            const workers: EntryWorker[] = [];
 
             for (const row of chunk) {
                 this.logger.verbose(`process() - Reading row: ${row.number}`);
@@ -116,8 +119,12 @@ export class EntryImporter {
                     this.benchmarkValue = parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.benchmarkValue).text);
                 }
 
-                this.createWorker(row);
+                const worker = this.createWorker(row);
+                workers.push(worker);
+                this.entry.addWorker(worker);
             }
+
+            // Call worker repo to save workers from this chunk
         });
     }
 

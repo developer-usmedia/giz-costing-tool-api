@@ -16,19 +16,19 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
 
-import { JwtPayload, RefreshJwtGuard, JwtAuthGuard, OTPService } from '@api/auth';
+import { JwtAuthGuard, JwtPayload, OTPService, RefreshJwtGuard } from '@api/auth';
 import { BaseController } from '@api/controllers';
+import { CurrentUser } from '@api/decorators';
+import { UserDTOFactory, UserResponse } from '@api/dto';
 import {
-    TwoFactorForm,
     ForgotPasswordForm,
+    LoginForm,
     PasswordResetForm,
     RegisterForm,
-    VerifyEmailForm,
-    LoginForm,
+    TwoFactorForm,
     VerifyCodeForm,
+    VerifyEmailForm,
 } from '@api/forms';
-import { UserDTOFactory, UserResponse } from '@api/dto';
-import { CurrentUser } from '@api/decorators';
 import { User } from '@domain/entities';
 import { UserService } from '@domain/services';
 

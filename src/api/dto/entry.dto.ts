@@ -33,7 +33,7 @@ export interface EntryDTO extends HalResponse {
     };
     payroll: {
         year: string;
-        currencyCode?: string;
+        currencyCode: string;
         nrOfJobCategories: number;
         nrOfWorkers: number;
     };
@@ -58,8 +58,8 @@ export interface EntryDTO extends HalResponse {
         };
         annualCosts?: {
             remunerationIncrease: number;
-            laborCosts: number;
-            additionalCosts: number;
+            taxCosts: number;
+            overheadCosts: number;
             totalCosts: number;
             totalCostsPerUnit: number;
         };
@@ -69,7 +69,7 @@ export interface EntryDTO extends HalResponse {
         specification?: {
             taxEmployee: number;
             taxEmployer: number;
-            additionalCosts: number;
+            overheadCosts: number;
             remunerationIncrease: number;
         };
         distribution?: {
@@ -91,7 +91,7 @@ export interface EntryDTO extends HalResponse {
         };
         annualCosts?: {
             remunerationIncrease: number;
-            laborCosts: number;
+            taxCosts: number;
             additionalCosts: number;
             totalCosts: number;
             totalCostsPerUnit: number;
@@ -149,6 +149,7 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
         },
         payroll: {
             year: entity.payroll.year.toString(),
+            currencyCode: entity.payroll.currencyCode,
             nrOfJobCategories: entity.payroll.nrOfJobCategories,
             nrOfWorkers: entity.payroll.nrOfWorkers,
         },
@@ -172,33 +173,33 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
                 amount: entity.buyer.amount,
             },
         },
-        scenario: {
+        scenario: entity.scenario ? {
             type: entity.scenario?.type,
             specification: {
-                taxEmployee: entity.scenario?.specs.taxEmployee,
-                taxEmployer: entity.scenario?.specs.taxEmployer,
-                additionalCosts: entity.scenario?.specs.overheadCosts,
-                remunerationIncrease: entity.scenario?.specs.remunerationIncrease,
+                taxEmployee: entity.scenario.specs.taxEmployee,
+                taxEmployer: entity.scenario.specs.taxEmployer,
+                overheadCosts: entity.scenario.specs.overheadCosts,
+                remunerationIncrease: entity.scenario.specs.remunerationIncrease,
             },
-            distribution: {
-                baseWagePerc: entity.scenario?.distro.baseWagePerc,
-                bonusesPerc: entity.scenario?.distro.bonusesPerc,
-                ikbPerc: entity.scenario?.distro.ikbPerc,
-                ikbHousingPerc: entity.scenario?.distro.ikbHousingPerc,
-                ikbFoodPerc: entity.scenario?.distro.ikbFoodPerc,
-                ikbTransportPerc: entity.scenario?.distro.ikbTransportPerc,
-                ikbHealthcarePerc: entity.scenario?.distro.ikbHealthcarePerc,
-                ikbChildcarePerc: entity.scenario?.distro.ikbChildcarePerc,
-                ikbChildEducationPerc: entity.scenario?.distro.ikbChildEducationPerc,
-            },
+            distribution: entity.scenario?.distro ? {
+                baseWagePerc: entity.scenario.distro.baseWagePerc,
+                bonusesPerc: entity.scenario.distro.bonusesPerc,
+                ikbPerc: entity.scenario.distro.ikbPerc,
+                ikbHousingPerc: entity.scenario.distro.ikbHousingPerc,
+                ikbFoodPerc: entity.scenario.distro.ikbFoodPerc,
+                ikbTransportPerc: entity.scenario.distro.ikbTransportPerc,
+                ikbHealthcarePerc: entity.scenario.distro.ikbHealthcarePerc,
+                ikbChildcarePerc: entity.scenario.distro.ikbChildcarePerc,
+                ikbChildEducationPerc: entity.scenario.distro.ikbChildEducationPerc,
+            }: undefined,
             livingWage: {
-                nrOfWorkersBelowLivingWage: entity.scenario?.payroll.nrOfWorkersWithLWGap,
-                avgLivingWageGap: entity.scenario?.payroll.avgLivingWageGap,
-                largestLivingWageGap: entity.scenario?.payroll.largestLivingWageGap,
-                annualFacilityLivingWageGap: entity.scenario?.payroll.sumAnnualLivingWageGapAllWorkers,
+                nrOfWorkersBelowLivingWage: entity.scenario.payroll.nrOfWorkersWithLWGap,
+                avgLivingWageGap: entity.scenario.payroll.avgLivingWageGap,
+                largestLivingWageGap: entity.scenario.payroll.largestLivingWageGap,
+                annualFacilityLivingWageGap: entity.scenario.payroll.sumAnnualLivingWageGapAllWorkers,
             },
             // TODO: Annual Costs
-        },
+        } : undefined,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
         _links: {
@@ -207,5 +208,6 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
         },
     };
 
+    // TODO fix: cleanObject removes the
     return cleanObject(dto);
 };

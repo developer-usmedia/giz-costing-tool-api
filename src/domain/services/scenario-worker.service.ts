@@ -2,8 +2,8 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository, raw } from '@mikro-orm/postgresql';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EntryWorker, ScenarioWorker } from '@domain/entities';
-import { DatabaseService } from '@domain/services';
+import { EntryWorker, Scenario, ScenarioWorker } from '@domain/entities';
+import { DatabaseService, EntryWorkerService } from '@domain/services';
 
 @Injectable()
 export class ScenarioWorkerService extends DatabaseService<ScenarioWorker> {
@@ -13,6 +13,7 @@ export class ScenarioWorkerService extends DatabaseService<ScenarioWorker> {
     constructor(
         protected readonly em: EntityManager,
         @InjectRepository(ScenarioWorker) protected readonly repository: EntityRepository<ScenarioWorker>,
+        protected readonly entryWorkerService: EntryWorkerService,
     ) {
         super(em, repository);
     }
@@ -89,4 +90,20 @@ export class ScenarioWorkerService extends DatabaseService<ScenarioWorker> {
         return Promise.resolve();
     }
     /* eslint-enable @typescript-eslint/no-unsafe-argument */
+
+    async importWorkers(scenario: Scenario, batchSize = 20) {
+        for await (const batch of this.entryWorkerService.getBatched(scenario.entry, batchSize)) {
+            const scenarioWorkers = [];
+
+            for (const entryWorker of batch) {
+                const scenarioWorker = new ScenarioWorker({
+                    scenario: scenario,
+                    worker: entryWorker,
+                });
+                scenarioWorkers.push(scenarioWorker);
+            }
+
+            await this.repository.insertMany(scenarioWorkers);
+        }
+    }
 }

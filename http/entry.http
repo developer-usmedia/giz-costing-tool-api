@@ -2,6 +2,7 @@
 @port=3000
 @endpoint=entries
 @entryId=297eaab9-dd81-481c-a3a5-d63596ccd663
+@workerId=297eaab9-dd81-481c-a3a5-d63596ccd663
 
 ### Get all
 GET http://{{host}}:{{port}}/api/{{endpoint}}
@@ -67,6 +68,15 @@ Authorization: Bearer {{token}}
 ### Get workers
 GET http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}/workers
 Authorization: Bearer {{token}}
+
+### Update worker
+PATCH http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}/workers/{{workerId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{  
+    "remunerationIncrease": 1223
+}
 
 ### Set a scenario
 POST http://{{host}}:{{port}}/api/{{endpoint}}/{{entryId}}/scenario

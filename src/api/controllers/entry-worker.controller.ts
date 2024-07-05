@@ -1,15 +1,16 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@api/auth';
 import { BaseController } from '@api/controllers';
-import { WorkerDTOFactory, WorkerListResponse } from '@api/dto';
 import { Paging } from '@api/decorators';
+import { WorkerDTOFactory, WorkerListResponse, WorkerResponse } from '@api/dto';
+import { WorkersResetForm } from '@api/forms';
+import { ScenarioWorkerUpdateForm } from '@api/forms/scenario-worker-update.form';
 import { PagingParams } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { ScenarioWorker } from '@domain/entities';
 import { EntryService, ScenarioWorkerService } from '@domain/services';
-import { WorkersResetForm } from '@api/forms';
 
 @ApiTags('entries')
 @Controller('entries/:entryId/workers')
@@ -31,10 +32,6 @@ export class EntryWorkerController extends BaseController {
         @Paging('ScenarioWorker', PagingValidationPipe) paging: PagingParams<ScenarioWorker>,
     ): Promise<WorkerListResponse> {
         const entry = await this.entryService.findOneByUid(entryId);
-
-        if(!entry.scenario) {
-            throw this.clientError('First enable a scenario before getting workers');
-        }
 
         paging.filter = { ...paging.filter, _scenario: entry.scenario } as any; // TODO: this needs fixing
         const [workers, count] = await this.workerService.findManyPaged(paging);
@@ -64,4 +61,24 @@ export class EntryWorkerController extends BaseController {
             await this.workerService.resetSpecificationsForWorkers(entry.scenario.id);
         }
     }
+
+    @Patch('/:workerId')
+    @ApiOperation({ summary: 'Update a worker' })
+    @ApiResponse({ status: 201, description: 'Updated worker' })
+    @ApiResponse({ status: 404, description: 'Entry or worker not found' })
+    public async updateScenario(
+        @Param('entryId', ParseUUIDPipe) entryId: string,
+        @Param('workerId', ParseUUIDPipe) workerId: string,
+        @Body() updateWorkerForm: ScenarioWorkerUpdateForm,
+    ): Promise<WorkerResponse> {
+        /* eslint-disable @typescript-eslint/no-unsafe-argument */
+        const entry = await this.entryService.findOne({ _id: entryId } as any);
+        const original = await this.workerService.findOne({ _id: workerId, _scenario: entry.scenario } as any);
+        /* eslint-enable @typescript-eslint/no-unsafe-argument */
+        const updated = ScenarioWorkerUpdateForm.updateEntity(original, updateWorkerForm);
+        const saved = await this.workerService.persist(updated);
+
+        return WorkerDTOFactory.fromEntity(saved);
+    }
+
 }

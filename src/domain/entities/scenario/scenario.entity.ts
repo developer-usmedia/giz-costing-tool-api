@@ -4,9 +4,11 @@ import {
     AbstractEntity,
     Entry,
     SCENARIO_TYPE_OPTIONS,
-    ScenarioDistribution, ScenarioDistributionProps,
+    ScenarioDistribution,
+    ScenarioDistributionProps,
     ScenarioPayroll,
-    ScenarioSpecification, ScenarioSpecificationProps,
+    ScenarioSpecification,
+    ScenarioSpecificationProps,
     ScenarioType,
     ScenarioWorker,
 } from '@domain/entities';
@@ -30,7 +32,7 @@ export class Scenario extends AbstractEntity<Scenario> {
     @Embedded({ entity: () => ScenarioSpecification, prefix: 'specs_' })
     private _specs: ScenarioSpecification;
 
-    @Embedded({ entity: () => ScenarioDistribution, prefix: 'distro_' })
+    @Embedded({ entity: () => ScenarioDistribution, prefix: 'distro_', nullable: true })
     private _distro: ScenarioDistribution;
 
     @Embedded({ entity: () => ScenarioPayroll, prefix: 'payroll_' })
@@ -47,27 +49,10 @@ export class Scenario extends AbstractEntity<Scenario> {
 
         this._entry = props.entry;
         this._specs = new ScenarioSpecification(props.specs);
-        this._distro = new ScenarioDistribution(props.distro);
+        this._distro = props.distro ? new ScenarioDistribution(props.distro) : null;
         this._payroll = new ScenarioPayroll();
 
-        // this.importWorkers();
     }
-
-    // // TODO: move to service and instantiate with scenario calculation value
-    // public importWorkers(): void {
-    //     // if (this.entry.workers.length <= 0) {
-    //     //     return;
-    //     // }
-
-    //     for (const worker of this.entry.workers) {
-    //         const scenarioWorker = new ScenarioWorker({
-    //             scenario: this,
-    //             worker: worker,
-    //         });
-
-    //         this._workers.add(scenarioWorker);
-    //     }
-    // }
 
     get type() {
         return this._type;

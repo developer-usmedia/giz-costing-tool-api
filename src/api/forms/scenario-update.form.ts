@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsObject, ValidateNested } from 'class-validator';
+import { IsObject, IsOptional, ValidateNested } from 'class-validator';
 
 import { Scenario } from '@domain/entities';
 import { ScenarioDistroCreateForm } from './scenario-distribution.form';
@@ -11,11 +11,13 @@ export class ScenarioUpdateForm {
     @IsObject()
     @ValidateNested()
     @Type(() => ScenarioSpecUpdateForm)
+    @IsOptional()
     specifications: ScenarioSpecUpdateForm;
 
     @ApiProperty({ nullable: true })
     @ValidateNested()
     @Type(() => ScenarioDistroCreateForm)
+    @IsOptional()
     distributions: ScenarioDistroCreateForm;
 
     // Convert to database entity from DTO specified above

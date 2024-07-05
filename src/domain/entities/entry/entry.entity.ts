@@ -154,6 +154,44 @@ export class Entry extends AbstractEntity<Entry> {
         this.updateStatus();
     }
 
+     // These are calculations that loop over relation -> move to service + sql call
+    public getNOfJobCategories(): number {
+        return new Set(this.workers?.map((worker) => worker.name)).size;
+    }
+    
+    public getNOfWorkersBelowLW(): number {
+        return this.workers?.filter((w) => w.isBelowLw).length;
+}
+    
+    public getNOfWorkers(): number {
+        return this.workers?.reduce((counter, worker) => worker.nrOfWorkers + counter, 0) ?? 0;
+    }
+    
+    // TODO: this should be done via service
+    public calculcateLwGaps(): void {
+        if (!this.workers.length) {
+            return;
+        }
+    
+        const benchmarkValue = this.benchmark.value;
+        const lwWorkers = this.workers.filter((worker) => worker.remuneration.total() < benchmarkValue);
+        const lwGaps = lwWorkers.map(w => w.remuneration.total()).map((value) => benchmarkValue - value);
+
+        const avg = lwGaps?.reduce((counter, value) => value + counter, 0) ?? 0;
+        const largest = [...lwGaps].sort().at(lwGaps.length - 1) ?? 0;
+        const sumAnnualLivingWageGapAllWorkers = lwWorkers.reduce((index, worker) => index + worker.livingWage().annualLivingWageGap, 0);
+
+        this._payroll = new EntryPayroll({
+            year: this._payroll.year,
+            avgLivingWageGap: avg,
+            largestLivingWageGap: largest,
+            sumAnnualLivingWageGapAllWorkers: sumAnnualLivingWageGapAllWorkers,
+            nrOfWorkersWithLWGap: this.getNOfWorkersBelowLW(),
+            nrOfJobCategories: this.getNOfJobCategories(),
+            nrOfWorkers: this.getNOfWorkers(),
+        });
+        this.updateStatus();
+    }
     public clearBenchmark() {
         if (this.isLocked) {
             throw Error('Cannot clear benchmark on locked entry.');
@@ -186,7 +224,8 @@ export class Entry extends AbstractEntity<Entry> {
         }
 
         const hasPayrollInfo = this._payroll?.isComplete() || false;
-        if (!hasPayrollInfo) {
+        const nrOfWorkers = this._workers.count(); // TODO: remove when payroll (summary) is inserted via sql / service
+        if (!hasPayrollInfo && nrOfWorkers === 0) {
             this._status = 'INFO_DONE';
             return;
         }
@@ -207,48 +246,13 @@ export class Entry extends AbstractEntity<Entry> {
         this._status = 'COMPLETED';
     }
 
-    // TODO: Remove when done
-    //
-    // public addWorker(worker: EntryWorker, { recalculateLwGaps = true }): void {
-    //     this._workers.add(worker);
-    //
-    //     if (recalculateLwGaps) {
-    //         this.calculcateLwGaps();
-    //     }
-    // }
-    //
-    // // These are calculations that loop over relation -> move to service
-    // public getNOfJobCategories(): number {
-    //     return new Set(this.workers?.map((worker) => worker.name)).size;
-    // }
-    //
-    // public getNOfWorkersBelowLW(): number {
-    //     return this.workers?.filter((w) => w.isBelowLW).length;
-    // }
-    //
-    // public getNOfWorkers(): number {
-    //     return this.workers?.reduce((counter, worker) => worker.numberOfWorkers + counter, 0) ?? 0;
-    // }
-    //
-    // public calculcateLwGaps(): void {
-    //     if (!this.workers.length) {
-    //         return;
-    //     }
-    //
-    //     const benchmarkValue = this.benchmark.localValue;
-    //     const lwGaps = this.workers
-    //         ?.map((worker) => worker.totalRenumeration)
-    //         .filter((value) => value < benchmarkValue)
-    //         .map((value) => benchmarkValue - value);
-    //
-    //     const avg = lwGaps?.reduce((counter, value) => value + counter, 0) ?? 0;
-    //     const largest = [...lwGaps].sort().at(lwGaps.length - 1) ?? 0;
-    //
-    //     this.averageLwGap = avg;
-    //     this.largestLwGap = largest;
-    // }
-    //
-    // public finalizeImport(): void {
-    //     this.calculcateLwGaps();
-    // }
+    public finalizeImport(): void {
+        this.calculcateLwGaps();
+    }
+
+    // TODO: Remove when workers are stored with repository
+    public addWorker(worker: EntryWorker): void {
+        this._workers.add(worker);
+        this.updateStatus();
+    }
 }

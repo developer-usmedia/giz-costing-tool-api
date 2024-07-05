@@ -1,8 +1,8 @@
 import * as brevo from '@getbrevo/brevo';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { environment } from 'environment';
 import { SendSmtpEmail } from '@getbrevo/brevo/model/sendSmtpEmail';
+import { environment } from 'environment';
 
 export type BrevoEmail = { email: string; name?: string };
 
@@ -80,7 +80,11 @@ GIZ`;
         textEmail.textContent = body;
 
         this.logger.debug(`Sending text email to ${to.email}`);
-        this.logger.verbose(subject, body);
+        this.logger.debug(subject, body);
+
+        if(environment.api.isLocal) {
+            return true;
+        }
 
         return this.sendTransactionalEmail(textEmail);
     }

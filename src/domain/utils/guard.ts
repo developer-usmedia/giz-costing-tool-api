@@ -183,7 +183,7 @@ export class Guard {
      * @throws {Error} - Throws an error if the value is null or undefined.
      */
     public static isDefined(value: unknown): void {
-        if (value === null || typeof value === 'undefined') {
+        if (value === null || value == undefined || typeof value === 'undefined') {
             throw new Error('Value is undefined');
         }
     }
@@ -333,6 +333,11 @@ export class Guard {
      * @throws {Error} When the value is an empty string.
      */
     public static isStringNotEmpty(value: string, checkTrimmed = true): void {
+        if (typeof value !== 'string') {
+            // If guard type string and optional: true the 'value' could be of type null or undefined.
+            return;
+        }
+
         if (!value || (checkTrimmed ? value.trim().length === 0 : value.length === 0)) {
             throw new Error('Value is an empty string');
         }

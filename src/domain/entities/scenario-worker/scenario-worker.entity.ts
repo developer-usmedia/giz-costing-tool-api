@@ -84,12 +84,18 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         this._distro = new ScenarioWorkerDistribution(distro);
     }
 
-    public remuneration(): EntryWorkerRemuneration {
+    public remuneration(): EntryWorkerRemuneration | null {
         if (this.remunerationResult !== undefined) {
             return new EntryWorkerRemuneration(this.remunerationResult);
         }
 
         this.calculate();
+
+        if(!this.remunerationResult) {
+            // Entry could be incorrect status so this.calculate() will not update value
+            return null;
+        }
+        
         return new EntryWorkerRemuneration(this.remunerationResult);
     }
 
@@ -165,8 +171,8 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         }
 
         return Math.max(
-            (this._scenario.specs?.remunerationIncrease || 0),
-            (this._original.livingWage()?.livingWageGap || 0)
+            this._scenario.specs?.remunerationIncrease || 0,
+            this._original.livingWage()?.livingWageGap || 0,
         );
     }
 

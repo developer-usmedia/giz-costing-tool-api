@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, Max, Min } from 'class-validator';
+import { IsNumber, IsOptional, Max, Min } from 'class-validator';
 
 import { ScenarioSpecification } from '@domain/entities';
 
@@ -18,10 +18,16 @@ export class ScenarioSpecUpdateForm {
 
     @ApiProperty({ example: 300, minimum: 0, nullable: true })
     @IsNumber()
+    @IsOptional()
+    @Min(0)
+    @Max(9999999999)
     overheadCosts: number;
 
     @ApiProperty({ example: 1, minimum: 0, nullable: true })
     @IsNumber()
+    @IsOptional()
+    @Min(0)
+    @Max(9999999999)
     remunerationIncrease: number;
 
     // Convert to database entity from DTO specified above

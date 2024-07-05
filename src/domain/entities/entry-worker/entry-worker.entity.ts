@@ -37,7 +37,6 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
     @Embedded({ entity: () => EntryWorkerRemuneration, prefix: false })
     private _remuneration: EntryWorkerRemuneration;
 
-    // TODO Q for J: give this its own type? If so, why? Or is this inline ok for the small type that it is?
     private livingWageResult: null | {
         livingWageGap: number;
         annualLivingWageGap: number;
@@ -78,6 +77,11 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
 
     get remuneration() {
         return this._remuneration;
+    }
+
+    // TODO: Used in temp lwCalculations. Can be removed when calculations have moved to service
+    get isBelowLw(): boolean {
+        return this.livingWageResult.livingWageGap > 0;
     }
 
     set name(value: string) {
@@ -122,7 +126,7 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
         const livingWageBenchmark = this._entry.benchmark.value;
         const monthlyTotalRemuneration = this._remuneration.total();
         const monthlyGap = Math.max(livingWageBenchmark - monthlyTotalRemuneration, 0);
-        const annualGap = (monthlyGap / 100) * this._percOfYearWorked;
+        const annualGap = (monthlyGap * 12) * (this._percOfYearWorked / 100);
 
         this.livingWageResult = {
             livingWageGap: monthlyGap,

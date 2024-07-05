@@ -16,9 +16,9 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@api/auth';
 import { BaseController } from '@api/controllers';
-import { EntryCreateForm, EntryUpdateForm } from '@api/forms';
-import { EntryDTOFactory, EntryListResponse, EntryResponse } from '@api/dto';
 import { CurrentUser, Paging } from '@api/decorators';
+import { EntryDTOFactory, EntryListResponse, EntryResponse } from '@api/dto';
+import { EntryCreateForm, EntryUpdateForm } from '@api/forms';
 import { PagingParams, Sort } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Entry, User } from '@domain/entities';
@@ -67,7 +67,7 @@ export class EntryController extends BaseController {
         return EntryDTOFactory.fromEntity(savedEntry);
     }
 
-    @Get('/:id')
+    @Get('/:entryId')
     @ApiOperation({ summary: 'Get a single entry by id' })
     @ApiResponse({ status: 404, description: 'The entry cannot be found' })
     @ApiResponse({ status: 200, description: 'The entry record' })

@@ -5,6 +5,13 @@ import { Guard } from '@domain/utils/guard';
 export interface EntryPayrollProps {
     year: number;
     currencyCode?: string;
+    // Temp add them here. Remove when fields are updated via a service call
+    nrOfJobCategories?: number;
+    nrOfWorkers?: number;
+    nrOfWorkersWithLWGap?: number;
+    avgLivingWageGap?: number;
+    largestLivingWageGap?: number;
+    sumAnnualLivingWageGapAllWorkers?: number;
 }
 
 @Embeddable()
@@ -40,12 +47,12 @@ export class EntryPayroll {
         this.currencyCode = props.currencyCode ?? null;
 
         // Note: These fields are updated via a custom query (triggered via the service)
-        this._nrOfJobCategories = 0;
-        this._nrOfWorkers = 0;
-        this._nrOfWorkersWithLWGap = 0;
-        this._avgLivingWageGap = 0;
-        this._largestLivingWageGap = 0;
-        this._sumAnnualLivingWageGapAllWorkers = 0;
+        this._nrOfJobCategories = props.nrOfJobCategories ?? 0;
+        this._nrOfWorkers = props.nrOfWorkers ?? 0;
+        this._nrOfWorkersWithLWGap = props.nrOfWorkersWithLWGap ??  0;
+        this._avgLivingWageGap = props.avgLivingWageGap ?? 0;
+        this._largestLivingWageGap = props.largestLivingWageGap ?? 0;
+        this._sumAnnualLivingWageGapAllWorkers = props.sumAnnualLivingWageGapAllWorkers ?? 0;
     }
 
     get year() {
@@ -92,7 +99,7 @@ export class EntryPayroll {
 
     public isComplete(): boolean {
         return !!this._year
-            && !!this._currencyCode
-            && (this._nrOfWorkers > 0);
+            && !!this._currencyCode;
+            // && (this._nrOfWorkers > 0); // TODO: Renable after workers are imported
     }
 }

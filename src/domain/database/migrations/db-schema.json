@@ -757,21 +757,25 @@
         },
         "specs_tax_employee": {
           "name": "specs_tax_employee",
-          "type": "smallint",
+          "type": "numeric(5,2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "mappedType": "smallint"
+          "precision": 5,
+          "scale": 2,
+          "mappedType": "decimal"
         },
         "specs_tax_employer": {
           "name": "specs_tax_employer",
-          "type": "smallint",
+          "type": "numeric(5,2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": true,
-          "mappedType": "smallint"
+          "precision": 5,
+          "scale": 2,
+          "mappedType": "decimal"
         },
         "specs_overhead_costs": {
           "name": "specs_overhead_costs",

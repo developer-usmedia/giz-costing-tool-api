@@ -3,9 +3,9 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { JwtAuthGuard } from '@api/auth';
 import { BaseController } from '@api/controllers';
-import { ScenarioCreateForm, ScenarioUpdateForm } from '@api/forms';
 import { EntryDTOFactory, EntryResponse } from '@api/dto';
-import { EntryService, ScenarioService } from '@domain/services';
+import { ScenarioCreateForm, ScenarioUpdateForm } from '@api/forms';
+import { EntryService, ScenarioService, ScenarioWorkerService } from '@domain/services';
 
 @ApiTags('entries')
 @Controller('entries/:entryId/scenario')
@@ -14,6 +14,7 @@ export class EntryScenarioController extends BaseController {
     constructor(
         private readonly entryService: EntryService,
         private readonly scenarioService: ScenarioService,
+        private readonly workerService: ScenarioWorkerService,
     ) {
         super();
     }
@@ -35,6 +36,7 @@ export class EntryScenarioController extends BaseController {
 
         const scenario = ScenarioCreateForm.toEntity(createScenarioForm, entry);
         await this.scenarioService.persist(scenario);
+        await this.workerService.importWorkers(scenario);
 
         return EntryDTOFactory.fromEntity(entry);
     }
@@ -61,7 +63,7 @@ export class EntryScenarioController extends BaseController {
     @ApiResponse({ status: 200, description: 'Successfully deleted scenario from entry' })
     public async deleteScenario(@Param('entryId', ParseUUIDPipe) entryId: string): Promise<EntryResponse> {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        const scenario = await this.scenarioService.findOne({ _entryId: entryId } as any);
+        const scenario = await this.scenarioService.findOne({ _entry: entryId } as any);
         await this.scenarioService.remove(scenario);
 
         return EntryDTOFactory.fromEntity(scenario.entry);

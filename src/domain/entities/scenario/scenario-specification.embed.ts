@@ -1,4 +1,5 @@
 import { Embeddable, Property } from '@mikro-orm/core';
+
 import { Guard } from '@domain/utils/guard';
 
 export interface ScenarioSpecificationProps {
@@ -10,10 +11,10 @@ export interface ScenarioSpecificationProps {
 
 @Embeddable()
 export class ScenarioSpecification {
-    @Property({ columnType: 'smallint', nullable: true, fieldName: 'tax_employee' })
+    @Property({ columnType: 'numeric(5,2)', nullable: true, fieldName: 'tax_employee' })
     private _taxEmployee: number;
 
-    @Property({ columnType: 'smallint', nullable: true, fieldName: 'tax_employer' })
+    @Property({ columnType: 'numeric(5,2)', nullable: true, fieldName: 'tax_employer' })
     private _taxEmployer: number;
 
     @Property({ columnType: 'numeric(12,2)', nullable: true, fieldName: 'overhead_costs' })
@@ -22,13 +23,11 @@ export class ScenarioSpecification {
     @Property({ columnType: 'numeric(12,2)', nullable: true, fieldName: 'remuneration_increase' })
     private _remunerationIncrease?: number;
 
-    constructor(props?: ScenarioSpecificationProps) {
-        if (props) {
-            this.taxEmployee = props.taxEmployee;
-            this.taxEmployer = props.taxEmployer;
-            this.overheadCosts = props.overheadCosts;
-            this.remunerationIncrease = props.remunerationIncrease;
-        }
+    constructor(props: ScenarioSpecificationProps) {
+        this.taxEmployee = props.taxEmployee;
+        this.taxEmployer = props.taxEmployer;
+        this.overheadCosts = props.overheadCosts;
+        this.remunerationIncrease = props.remunerationIncrease;
     }
 
     get taxEmployee() {
@@ -63,14 +62,13 @@ export class ScenarioSpecification {
     }
 
     private set remunerationIncrease(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 9999999999.99 });
+        Guard.check(value, { type: 'number', min: 0, max: 9999999999.99, optional: true });
         this._remunerationIncrease = value;
     }
 
     public isComplete(): boolean {
-        return !!this._taxEmployee
-            && !!this._taxEmployer
-            && !!this._overheadCosts
-            && !!this._remunerationIncrease;
+        return this.taxEmployee != null
+            && this.taxEmployer != null
+            && this.overheadCosts != null;
     }
 }
