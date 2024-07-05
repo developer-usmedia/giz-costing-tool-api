@@ -135,7 +135,7 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
         },
         scenario: {
             specification: {
-                remunerationIncrease: entity.specs.remunerationIncrease, // TODO: this should be override -> entity.specs.increase ?? scenario.specs.increaes
+                remunerationIncrease: entity.specs.remunerationIncrease,
                 taxEmployee: entity.scenario.specs.taxEmployee,
                 taxEmployer: entity.scenario.specs.taxEmployer,
                 overheadCosts: entity.scenario.specs.overheadCosts,

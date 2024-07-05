@@ -43,6 +43,19 @@ const runMigrations = async (): Promise<void> => {
     }
 };
 
+const determineCorsOrigin = (): boolean | string | string[] => {
+    const origins = environment.api.corsOrigin;
+    if (origins === '*') {
+        return true;
+    }
+
+    if (origins.length > 0) {
+        return origins.split(',');
+    }
+
+    return false;
+};
+
 const boostrap = async (): Promise<any> => {
     if (!environment.isValid()) {
         throw new Error('Missing environment variables, see environment.ts');
@@ -54,7 +67,7 @@ const boostrap = async (): Promise<any> => {
 
     api.setGlobalPrefix('api', { exclude: ['/', 'health', 'health/liveness', 'health/readiness'] });
     api.enableShutdownHooks();
-    api.enableCors({ credentials: true, origin: environment.api.corsOrigin });
+    api.enableCors({ credentials: true, origin: determineCorsOrigin() });
     api.use(cookieParser());
     api.use(passport.initialize());
     api.useGlobalPipes(new ValidationPipe());

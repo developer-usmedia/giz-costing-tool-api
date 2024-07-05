@@ -9,7 +9,7 @@ class Environment {
         port: number;
         env: Envs;
         isLocal: boolean;
-        corsOrigin: string[];
+        corsOrigin: string;
         logLevel: LogLevel;
     };
 
@@ -43,7 +43,7 @@ class Environment {
             port: +process.env.API_PORT || 8080,
             env: process.env.ENV as Envs,
             isLocal: this.isLocal(),
-            corsOrigin: this.parseUrls(process.env.API_CORS_ORIGIN),
+            corsOrigin: process.env.API_CORS_ORIGIN ?? '*',
             logLevel: process.env.LOG_LEVEL as LogLevel ?? 'warn',
         };
 
@@ -85,14 +85,6 @@ class Environment {
     private readonly isLocal = (): boolean => {
         return ['development', 'test'].includes(process.env.ENV);
     };
-
-    private parseUrls(urls: string): string[] {
-        if (!urls) {
-            return [];
-        }
-
-        return urls.split(',').map(u => u.trim().replace(/\/$/, ''));
-    }
 }
 
 export const environment = new Environment();
