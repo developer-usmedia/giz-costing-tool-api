@@ -40,7 +40,7 @@ spec:
             - name: API_URL
               value: 'https://giz-costing-tool-api-6qii37ligq-ez.a.run.app'
             - name: API_PORT
-              value: 3000
+              value: '3000'
             - name: API_CORS_ORIGIN
               value: '*'
             - name: DB_NAME
