@@ -8,6 +8,9 @@ definitions:
     docker:
       memory: 2048
 
+  caches:
+    npm: ${HOME}/.npm
+
   steps:
     - step: &sonar
         name: Sonar
@@ -19,24 +22,18 @@ definitions:
         caches:
           - node
         script:
-          - npm ci
+          - npm ci --prefer-offline
           - npm run lint
 
     - step: &build
         name: Build
         caches:
-          - node
+          - npm
         script:
           - npm ci
           - npm run build
-
-    - step: &test
-        name: Run tests
-        caches:
-          - node
-        script:
-          - npm ci
-          - npm run test
+        artifacts:
+          - dist/**
 
     - step: &deploy
         name: Deploy
@@ -45,13 +42,14 @@ definitions:
          - docker
         script:
           - export PATH=/usr/bin:$PATH
+          - export DOCKER_CONTAINER=eu.gcr.io/usmedia-containers/giz-costing-tool-api
           - echo ${GCP_BITBUCKET_PIPELINE_SA} | base64 --decode --ignore-garbage > client-secret.json
           - gcloud auth activate-service-account --key-file client-secret.json && rm client-secret.json
           - gcloud auth configure-docker
-          - docker build -t eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_COMMIT} --file ./config/Dockerfile .
-          - docker push eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_COMMIT}
-          - docker tag eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_COMMIT} eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_DEPLOYMENT_ENVIRONMENT}
-          - docker push eu.gcr.io/usmedia-containers/giz-costing-tool-api:${BITBUCKET_DEPLOYMENT_ENVIRONMENT}
+          - docker build -t ${DOCKER_CONTAINER}:${BITBUCKET_COMMIT} --file ./config/Dockerfile .
+          - docker push ${DOCKER_CONTAINER}:${BITBUCKET_COMMIT}
+          - docker tag ${DOCKER_CONTAINER}:${BITBUCKET_COMMIT} ${DOCKER_CONTAINER}:${BITBUCKET_BRANCH}
+          - docker push ${DOCKER_CONTAINER}:${BITBUCKET_BRANCH}
           - gcloud config set project ${GOOGLE_PROJECT_ID}
           - gcloud config set run/region europe-west4
           - apt-get update && apt-get install gettext-base
@@ -66,8 +64,6 @@ pipelines:
       - parallel:
           steps:
             - step: *lint
-            - step: *build
-            # - step: *test
             - step: *sonar
 
   branches:
@@ -84,4 +80,3 @@ pipelines:
     #       deployment: production
     #       trigger: manual
     #       <<: *deploy
-
