@@ -10,10 +10,10 @@
   },
   "scripts": {
     "build": "nest build",
-    "start:prod": "node dist/main",
+    "start": "nest start --watch",
+    "start:prod": "node dist/api",
     "start:db": "docker compose -f config/docker-compose.yml --env-file .env up",
     "start:beaver": "docker compose -f config/docker-compose.beaver.yml --env-file .env up",
-    "start": "nest start --watch",
     "lint": "eslint -c config/.eslintrc.js \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest --config config/jest-unit.json && jest --config ./config/jest-e2e.json",
     "test:pre-clear": "npx mikro-orm migration:fresh && npm run test",

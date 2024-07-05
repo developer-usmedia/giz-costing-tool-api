@@ -6,7 +6,7 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/minScale: '1'
+        autoscaling.knative.dev/minScale: '0'
         autoscaling.knative.dev/maxScale: '1'
         run.googleapis.com/vpc-access-egress: private-ranges-only
         run.googleapis.com/cloudsql-instances: true-elevator-417011:europe-west4:giz-costing-tool-staging-postgresql
@@ -22,8 +22,8 @@ spec:
               containerPort: 3000
           resources:
             limits:
-              cpu: 2000m
-              memory: 2Gi
+              cpu: 1000m
+              memory: 1Gi
           startupProbe:
             httpGet:
               path: '/health/readiness'
@@ -45,28 +45,28 @@ spec:
               value: 'json'
             - name: LOG_LEVEL
               value: 'debug'
-            - name: MIKRO_ORM_DB_NAME
+            - name: DB_NAME
               value: giz-costing-tool-staging
-            - name: MIKRO_ORM_USER
+            - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   key: latest
                   name: DB_USER
-            - name: MIKRO_ORM_PASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: latest
                   name: DB_PASSWORD
-            - name: MIKRO_ORM_HOST
+            - name: DB_HOST
               value: '10.79.32.3' # Private IP because of Google VPC
-            - name: MIKRO_ORM_PORT
+            - name: DB_PORT
               value: '5432'
             - name: API_URL
               value: 'https://giz-costing-tool-api-6qii37ligq-ez.a.run.app'
             - name: API_CORS_ORIGIN
-              value: '-true-elevator-417011.ew.r.appspot.com$,https://true-elevator-417011.ew.r.appspot.com,http://localhost:4200'
+              value: '*'
             - name: JWT_EXPIRES_IN
-              value: '3600000'
+              value: '1h'
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
@@ -80,4 +80,4 @@ spec:
             - name: EMAIL_FROM_ADDRESS
               value: info@usmedia.nl
             - name: EMAIL_FROM_NAME
-              value: GIZ         
+              value: GIZ
