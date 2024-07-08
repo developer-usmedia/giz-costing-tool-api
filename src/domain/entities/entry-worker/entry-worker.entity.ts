@@ -81,7 +81,7 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
 
     // TODO: Used in temp lwCalculations. Can be removed when calculations have moved to service
     get isBelowLw(): boolean {
-        return this.livingWageResult.livingWageGap > 0;
+        return this.livingWageResult?.livingWageGap > 0;
     }
 
     set name(value: string) {
