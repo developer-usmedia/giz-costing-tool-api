@@ -87,7 +87,7 @@ export class EntryBenchmark {
     // }
 
     private set year(value: number) {
-        Guard.check(value, { type: 'number', optional: true, min: 2020, max: 2050 });
+        Guard.check(value, { type: 'number', optional: true, min: 2000, max: 2100 });
         this._year = value;
     }
 

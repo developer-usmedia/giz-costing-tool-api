@@ -101,7 +101,7 @@ export class Benchmark extends AbstractEntity<Benchmark> {
     }
 
     set year(value: number) {
-        Guard.check(value, { type: 'number', min: 2020, max: 2050 });
+        Guard.check(value, { type: 'number', min: 2000, max: 2100 });
         this._year = value;
     }
 

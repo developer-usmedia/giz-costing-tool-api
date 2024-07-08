@@ -88,7 +88,7 @@ export class EntryPayroll {
     }
 
     private set year(value: number) {
-        Guard.check(value, { type: 'number', min: 2020, max: 2050 });
+        Guard.check(value, { type: 'number', min: 2000, max: 2050 });
         this._year = value;
     }
 

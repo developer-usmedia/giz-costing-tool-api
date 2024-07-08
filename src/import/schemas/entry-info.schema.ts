@@ -28,8 +28,8 @@ const entryInfoSchema = (): joi.ObjectSchema => {
         productionAmount:       joi.number().min(1).required(),
         productionUnit:         joi.string().trim().max(255).required(),
         productName:            joi.string().trim().max(255).optional(),
-        year:                   joi.number().min(0).max(2100).required(),
-        currencyCode:           joi.string().trim().max(255).required(),
+        year:                   joi.number().min(2000).max(2100).required(),
+        currencyCode:           joi.string().trim().min(1).max(3).required(),
     });
 
     return schema;
