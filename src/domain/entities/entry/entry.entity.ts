@@ -187,7 +187,7 @@ export class Entry extends AbstractEntity<Entry> {
         const lwWorkers = this.workers.filter((worker) => worker.remuneration.total() < benchmarkValue);
         const lwGaps = lwWorkers.map((w) => w.remuneration.total()).map((value) => benchmarkValue - value);
 
-        const avg = lwGaps?.reduce((counter, value) => value + counter, 0) ?? 0;
+        const avg = (lwGaps?.reduce((counter, value) => value + counter, 0) / lwGaps.length) ?? 0;
         const largest = [...lwGaps].sort().at(lwGaps.length - 1) ?? 0;
         const sumAnnualLivingWageGapAllWorkers = lwWorkers.reduce((index, worker) => index + worker.livingWage().annualLivingWageGap, 0);
 
