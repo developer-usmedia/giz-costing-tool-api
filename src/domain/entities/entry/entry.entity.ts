@@ -1,14 +1,20 @@
 import { Collection, Embedded, Entity, Enum, ManyToOne, OneToMany, OneToOne, Property } from '@mikro-orm/core';
 
 import {
-    AbstractEntity, ENTRY_STATUS_OPTIONS,
-    EntryBenchmark, EntryBenchmarkProps,
-    EntryBuyer, EntryBuyerProps,
-    EntryFacility, EntryFacilityProps,
-    EntryPayroll, EntryPayrollProps,
+    AbstractEntity,
+    ENTRY_STATUS_OPTIONS,
+    EntryBenchmark,
+    EntryBenchmarkProps,
+    EntryBuyer,
+    EntryBuyerProps,
+    EntryFacility,
+    EntryFacilityProps,
+    EntryPayroll,
+    EntryPayrollProps,
     EntryStatus,
     EntryWorker,
-    Scenario, ScenarioProps,
+    Scenario,
+    ScenarioProps,
     User,
 } from '@domain/entities';
 import { Guard } from '@domain/utils/guard';
@@ -53,8 +59,15 @@ export class Entry extends AbstractEntity<Entry> {
     @OneToMany({ entity: () => EntryWorker, mappedBy: (worker) => worker['_entry'], orphanRemoval: true })
     private readonly _workers = new Collection<EntryWorker>(this);
 
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    @OneToOne({ entity: () => Scenario, mappedBy: (scenario) => scenario['_entry'], deleteRule: 'set null', nullable: true, eager: true })
+    @OneToOne({
+        entity: () => Scenario,
+         // eslint-disable-next-line @typescript-eslint/dot-notation
+        mappedBy: (scenario) => scenario['_entry'],
+        deleteRule: 'set null',
+        orphanRemoval: true,
+        nullable: true,
+        eager: true,
+    })
     private _scenario?: Scenario;
 
     constructor(props: EntryProps) {
@@ -154,19 +167,16 @@ export class Entry extends AbstractEntity<Entry> {
         this.updateStatus();
     }
 
-     // These are calculations that loop over relation -> move to service + sql call
+    // These are calculations that loop over relation -> move to service + sql call
     public getNOfJobCategories(): number {
         return new Set(this.workers?.map((worker) => worker.name)).size;
     }
-    
     public getNOfWorkersBelowLW(): number {
         return this.workers?.filter((w) => w.isBelowLw).length;
-}
-    
+    }
     public getNOfWorkers(): number {
         return this.workers?.reduce((counter, worker) => worker.nrOfWorkers + counter, 0) ?? 0;
     }
-    
     // TODO: this should be done via service
     public calculcateLwGaps(): void {
         if (!this.workers.length) {
@@ -175,7 +185,7 @@ export class Entry extends AbstractEntity<Entry> {
     
         const benchmarkValue = this.benchmark.value;
         const lwWorkers = this.workers.filter((worker) => worker.remuneration.total() < benchmarkValue);
-        const lwGaps = lwWorkers.map(w => w.remuneration.total()).map((value) => benchmarkValue - value);
+        const lwGaps = lwWorkers.map((w) => w.remuneration.total()).map((value) => benchmarkValue - value);
 
         const avg = lwGaps?.reduce((counter, value) => value + counter, 0) ?? 0;
         const largest = [...lwGaps].sort().at(lwGaps.length - 1) ?? 0;
@@ -183,6 +193,7 @@ export class Entry extends AbstractEntity<Entry> {
 
         this._payroll = new EntryPayroll({
             year: this._payroll.year,
+            currencyCode: this._payroll.currencyCode,
             avgLivingWageGap: avg,
             largestLivingWageGap: largest,
             sumAnnualLivingWageGapAllWorkers: sumAnnualLivingWageGapAllWorkers,
@@ -224,7 +235,7 @@ export class Entry extends AbstractEntity<Entry> {
         }
 
         const hasPayrollInfo = this._payroll?.isComplete() || false;
-        const nrOfWorkers = this._workers.count(); // TODO: remove when payroll (summary) is inserted via sql / service
+        const nrOfWorkers = this._workers?.isInitialized() ? this._workers.count() : 0; // TODO: remove when payroll (summary) is inserted via sql / service
         if (!hasPayrollInfo && nrOfWorkers === 0) {
             this._status = 'INFO_DONE';
             return;
@@ -236,12 +247,17 @@ export class Entry extends AbstractEntity<Entry> {
             return;
         }
 
-        const hasDistributionInfo = this._scenario?.distro.isComplete() || false;
+        const hasDistributionInfo = this._scenario?.distro?.isComplete() || false;
         if (!hasDistributionInfo) {
-            this._status = 'DISTRIBUTION_DONE';
+            this._status = 'SCENARIO_DONE';
             return;
         }
 
+        const hasReport = false; // this.scenario.report.isComplete()
+        if (!hasReport) {
+            this._status = 'DISTRIBUTION_DONE';
+        }
+        
         // All Done!
         this._status = 'COMPLETED';
     }

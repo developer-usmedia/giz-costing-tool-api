@@ -34,9 +34,15 @@ export class EntryScenarioController extends BaseController {
             return this.clientError('Entry already has a scenario selected. Delete the scenario first.');
         }
 
-        const scenario = ScenarioCreateForm.toEntity(createScenarioForm, entry);
-        await this.scenarioService.persist(scenario);
-        await this.workerService.importWorkers(scenario);
+        entry.selectScenario({
+            entry: entry,
+            type: createScenarioForm.type,
+            specs: createScenarioForm.specifications,
+            distro: createScenarioForm.distributions,
+        });
+
+        await this.entryService.persist(entry);
+        await this.workerService.importWorkers(entry.scenario);
 
         return EntryDTOFactory.fromEntity(entry);
     }
@@ -63,9 +69,10 @@ export class EntryScenarioController extends BaseController {
     @ApiResponse({ status: 200, description: 'Successfully deleted scenario from entry' })
     public async deleteScenario(@Param('entryId', ParseUUIDPipe) entryId: string): Promise<EntryResponse> {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        const scenario = await this.scenarioService.findOne({ _entry: entryId } as any);
-        await this.scenarioService.remove(scenario);
+        const entry = await this.entryService.findOne({ _id: entryId } as any);
+        entry.clearScenario();
+        await this.entryService.persist(entry);
 
-        return EntryDTOFactory.fromEntity(scenario.entry);
+        return EntryDTOFactory.fromEntity(entry);
     }
 }

@@ -4,7 +4,7 @@ import { Guard } from '@domain/utils/guard';
 
 export interface EntryPayrollProps {
     year: number;
-    currencyCode?: string;
+    currencyCode: string;
     // Temp add them here. Remove when fields are updated via a service call
     nrOfJobCategories?: number;
     nrOfWorkers?: number;

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsObject, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
+import { IsIn, IsNumber, IsObject, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
 
-import { Entry } from '@domain/entities';
+import { BUYER_UNIT_OPTIONS, BuyerUnit, Entry } from '@domain/entities';
 
 // TODO: look at duplicate keys? (year, country...)
 
@@ -42,6 +42,11 @@ class EntryBuyerForm {
     @IsNumber()
     @IsOptional()
     buyerProportion?: number;
+
+    @ApiProperty({ example: BUYER_UNIT_OPTIONS[0], nullable: true })
+    @IsIn(BUYER_UNIT_OPTIONS)
+    @IsOptional()
+    buyerUnit?: BuyerUnit;
 }
 
 class EntryFacilityForm {
@@ -151,6 +156,14 @@ export class EntryUpdateForm {
                 taxEmployer: form.taxEmployer ?? entry.scenario.specs.taxEmployer,
                 taxEmployee: form.taxEmployee ?? entry.scenario.specs.taxEmployer,
                 remunerationIncrease: entry.scenario.specs.remunerationIncrease,
+            });
+        }
+
+        if (form.buyer) {
+            entry.updateBuyerInfo({
+                name: form.buyer.buyerName ?? entry.buyer.name,
+                proportionAmount: form.buyer.buyerProportion ?? entry.buyer.amount,
+                proportionUnit: form.buyer.buyerUnit ?? entry.buyer.unit,
             });
         }
 

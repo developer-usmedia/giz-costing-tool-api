@@ -52,12 +52,13 @@ export class ScenarioDistribution {
             this.ikbChildcarePerc = props.ikbChildcarePerc || 0;
             this.ikbChildEducationPerc = props.ikbChildEducationPerc || 0;
 
-            this.ikbPerc = this.ikbHousingPerc
-                + this.ikbFoodPerc
-                + this.ikbTransportPerc
-                + this.ikbHealthcarePerc
-                + this.ikbChildcarePerc
-                + this.ikbChildEducationPerc;
+            this.ikbPerc =
+                this.ikbHousingPerc +
+                this.ikbFoodPerc +
+                this.ikbTransportPerc +
+                this.ikbHealthcarePerc +
+                this.ikbChildcarePerc +
+                this.ikbChildEducationPerc;
 
             this.baseWagePerc = 100 - (this.bonusesPerc + this.ikbPerc);
         }
@@ -145,14 +146,16 @@ export class ScenarioDistribution {
     }
 
     public isComplete(): boolean {
-        return !!this._baseWagePerc
-            && !!this._bonusesPerc
-            && !!this._ikbPerc
-            && !!this._ikbHousingPerc
-            && !!this._ikbFoodPerc
-            && !!this._ikbTransportPerc
-            && !!this._ikbHealthcarePerc
-            && !!this._ikbChildcarePerc
-            && !!this._ikbChildEducationPerc;
+        return (
+            this._baseWagePerc !== null &&
+            this._bonusesPerc !== null &&
+            this._ikbPerc !== null &&
+            this._ikbHousingPerc !== null &&
+            this._ikbFoodPerc !== null &&
+            this._ikbTransportPerc !== null &&
+            this._ikbHealthcarePerc !== null &&
+            this._ikbChildcarePerc !== null &&
+            this._ikbChildEducationPerc !== null
+        );
     }
 }

@@ -81,9 +81,11 @@ export class Scenario extends AbstractEntity<Scenario> {
 
     public updateSpecs(specs: ScenarioSpecificationProps) {
         this._specs = new ScenarioSpecification(specs);
+        this.entry.updateStatus();
     }
 
     public updateDistro(distro: ScenarioDistributionProps) {
         this._distro = new ScenarioDistribution(distro);
+        this.entry.updateStatus();
     }
 }
