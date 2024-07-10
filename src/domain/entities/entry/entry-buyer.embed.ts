@@ -1,6 +1,7 @@
 import { Embeddable, Enum, Property } from '@mikro-orm/core';
+
+import { BUYER_UNIT_OPTIONS, BuyerUnit } from '@domain/entities';
 import { Guard } from '@domain/utils/guard';
-import { BUYER_UNIT_OPTIONS, BuyerUnit, GENDER_OPTIONS } from '@domain/entities';
 
 export interface EntryBuyerProps {
     name: string;
@@ -13,7 +14,7 @@ export class EntryBuyer {
     @Property({ nullable: true })
     private _name?: string;
 
-    @Enum({ items: () => GENDER_OPTIONS, nullable: true })
+    @Enum({ items: () => BUYER_UNIT_OPTIONS, nullable: true })
     private _unit?: BuyerUnit;
 
     @Property({ columnType: 'numeric(9,2)', unsigned: true, nullable: true })

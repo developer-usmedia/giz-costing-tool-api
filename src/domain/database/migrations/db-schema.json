@@ -554,8 +554,8 @@
           "primary": false,
           "nullable": true,
           "enumItems": [
-            "MEN",
-            "WOMEN"
+            "UNIT",
+            "PERCENTAGE"
           ],
           "mappedType": "enum"
         },
