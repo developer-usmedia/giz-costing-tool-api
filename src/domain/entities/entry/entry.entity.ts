@@ -93,6 +93,10 @@ export class Entry extends AbstractEntity<Entry> {
         return this._matrixId ?? null;
     }
 
+    get matrixVerified() {
+        return this._matrixVerified ?? null;
+    }
+
     get status() {
         return this._status;
     }
@@ -153,8 +157,8 @@ export class Entry extends AbstractEntity<Entry> {
         this.updateStatus();
     }
 
-    public updateBuyerInfo(buyer: EntryBuyerProps) {
-        this._buyer = new EntryBuyer(buyer);
+    public updateBuyerInfo(props: EntryBuyerProps) {
+        this._buyer = new EntryBuyer(props);
         this.updateStatus();
     }
 
@@ -172,7 +176,7 @@ export class Entry extends AbstractEntity<Entry> {
         return new Set(this.workers?.map((worker) => worker.name)).size;
     }
     public getNOfWorkersBelowLW(): number {
-        return this.workers?.filter((w) => w.isBelowLw).length;
+        return this.workers?.filter((w) => w.isBelowLw).reduce((counter, worker) => counter + worker.nrOfWorkers , 0);
     }
     public getNOfWorkers(): number {
         return this.workers?.reduce((counter, worker) => worker.nrOfWorkers + counter, 0) ?? 0;
@@ -260,6 +264,10 @@ export class Entry extends AbstractEntity<Entry> {
         
         // All Done!
         this._status = 'COMPLETED';
+    }
+
+    public canCalculateReport(): boolean {
+        return this.status === 'COMPLETED' || this.status === 'DISTRIBUTION_DONE';
     }
 
     public finalizeImport(): void {

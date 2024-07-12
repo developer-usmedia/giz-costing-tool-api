@@ -22,7 +22,7 @@ import { EntryCreateForm, EntryUpdateForm } from '@api/forms';
 import { PagingParams, Sort } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Entry, User } from '@domain/entities';
-import { EntryService, UserService } from '@domain/services';
+import { EntryService, UserService, ReportService } from '@domain/services';
 import { EntryImportException } from '@import/dto/import-validation.dto';
 import { EntryImporter } from '@import/services/entry-importer';
 import { FileHelper } from '@import/utils/file-helper';
@@ -34,6 +34,7 @@ export class EntryController extends BaseController {
     constructor(
         private readonly userService: UserService,
         private readonly entryService: EntryService,
+        private readonly reportService: ReportService,
     ) {
         super();
     }
@@ -89,6 +90,17 @@ export class EntryController extends BaseController {
     ): Promise<EntryResponse> {
         const original = await this.entryService.findOneByUid(entryId);
         const updated = EntryUpdateForm.toEntity(original, updateEntryForm);
+
+        if (
+            updateEntryForm.buyer.buyerProportion ||
+            updateEntryForm.buyer.buyerUnit ||
+            updateEntryForm.overheadCosts ||
+            updateEntryForm.taxEmployee ||
+            updateEntryForm.taxEmployer
+        ) {
+            await this.reportService.calculateReport(updated);
+        }
+
         const saved = await this.entryService.persist(updated);
 
         return EntryDTOFactory.fromEntity(saved);

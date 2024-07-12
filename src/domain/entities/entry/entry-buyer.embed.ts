@@ -51,7 +51,12 @@ export class EntryBuyer {
     }
 
     private set amount(value: number) {
-        Guard.check(value, { type: 'number', optional: true, min: 1, max: 9999999.99 });
+        if(this.unit === 'PERCENTAGE') {
+            Guard.check(value, { type: 'number', optional: true, min: 0, max: 100 });
+        } else {
+            Guard.check(value, { type: 'number', optional: true, min: 1, max: 9999999.99 });
+        }
+
         this._amount = value;
     }
 

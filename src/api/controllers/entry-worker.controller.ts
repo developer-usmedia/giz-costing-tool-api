@@ -10,7 +10,7 @@ import { ScenarioWorkerUpdateForm } from '@api/forms/scenario-worker-update.form
 import { PagingParams } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { ScenarioWorker } from '@domain/entities';
-import { EntryService, ScenarioWorkerService } from '@domain/services';
+import { EntryService, ReportService, ScenarioWorkerService } from '@domain/services';
 
 @ApiTags('entries')
 @Controller('entries/:entryId/workers')
@@ -19,6 +19,7 @@ export class EntryWorkerController extends BaseController {
     constructor(
         private readonly entryService: EntryService,
         private readonly workerService: ScenarioWorkerService,
+        private readonly reportService: ReportService,
     ) {
         super();
     }
@@ -76,6 +77,11 @@ export class EntryWorkerController extends BaseController {
         const original = await this.workerService.findOne({ _id: workerId, _scenario: entry.scenario } as any);
         /* eslint-enable @typescript-eslint/no-unsafe-argument */
         const updated = ScenarioWorkerUpdateForm.updateEntity(original, updateWorkerForm);
+
+        if(updateWorkerForm.remunerationIncrease || updateWorkerForm.distribution) {
+            await this.reportService.calculateReport(entry);
+        }
+
         const saved = await this.workerService.persist(updated);
 
         return WorkerDTOFactory.fromEntity(saved);

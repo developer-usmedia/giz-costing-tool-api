@@ -67,4 +67,20 @@ export abstract class DatabaseService<T extends AbstractEntity<T>> {
     public flush(): Promise<void> {
         return this.em.flush();
     }
+
+    public async *getBatched(where: FilterQuery<T>, batchSize: number) {
+        let offset = 0;
+        let hasMore = true;
+
+        while (hasMore) {
+            const entities = await this.findMany(where, { offset: offset, limit: batchSize });
+
+            if (entities.length > 0) {
+                yield entities;
+                offset += entities.length;
+            }
+
+            hasMore = entities.length === batchSize;
+        }
+    }
 }

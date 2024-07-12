@@ -5,7 +5,7 @@ import { JwtAuthGuard } from '@api/auth';
 import { BaseController } from '@api/controllers';
 import { EntryDTOFactory, EntryResponse } from '@api/dto';
 import { ScenarioCreateForm, ScenarioUpdateForm } from '@api/forms';
-import { EntryService, ScenarioService, ScenarioWorkerService } from '@domain/services';
+import { EntryService, ScenarioService, ScenarioWorkerService, ReportService } from '@domain/services';
 
 @ApiTags('entries')
 @Controller('entries/:entryId/scenario')
@@ -15,6 +15,7 @@ export class EntryScenarioController extends BaseController {
         private readonly entryService: EntryService,
         private readonly scenarioService: ScenarioService,
         private readonly workerService: ScenarioWorkerService,
+        private readonly reportService: ReportService,
     ) {
         super();
     }
@@ -58,6 +59,12 @@ export class EntryScenarioController extends BaseController {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const original = await this.scenarioService.findOne({ _entry: entryId } as any);
         const updated = ScenarioUpdateForm.updateEntity(original, updateScenarioForm);
+
+        if(updateScenarioForm.distributions || updateScenarioForm.specifications) {
+            // Update requires new report
+            await this.reportService.calculateReport(updated.entry);
+        }
+
         const saved = await this.scenarioService.persist(updated);
 
         return EntryDTOFactory.fromEntity(saved.entry);

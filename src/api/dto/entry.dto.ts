@@ -92,7 +92,7 @@ export interface EntryDTO extends HalResponse {
         annualCosts?: {
             remunerationIncrease: number;
             taxCosts: number;
-            additionalCosts: number;
+            overheadCosts: number;
             totalCosts: number;
             totalCostsPerUnit: number;
         };
@@ -130,6 +130,9 @@ export class EntryDTOFactory {
 }
 
 const mapEntityToDTO = (entity: Entry): EntryDTO => {
+    const buyerReport = entity.scenario?.getBuyerReport();
+    const scenarioReport = entity.scenario?.report;
+
     const dto: EntryDTO = {
         id: entity.id,
         status: entity.status,
@@ -172,6 +175,13 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
                 unit: entity.buyer.unit,
                 amount: entity.buyer.amount,
             },
+            annualCosts: buyerReport ? {
+                remunerationIncrease: buyerReport.remunerationIncrease,
+                taxCosts: buyerReport.taxCosts,
+                overheadCosts: buyerReport.overheadCosts,
+                totalCosts: buyerReport.totalCosts,
+                totalCostsPerUnit: buyerReport.totalCostsPerUnit,
+            } : undefined,
         },
         scenario: entity.scenario ? {
             type: entity.scenario?.type,
@@ -198,7 +208,13 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
                 largestLivingWageGap: entity.scenario.payroll.largestLivingWageGap,
                 annualFacilityLivingWageGap: entity.scenario.payroll.sumAnnualLivingWageGapAllWorkers,
             },
-            // TODO: Annual Costs
+            annualCosts: scenarioReport ? {
+                remunerationIncrease: scenarioReport.remunerationIncrease,
+                taxCosts: scenarioReport.taxCosts,
+                overheadCosts: scenarioReport.overheadCosts,
+                totalCosts: scenarioReport.totalCosts,
+                totalCostsPerUnit: scenarioReport.totalCostsPerUnit,
+            } : undefined,
         } : undefined,
         createdAt: entity.createdAt,
         updatedAt: entity.updatedAt,
@@ -208,6 +224,5 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
         },
     };
 
-    // TODO fix: cleanObject removes the
     return cleanObject(dto);
 };

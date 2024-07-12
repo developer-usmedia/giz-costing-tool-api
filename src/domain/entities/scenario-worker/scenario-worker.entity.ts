@@ -119,6 +119,28 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         this.calculateLivingWage();
     }
 
+    public getTaxes(props?: { forCategory: boolean }): number {
+        const { taxEmployee, taxEmployer } = this.scenario.specs;
+        const increase = (taxEmployee + taxEmployer) / 100;
+
+        const taxes = this.determineRemunerationIncrease() * increase;
+
+        if(props?.forCategory) {
+            return taxes * this.original.nrOfWorkers;
+        }
+
+        return taxes * this.original.nrOfWorkers;
+    }
+
+    public getRemunerationIncrease(props?: { forCategory: boolean }): number {
+        const increase = this.determineRemunerationIncrease();
+        
+        if(props?.forCategory) {
+            return increase * this.original.nrOfWorkers;
+        }
+        return increase;
+    }
+
     private calculateRemuneration() {
         this.remunerationResult = {
             baseWage: this._original.remuneration.baseWage,

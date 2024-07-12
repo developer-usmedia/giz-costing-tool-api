@@ -898,6 +898,72 @@
           "scale": 2,
           "mappedType": "decimal"
         },
+        "report_remuneration_increase": {
+          "name": "report_remuneration_increase",
+          "type": "numeric(14,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 14,
+          "scale": 4,
+          "mappedType": "decimal"
+        },
+        "report_tax_costs": {
+          "name": "report_tax_costs",
+          "type": "numeric(14,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 14,
+          "scale": 4,
+          "mappedType": "decimal"
+        },
+        "report_overhead_costs": {
+          "name": "report_overhead_costs",
+          "type": "numeric(14,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 14,
+          "scale": 4,
+          "mappedType": "decimal"
+        },
+        "report_total_costs": {
+          "name": "report_total_costs",
+          "type": "numeric(14,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 14,
+          "scale": 4,
+          "mappedType": "decimal"
+        },
+        "report_total_costs_per_unit": {
+          "name": "report_total_costs_per_unit",
+          "type": "numeric(14,4)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "precision": 14,
+          "scale": 4,
+          "mappedType": "decimal"
+        },
+        "report__calculated_at": {
+          "name": "report__calculated_at",
+          "type": "timestamp",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "length": 6,
+          "default": "now()",
+          "mappedType": "datetime"
+        },
         "payroll_num_workers_lwgap": {
           "name": "payroll_num_workers_lwgap",
           "type": "integer",
