@@ -120,6 +120,11 @@ export class EntryImporter {
                 }
 
                 const worker = this.createWorker(row);
+
+                if(!worker) {
+                    return;
+                }
+
                 workers.push(worker);
                 this.entry.addWorker(worker);
             }
@@ -204,7 +209,7 @@ export class EntryImporter {
         return {
             name: row.getCell(COLUMN_MAPPING_PAYROLL.name).text,
             gender: parseGenderCell(row.getCell(COLUMN_MAPPING_PAYROLL.gender).text),
-            nrOfWorkers: parseIntCell(row.getCell(COLUMN_MAPPING_PAYROLL.numberOfWorkers).text),
+            nrOfWorkers: parseIntCell(row.getCell(COLUMN_MAPPING_PAYROLL.nrOfWorkers).text),
             monthlyWage: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyWage).text),
             monthlyBonus: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyBonus).text),
             percOfYearWorked: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.percentageOfYearsWorked).text),

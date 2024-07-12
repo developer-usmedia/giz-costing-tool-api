@@ -28,7 +28,7 @@ export const INFO_SHEET_MAPPING = {
 export const COLUMN_MAPPING_PAYROLL = {
     name: 'C',
     gender: 'D',
-    numberOfWorkers: 'E',
+    nrOfWorkers: 'E',
     monthlyWage: 'AQ',
     monthlyBonus: 'AR',
     percentageOfYearsWorked: 'AT',
