@@ -18,37 +18,38 @@ export class ScenarioWorkerService extends DatabaseService<ScenarioWorker> {
         super(em, repository);
     }
 
-    public resetSpecificationsForWorkers(scenarioId: string): Promise<void> {
-        const qb = this.repository.qb('sw')
-            .update(raw('sw.specs_remuneration_increase = null'))
+    public async resetSpecificationsForWorkers(scenarioId: string): Promise<void> {
+        const qb = this.repository
+            .qb()
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            .update({ specs_remuneration_increase: null } as any)
             .where('scenario_id = ?', [scenarioId]);
 
         this.logger.log(qb.getQuery());
-        return Promise.resolve();
 
-        // return qb.execute();
-        return Promise.resolve();
+        return await qb.execute();
     }
 
-    public resetDistributionForWorkers(scenarioId: string): Promise<void> {
-        const qb = this.repository.qb('sw')
-            .update(raw(
-                'sw.distro_base_wage = null, ' +
-                'sw.distro_bonuses = null, ' +
-                'sw.distro_ikb = null, ' +
-                'sw.distro_ikb_housing = null, ' +
-                'sw.distro_ikb_food = null, ' +
-                'sw.distro_ikb_transport = null, ' +
-                'sw.distro_ikb_healthcare = null, ' +
-                'sw.distro_ikb_childcare = null, ' +
-                'sw.distro_ikb_child_education = null'
-            ))
-            .where('sw.scenario_id = ?', [scenarioId]);
+    public async resetDistributionForWorkers(scenarioId: string): Promise<void> {
+        const qb = this.repository
+            .qb()
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            .update({
+                distro_base_wage: null,
+                distro_bonuses: null,
+                distro_ikb: null,
+                distro_ikb_housing: null,
+                distro_ikb_food: null,
+                distro_ikb_transport: null,
+                distro_ikb_healthcare: null,
+                distro_ikb_childcare: null,
+                distro_ikb_child_education: null,
+            } as any)
+            .where('scenario_id = ?', [scenarioId]);
 
         this.logger.log(qb.getQuery());
 
-        // return qb.execute();
-        return Promise.resolve();
+        return await qb.execute();
     }
 
     /* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -67,16 +68,18 @@ export class ScenarioWorkerService extends DatabaseService<ScenarioWorker> {
         //     });
         // console.log(qb.toString());
 
-        const notIn = this.em.createQueryBuilder(ScenarioWorker, 'sw')
+        const notIn = this.em
+            .createQueryBuilder(ScenarioWorker, 'sw')
             .select('sw.original_id')
             .where('sw.scenario_id = ?', [scenarioId]);
 
-        const insert = this.em.createQueryBuilder(EntryWorker, 'ew')
+        const insert = this.em
+            .createQueryBuilder(EntryWorker, 'ew')
             .select(raw('?, ew.id', [scenarioId]))
             .where({ id: { $nin: notIn.getKnexQuery() } });
 
-
-        const qb = this.repository.qb('sw')
+        const qb = this.repository
+            .qb('sw')
             .from(raw('(scenario_id, original_id)')) // , ['scenario_id', 'original_id']
             .insert(insert.getKnexQuery());
 

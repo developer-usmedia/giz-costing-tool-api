@@ -58,7 +58,7 @@ export class ReportService {
         let sumOfTaxes = 0;
 
         for await (const batch of this.scenarioWorkerService.getBatched(
-            /* eslint-disable @typescript-eslint/no-unsafe-argument */
+            /* eslint-disable-next-line @typescript-eslint/no-unsafe-argument */
             { _scenario: entry.scenario } as any,
             this.batchSize,
         )) {

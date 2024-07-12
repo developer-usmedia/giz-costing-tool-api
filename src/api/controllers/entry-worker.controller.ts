@@ -59,7 +59,7 @@ export class EntryWorkerController extends BaseController {
         }
 
         if (form.type === 'distribution' || form.type === 'all') {
-            await this.workerService.resetSpecificationsForWorkers(entry.scenario.id);
+            await this.workerService.resetDistributionForWorkers(entry.scenario.id);
         }
     }
 

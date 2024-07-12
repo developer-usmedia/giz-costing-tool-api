@@ -84,6 +84,10 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         this._distro = new ScenarioWorkerDistribution(distro);
     }
 
+    public clearDistro(): void {
+        this._distro = null;
+    }
+
     public remuneration(): EntryWorkerRemuneration | null {
         if (this.remunerationResult !== undefined) {
             return new EntryWorkerRemuneration(this.remunerationResult);

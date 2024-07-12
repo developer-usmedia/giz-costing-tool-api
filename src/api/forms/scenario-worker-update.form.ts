@@ -55,7 +55,7 @@ export class ScenarioWorkerUpdateForm {
     distribution: ScenarioWorkerDistroUpdateForm;
 
     public static updateEntity(worker: ScenarioWorker, form: ScenarioWorkerUpdateForm): ScenarioWorker {
-        if (form.remunerationIncrease) {
+        if (form.remunerationIncrease !== undefined) {
             worker.updateSpecs({ remunerationIncrease: form.remunerationIncrease });
         }
 
@@ -69,6 +69,8 @@ export class ScenarioWorkerUpdateForm {
                 ikbChildcarePerc: form.distribution.ikbChildcarePerc,
                 ikbChildEducationPerc: form.distribution.ikbChildEducationPerc,
             });
+        } else if (form.distribution === null) {
+            worker.clearDistro();
         }
         
         return worker;
