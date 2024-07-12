@@ -39,6 +39,7 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
 
     private livingWageResult: null | {
         livingWageGap: number;
+        livingWageGapPerc: number;
         annualLivingWageGap: number;
         annualLivingWageGapAllWorkers: number;
     };
@@ -127,9 +128,11 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
         const monthlyTotalRemuneration = this._remuneration.total();
         const monthlyGap = Math.max(livingWageBenchmark - monthlyTotalRemuneration, 0);
         const annualGap = (monthlyGap * 12) * (this._percOfYearWorked / 100);
+        const livingWagePerc = (monthlyGap / livingWageBenchmark) * 100;
 
         this.livingWageResult = {
             livingWageGap: monthlyGap,
+            livingWageGapPerc: livingWagePerc,
             annualLivingWageGap: annualGap,
             annualLivingWageGapAllWorkers: annualGap * this._nrOfWorkers,
         };

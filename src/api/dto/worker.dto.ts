@@ -36,6 +36,7 @@ export interface WorkerDTO extends HalResponse {
     };
     livingWage?: {
         livingWageGap: number;
+        livingWageGapPerc: number;
         annualLivingWageGap: number;
         annualLivingWageGapAllWorkers: number;
     };
@@ -71,6 +72,7 @@ export interface WorkerDTO extends HalResponse {
         };
         livingWage?: {
             livingWageGap: number;
+            livingWageGapPerc: number;
             annualLivingWageGap: number;
             annualLivingWageGapAllWorkers: number;
         };
@@ -109,6 +111,10 @@ export class WorkerDTOFactory {
 }
 
 const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
+    const originalLw = entity.original.livingWage();
+    const scenarioLw = entity.livingWage();
+    const remuneration = entity.remuneration();
+
     return {
         id: entity.id,
         entryId: entity.original.entry.id,
@@ -129,9 +135,10 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
             total: entity.original.remuneration.baseWage,
         },
         livingWage: {
-            livingWageGap: entity.original.livingWage()?.livingWageGap,
-            annualLivingWageGap: entity.original.livingWage()?.annualLivingWageGap,
-            annualLivingWageGapAllWorkers: entity.original.livingWage()?.annualLivingWageGapAllWorkers,
+            livingWageGap: originalLw?.livingWageGap,
+            livingWageGapPerc: originalLw?.livingWageGapPerc,
+            annualLivingWageGap: originalLw?.annualLivingWageGap,
+            annualLivingWageGapAllWorkers: originalLw?.annualLivingWageGapAllWorkers,
         },
         scenario: {
             specification: {
@@ -151,22 +158,23 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
                 ikbChildcarePerc: entity.distro.ikbChildcarePerc,
                 ikbChildEducationPerc: entity.distro.ikbChildEducationPerc,
             } : undefined,
-            remuneration: entity.remuneration() ? {
-                baseWage: entity.remuneration().baseWage,
-                bonuses: entity.remuneration().bonuses,
-                ikb: entity.remuneration().ikb,
-                ikbHousing: entity.remuneration().ikbHousing,
-                ikbFood: entity.remuneration().ikbFood,
-                ikbTransport: entity.remuneration().ikbTransport,
-                ikbHealthcare: entity.remuneration().ikbHealthcare,
-                ikbChildcare: entity.remuneration().ikbChildcare,
-                ikbChildEducation: entity.remuneration().ikbChildEducation,
-                total: entity.remuneration().total(),
+            remuneration: remuneration ? {
+                baseWage: remuneration.baseWage,
+                bonuses: remuneration.bonuses,
+                ikb: remuneration.ikb,
+                ikbHousing: remuneration.ikbHousing,
+                ikbFood: remuneration.ikbFood,
+                ikbTransport: remuneration.ikbTransport,
+                ikbHealthcare: remuneration.ikbHealthcare,
+                ikbChildcare: remuneration.ikbChildcare,
+                ikbChildEducation: remuneration.ikbChildEducation,
+                total: remuneration.total(),
             }: undefined,
-            livingWage: entity.livingWage() ? {
-                livingWageGap: entity.livingWage().livingWageGap,
-                annualLivingWageGap: entity.livingWage().annualLivingWageGap,
-                annualLivingWageGapAllWorkers: entity.livingWage().annualLivingWageGapAllWorkers,
+            livingWage: scenarioLw ? {
+                livingWageGap: scenarioLw.livingWageGap,
+                livingWageGapPerc: scenarioLw.livingWageGapPerc,
+                annualLivingWageGap: scenarioLw.annualLivingWageGap,
+                annualLivingWageGapAllWorkers: scenarioLw.annualLivingWageGapAllWorkers,
             }: undefined,
         },
         _links: {

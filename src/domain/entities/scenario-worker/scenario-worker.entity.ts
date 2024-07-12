@@ -47,6 +47,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
 
     private livingWageResult: null | {
         livingWageGap: number;
+        livingWageGapPerc: number;
         annualLivingWageGap: number;
         annualLivingWageGapAllWorkers: number;
     };
@@ -183,9 +184,11 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
 
         const monthlyGap = Math.max(livingWageBenchmark - remuneration.total(), 0);
         const annualGap = (monthlyGap / 100) * this._original.percOfYearWorked;
+        const livingWagePerc = (monthlyGap / livingWageBenchmark) * 100;
 
         this.livingWageResult = {
             livingWageGap: monthlyGap,
+            livingWageGapPerc: livingWagePerc,
             annualLivingWageGap: annualGap,
             annualLivingWageGapAllWorkers: annualGap * this._original.nrOfWorkers,
         };
