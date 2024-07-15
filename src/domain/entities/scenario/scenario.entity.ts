@@ -111,7 +111,7 @@ export class Scenario extends AbstractEntity<Scenario> {
             return undefined;
         }
 
-        let percentage = this.entry.buyer.amount / 100;
+        let multiplier = this.entry.buyer.amount / 100;
 
         if (this.entry.buyer.unit === 'UNIT') {
             if(this.entry.buyer.amount > this.entry.facility.productionAmount) {
@@ -120,14 +120,14 @@ export class Scenario extends AbstractEntity<Scenario> {
                 return null;
             }
 
-            percentage = (this.entry.facility.productionAmount / this.entry.buyer.amount) * 100;
+            multiplier = 1 / (this.entry.facility.productionAmount / this.entry.buyer.amount);
         }
         
         return {
-            remunerationIncrease: this.report.remunerationIncrease * percentage,
-            taxCosts: this.report.taxCosts * percentage,
-            overheadCosts: this.report.overheadCosts * percentage,
-            totalCosts: this.report.totalCosts * percentage,
+            remunerationIncrease: this.report.remunerationIncrease * multiplier,
+            taxCosts: this.report.taxCosts * multiplier,
+            overheadCosts: this.report.overheadCosts * multiplier,
+            totalCosts: this.report.totalCosts * multiplier,
             totalCostsPerUnit: this.report.totalCostsPerUnit,
         };
     }
