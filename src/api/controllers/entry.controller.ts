@@ -7,12 +7,14 @@ import {
     ParseUUIDPipe,
     Patch,
     Post,
+    Res,
     UnprocessableEntityException,
     UploadedFile,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 import { JwtAuthGuard } from '@api/auth';
 import { BaseController } from '@api/controllers';
@@ -22,8 +24,9 @@ import { EntryCreateForm, EntryUpdateForm } from '@api/forms';
 import { PagingParams, Sort } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Entry, User } from '@domain/entities';
-import { EntryService, UserService, ReportService } from '@domain/services';
+import { EntryService, ReportService, UserService } from '@domain/services';
 import { EntryImportException } from '@import/dto/import-validation.dto';
+import { EntryExporter } from '@import/services/entry-exporter';
 import { EntryImporter } from '@import/services/entry-importer';
 import { FileHelper } from '@import/utils/file-helper';
 
@@ -120,7 +123,7 @@ export class EntryController extends BaseController {
     }
 
     @Post('/import')
-    @ApiOperation({ summary: 'Import a entry via SM Excel export' })
+    @ApiOperation({ summary: 'Import an entry via SM Excel export' })
     @ApiResponse({ status: 201, description: 'Imported entry' })
     @ApiResponse({ status: 422, description: 'Errors found while importing' })
     @UseInterceptors(FileHelper.createFileInterceptor(EntryImporter.ACCEPTED_FILE_TYPE, EntryImporter.FILE_SIZE_LIMIT))
@@ -149,4 +152,29 @@ export class EntryController extends BaseController {
         const savedEntry = await this.entryService.persist(importer.entry);
         return EntryDTOFactory.fromEntity(savedEntry);
     }
+
+    @Get('/:entryId/export')
+    @ApiOperation({ summary: 'Export an entry' })
+    @ApiResponse({ status: 201, description: 'Excel export of entry scenario' })
+    public async export(
+        @Param('entryId', ParseUUIDPipe) entryId: string,
+        @Res() res: Response,
+    ): Promise<any> {
+        const entry = await this.entryService.findOneByUid(entryId);
+
+        if (entry.status !== 'COMPLETED') {
+            this.clientError('Cannot export entry with an incomplete status');
+        }
+
+        res.contentType('.xlsx');
+        res.setHeader('Content-Disposition', `attachment; filename="${entry.facility.name}-${entry.payroll.year}.xlsx"`);
+        res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
+        res.status(200);
+
+        const exporter = new EntryExporter(entry);
+        await exporter.workbook.xlsx.write(res);
+
+        return res.send();
+    }
+
 }
