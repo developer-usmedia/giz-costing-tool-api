@@ -77,19 +77,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         return this._distro;
     }
 
-    public updateSpecs(specs: ScenarioWorkerSpecificationProps) {
-        this._specs = new ScenarioWorkerSpecification(specs);
-    }
-
-    public updateDistro(distro: ScenarioWorkerDistributionProps) {
-        this._distro = new ScenarioWorkerDistribution(distro);
-    }
-
-    public clearDistro(): void {
-        this._distro = null;
-    }
-
-    public remuneration(): EntryWorkerRemuneration | null {
+    get remuneration(): EntryWorkerRemuneration | null {
         if (this.remunerationResult !== undefined) {
             return new EntryWorkerRemuneration(this.remunerationResult);
         }
@@ -102,6 +90,32 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         }
         
         return new EntryWorkerRemuneration(this.remunerationResult);
+    }
+
+    get calculationDistribution() {
+        return {
+            baseWagePerc: (this.distro.baseWagePerc ?? this.scenario.distro?.baseWagePerc) ?? 0,
+            bonusesPerc: (this.distro.bonusesPerc ?? this.scenario.distro?.bonusesPerc) ?? 0,
+            ikbPerc: (this.distro.ikbPerc ?? this?.scenario.distro?.ikbPerc) ?? 0,
+            ikbHousingPerc: (this.distro.ikbHousingPerc ?? this.scenario.distro?.ikbHousingPerc) ?? 0,
+            ikbFoodPerc: (this.distro.ikbFoodPerc ?? this.scenario.distro?.ikbFoodPerc) ?? 0,
+            ikbTransportPerc: (this.distro.ikbTransportPerc ?? this.scenario.distro?.ikbTransportPerc) ?? 0,
+            ikbHealthcarePerc: (this.distro.ikbHealthcarePerc ?? this.scenario.distro?.ikbHealthcarePerc) ?? 0,
+            ikbChildcarePerc: (this.distro.ikbChildcarePerc ?? this.scenario.distro?.ikbChildcarePerc) ?? 0,
+            ikbChildEducationPerc: (this.distro.ikbChildEducationPerc ?? this.scenario?.distro?.ikbChildEducationPerc) ?? 0,
+        };
+    }
+    
+    public updateSpecs(specs: ScenarioWorkerSpecificationProps) {
+        this._specs = new ScenarioWorkerSpecification(specs);
+    }
+
+    public updateDistro(distro: ScenarioWorkerDistributionProps) {
+        this._distro = new ScenarioWorkerDistribution(distro);
+    }
+
+    public clearDistro(): void {
+        this._distro = null;
     }
 
     public livingWage() {
@@ -182,7 +196,8 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         const remuneration = new EntryWorkerRemuneration(this.remunerationResult);
         const livingWageBenchmark = this._scenario.entry.benchmark.value;
 
-        const monthlyGap = Math.max(livingWageBenchmark - remuneration.total(), 0);
+        // This is not correct in OsoPerezoso on export. TODO: test test test
+        const monthlyGap = Math.max(livingWageBenchmark - remuneration.total(), 0); 
         const annualGap = (monthlyGap / 100) * this._original.percOfYearWorked;
         const livingWagePerc = (monthlyGap / livingWageBenchmark) * 100;
 

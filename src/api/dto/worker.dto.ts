@@ -113,7 +113,7 @@ export class WorkerDTOFactory {
 const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
     const originalLw = entity.original.livingWage();
     const scenarioLw = entity.livingWage();
-    const remuneration = entity.remuneration();
+    const remuneration = entity.remuneration;
 
     return {
         id: entity.id,

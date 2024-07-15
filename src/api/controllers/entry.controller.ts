@@ -26,9 +26,9 @@ import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Entry, User } from '@domain/entities';
 import { EntryService, ReportService, UserService } from '@domain/services';
 import { EntryImportException } from '@import/dto/import-validation.dto';
-import { EntryExporter } from '@import/services/entry-exporter';
 import { EntryImporter } from '@import/services/entry-importer';
 import { FileHelper } from '@import/utils/file-helper';
+import { EntryExportService } from 'src/export/services/entry-export.service';
 
 @ApiTags('entries')
 @Controller('entries')
@@ -38,6 +38,7 @@ export class EntryController extends BaseController {
         private readonly userService: UserService,
         private readonly entryService: EntryService,
         private readonly reportService: ReportService,
+        private readonly exportService: EntryExportService,
     ) {
         super();
     }
@@ -171,8 +172,8 @@ export class EntryController extends BaseController {
         res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
         res.status(200);
 
-        const exporter = new EntryExporter(entry);
-        await exporter.workbook.xlsx.write(res);
+        const workbook = await this.exportService.export(entry);
+        await workbook.xlsx.write(res);
 
         return res.send();
     }

@@ -6,6 +6,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 
 import { JwtStrategy, OTPService, RefreshJwtStrategy } from '@api/auth';
 import { DomainModule } from '@domain/domain.module';
+import { ExportModule } from '@export/export.module';
 import { ImportModule } from '@import/import.module';
 import {
     AuthController,
@@ -22,6 +23,7 @@ import {
         ConfigModule.forRoot({ isGlobal: true }),
         DomainModule,
         ImportModule,
+        ExportModule,
         TerminusModule,
         PassportModule.register({}),
         ThrottlerModule.forRoot([{

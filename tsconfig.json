@@ -22,7 +22,8 @@
       "@api/*": ["src/api/*"],
       "@domain/*": ["src/domain/*"],
       "@email/*": ["src/email/*"],
-      "@import/*": ["src/import/*"]
+      "@import/*": ["src/import/*"],
+      "@export/*": ["src/export/*"]
     }
   }
 }

@@ -2,6 +2,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_INTERCEPTOR } from '@nestjs/core/constants';
+import { JwtModule } from '@nestjs/jwt';
 
 import { entities, mikroOrmOpts } from '@domain/database/mikro-orm.config';
 import { UserAwareInterceptor } from '@domain/interceptors';
@@ -13,7 +14,7 @@ import {
     UserService,
 } from '@domain/services';
 import { EmailModule } from '@email/email.module';
-import { JwtModule } from '@nestjs/jwt';
+import { EntryExportService } from '@export/services/entry-export.service';
 import { environment } from 'environment';
 import { ReportService } from './services/report.service';
 
@@ -32,6 +33,7 @@ import { ReportService } from './services/report.service';
         EntryService,
         UserService,
         EntryWorkerService,
+        EntryExportService,
         ReportService,
         ScenarioService,
         ScenarioWorkerService,
@@ -40,6 +42,7 @@ import { ReportService } from './services/report.service';
         EntryService,
         UserService,
         EntryWorkerService,
+        EntryExportService,
         ReportService,
         ScenarioService,
         ScenarioWorkerService,

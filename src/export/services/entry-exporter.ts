@@ -1,9 +1,10 @@
 import { Workbook } from 'exceljs';
 
-import { Entry } from '@domain/entities';
+import { Entry, ScenarioWorker } from '@domain/entities';
 
 const SHEET_MAPPING = {
     info: 'Information',
+    payroll: 'Payroll',
     costs: 'Costs',
 };
 
@@ -23,7 +24,39 @@ export class EntryExporter {
         this.styleSheets();
         
         this.fillInfoSheet();
+        this.initPayrollSheet();
         this.fillCostsSheet();
+    }
+
+    public addWorkersToPayrollSheet(workers: ScenarioWorker[]): void {
+        const payrollSheet = this.workbook.getWorksheet(SHEET_MAPPING.payroll); 
+
+        for (const worker of workers) {
+            const distro = worker.calculationDistribution;
+            const livingWage = worker.livingWage();
+
+            payrollSheet.addRow([
+                worker.original.name,
+                worker.original.gender,
+                worker.original.nrOfWorkers,
+                worker.original.remuneration.baseWage,
+                worker.original.remuneration.bonuses,
+                worker.original.remuneration.ikb,
+                worker.original.remuneration.total(),
+                worker.scenario.entry.benchmark.value,
+                worker.original.percOfYearWorked,
+                livingWage.livingWageGap,
+                livingWage.annualLivingWageGap,
+                livingWage.annualLivingWageGapAllWorkers,
+                worker.getRemunerationIncrease(),
+                distro.baseWagePerc,
+                worker.remuneration.baseWage - worker.original.remuneration.baseWage,
+                distro.bonusesPerc,
+                worker.remuneration.bonuses - worker.original.remuneration.bonuses,
+                distro.ikbPerc,
+                worker.remuneration.ikb - worker.original.remuneration.ikb,
+            ]);
+        }
     }
 
     private setupWorkbook(): Workbook {
@@ -32,6 +65,7 @@ export class EntryExporter {
         workbook.created = new Date();
 
         workbook.addWorksheet(SHEET_MAPPING.info);
+        workbook.addWorksheet(SHEET_MAPPING.payroll);
         workbook.addWorksheet(SHEET_MAPPING.costs);
 
         return workbook;
@@ -47,6 +81,40 @@ export class EntryExporter {
         costsSheet.getColumn(1).width = 30;
         costsSheet.getColumn(2).width = 15;
         costsSheet.getColumn(3).width = 15;
+
+        const payrollSheet = this.workbook.getWorksheet(SHEET_MAPPING.payroll);
+        for (let col = 1; col < 20; col++) {
+            payrollSheet.getColumn(col).width = 20;
+        }
+    }
+
+    private initPayrollSheet(): void {
+        const sheet = this.workbook.getWorksheet(SHEET_MAPPING.payroll);
+
+        const header = sheet.addRow([
+            'Job category',
+            'Gender',
+            'Number of workers',
+            'Base wage',
+            'Bonuses',
+            'In-kind benefits',
+            'Monthly total remuneration',
+            'Benchmark',
+            '% of year worked',
+            'Living wage gap',
+            'Annual living wage gap',
+            'Annual living wage gap (all workers)',
+            'Monthly total remuneration increase',
+            'Base wage distribution %',
+            'Base wage increase',
+            'Bonuses distribution %',
+            'Bonuses increase',
+            'In-kind benefits distribution %',
+            'In-kind benefits increase',
+        ]);
+
+        header.font = { bold: true };
+        header.height = 20;
     }
 
     private fillInfoSheet(): void {
