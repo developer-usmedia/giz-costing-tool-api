@@ -128,7 +128,7 @@ export class Scenario extends AbstractEntity<Scenario> {
             taxCosts: this.report.taxCosts * multiplier,
             overheadCosts: this.report.overheadCosts * multiplier,
             totalCosts: this.report.totalCosts * multiplier,
-            totalCostsPerUnit: this.report.totalCostsPerUnit,
+            totalCostsPerUnit: this.report.totalCostsPerUnit * multiplier,
         };
     }
 }
