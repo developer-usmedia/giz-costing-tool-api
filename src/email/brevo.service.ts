@@ -27,7 +27,7 @@ export class BrevoService {
 
 We have received a request to verify your email for the GIZ Costing Tool.
 
-Your verification code: ${verificationCode}.
+Your verification code: ${verificationCode}
 
 If you did not initiate this request, please ignore this email. Should the issue persist, kindly reach out to us at ina@giz.de to report it.
 
