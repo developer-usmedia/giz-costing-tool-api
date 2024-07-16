@@ -171,42 +171,6 @@ export class Entry extends AbstractEntity<Entry> {
         this.updateStatus();
     }
 
-    // These are calculations that loop over relation -> move to service + sql call
-    public getNOfJobCategories(): number {
-        return new Set(this.workers?.map((worker) => worker.name)).size;
-    }
-    public getNOfWorkersBelowLW(): number {
-        return this.workers?.filter((w) => w.isBelowLw).reduce((counter, worker) => counter + worker.nrOfWorkers , 0);
-    }
-    public getNOfWorkers(): number {
-        return this.workers?.reduce((counter, worker) => worker.nrOfWorkers + counter, 0) ?? 0;
-    }
-    // TODO: this should be done via service
-    public calculcateLwGaps(): void {
-        if (!this.workers.length) {
-            return;
-        }
-    
-        const benchmarkValue = this.benchmark.value;
-        const lwWorkers = this.workers.filter((worker) => worker.remuneration.total() < benchmarkValue);
-        const lwGaps = lwWorkers.map((w) => w.remuneration.total()).map((value) => benchmarkValue - value);
-
-        const avg = (lwGaps?.reduce((counter, value) => value + counter, 0) / lwGaps.length) ?? 0;
-        const largest = [...lwGaps].sort().at(lwGaps.length - 1) ?? 0;
-        const sumAnnualLivingWageGapAllWorkers = lwWorkers.reduce((index, worker) => index + worker.livingWage().annualLivingWageGap, 0);
-
-        this._payroll = new EntryPayroll({
-            year: this._payroll.year,
-            currencyCode: this._payroll.currencyCode,
-            avgLivingWageGap: avg,
-            largestLivingWageGap: largest,
-            sumAnnualLivingWageGapAllWorkers: sumAnnualLivingWageGapAllWorkers,
-            nrOfWorkersWithLWGap: this.getNOfWorkersBelowLW(),
-            nrOfJobCategories: this.getNOfJobCategories(),
-            nrOfWorkers: this.getNOfWorkers(),
-        });
-        this.updateStatus();
-    }
     public clearBenchmark() {
         if (this.isLocked) {
             throw Error('Cannot clear benchmark on locked entry.');
@@ -277,6 +241,43 @@ export class Entry extends AbstractEntity<Entry> {
     // TODO: Remove when workers are stored with repository
     public addWorker(worker: EntryWorker): void {
         this._workers.add(worker);
+        this.updateStatus();
+    }
+
+       // These are calculations that loop over relation -> move to service + sql call
+       private getNOfJobCategories(): number {
+        return new Set(this.workers?.map((worker) => worker.name)).size;
+    }
+    private getNOfWorkersBelowLW(): number {
+        return this.workers?.filter((w) => w.isBelowLw).reduce((counter, worker) => counter + worker.nrOfWorkers , 0);
+    }
+    private getNOfWorkers(): number {
+        return this.workers?.reduce((counter, worker) => worker.nrOfWorkers + counter, 0) ?? 0;
+    }
+    // TODO: this should be done via service
+    private calculcateLwGaps(): void {
+        if (!this.workers.length) {
+            return;
+        }
+    
+        const benchmarkValue = this.benchmark.value;
+        const lwWorkers = this.workers.filter((worker) => worker.remuneration.total() < benchmarkValue);
+        const lwGaps = lwWorkers.map((w) => w.remuneration.total()).map((value) => benchmarkValue - value);
+
+        const avg = (lwGaps?.reduce((counter, value) => value + counter, 0) / lwGaps.length) ?? 0;
+        const largest = [...lwGaps].sort().at(lwGaps.length - 1) ?? 0;
+        const sumAnnualLivingWageGapAllWorkers = lwWorkers.reduce((index, worker) => index + worker.livingWage().annualLivingWageGap, 0);
+
+        this._payroll = new EntryPayroll({
+            year: this._payroll.year,
+            currencyCode: this._payroll.currencyCode,
+            avgLivingWageGap: avg,
+            largestLivingWageGap: largest,
+            sumAnnualLivingWageGapAllWorkers: sumAnnualLivingWageGapAllWorkers,
+            nrOfWorkersWithLWGap: this.getNOfWorkersBelowLW(),
+            nrOfJobCategories: this.getNOfJobCategories(),
+            nrOfWorkers: this.getNOfWorkers(),
+        });
         this.updateStatus();
     }
 }

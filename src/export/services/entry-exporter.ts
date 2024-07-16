@@ -1,6 +1,10 @@
 import { Workbook } from 'exceljs';
 
 import { Entry, ScenarioWorker } from '@domain/entities';
+import { ExportComparisonDTOFactory } from '@export/dto/export-comparison.dto';
+import { ExportCostsDTOFactory } from '@export/dto/export-costs.dto';
+import { ExportInfoDTOFactory } from '@export/dto/export-info.dto';
+import { ExportWorkerDTOFactory } from '@export/dto/export-worker.dto';
 
 const SHEET_MAPPING = {
     info: 'Information',
@@ -32,29 +36,28 @@ export class EntryExporter {
         const payrollSheet = this.workbook.getWorksheet(SHEET_MAPPING.payroll); 
 
         for (const worker of workers) {
-            const distro = worker.calculationDistribution;
-            const livingWage = worker.livingWage();
+            const dto = ExportWorkerDTOFactory.fromEntity(worker);
 
             payrollSheet.addRow([
-                worker.original.name,
-                worker.original.gender,
-                worker.original.nrOfWorkers,
-                worker.original.remuneration.baseWage,
-                worker.original.remuneration.bonuses,
-                worker.original.remuneration.ikb,
-                worker.original.remuneration.total(),
-                worker.scenario.entry.benchmark.value,
-                worker.original.percOfYearWorked,
-                livingWage.livingWageGap,
-                livingWage.annualLivingWageGap,
-                livingWage.annualLivingWageGapAllWorkers,
-                worker.getRemunerationIncrease(),
-                distro.baseWagePerc,
-                worker.remuneration.baseWage - worker.original.remuneration.baseWage,
-                distro.bonusesPerc,
-                worker.remuneration.bonuses - worker.original.remuneration.bonuses,
-                distro.ikbPerc,
-                worker.remuneration.ikb - worker.original.remuneration.ikb,
+                dto.name,
+                dto.gender,
+                dto.nrOfWorkers,
+                dto.monthlyWage,
+                dto.monthlyBonus,
+                dto.monthlyIkb,
+                dto.monthylyRemuneration,
+                dto.benchmarkValue,
+                dto.percOfYearWorked,
+                dto.livingWageGap,
+                dto.annualLivingWageGap,
+                dto.annualLivingWageGapAllWorkers,
+                dto.remunerationIncrease,
+                dto.baseWagePerc,
+                dto.baseWageIncrease,
+                dto.bonusesPerc,
+                dto.bonusesIncrease,
+                dto.ikbPerc,
+                dto.ikbIncrease,
             ]);
         }
     }
@@ -119,22 +122,23 @@ export class EntryExporter {
 
     private fillInfoSheet(): void {
         const sheet = this.workbook.getWorksheet(SHEET_MAPPING.info);
+        const dto = ExportInfoDTOFactory.fromEntity(this.entry);
 
-        sheet.addRow(['Entry ID', this.entry.id]);
-        sheet.addRow(['Matrix ID', this.entry.matrixId]);
-        sheet.addRow(['Facility ID', this.entry.facility.facilityId]);
-        sheet.addRow(['Facility Name', this.entry.facility.name]);
+        sheet.addRow(['Entry ID', dto.entryId]);
+        sheet.addRow(['Matrix ID', dto.matrixId]);
+        sheet.addRow(['Facility ID', dto.facilityId]);
+        sheet.addRow(['Facility Name', dto.facilityName]);
         sheet.addRow(['Country', this.entry.facility.country]);
-        sheet.addRow(['Currency', this.entry.payroll.currencyCode]);
-        sheet.addRow(['Products', this.entry.facility.products]);
-        sheet.addRow(['Annual production', `${this.entry.facility.productionAmount} ${this.entry.facility.productionUnit}`]);
-        sheet.addRow(['Year', this.entry.payroll.year]);
-        sheet.addRow(['Benchmark year', this.entry.benchmark.year]);
-        sheet.addRow(['Benchmark value', this.entry.benchmark.value]);
-        sheet.addRow(['Benchmark region', this.entry.benchmark.region]);
-        sheet.addRow(['# of job categories', this.entry.payroll.nrOfJobCategories]);
-        sheet.addRow(['# of workers', this.entry.payroll.nrOfWorkers]);
-        sheet.addRow(['# of workers below living wage', this.entry.payroll.nrOfWorkersWithLWGap]);
+        sheet.addRow(['Currency', dto.currency]);
+        sheet.addRow(['Products', dto.products]);
+        sheet.addRow(['Annual production', `${dto.productionAmount} ${dto.productionUnit}`]);
+        sheet.addRow(['Year', dto.year]);
+        sheet.addRow(['Benchmark year', dto.year]);
+        sheet.addRow(['Benchmark value', dto.benchmarkValue]);
+        sheet.addRow(['Benchmark region', dto.benchmarkRegion]);
+        sheet.addRow(['# of job categories', dto.nrOfJobCategories]);
+        sheet.addRow(['# of workers', dto.nrOfWorkers]);
+        sheet.addRow(['# of workers below living wage', dto.nrOfWorkersWithLwGap]);
 
         sheet.addRow(['Export date', new Date().toISOString()]);
     }
@@ -145,14 +149,13 @@ export class EntryExporter {
     }
 
     private addComparison(): void {
-        const entry = this.entry.payroll;
-        const scenario = this.entry.scenario.payroll;
         const sheet = this.workbook.getWorksheet(SHEET_MAPPING.costs);
+        const dto = ExportComparisonDTOFactory.fromEntity(this.entry);
 
         const header = sheet.addRow(['Comparison', 'Status Quo', 'Scenario']);
-        sheet.addRow(['Employees below living wage', entry.nrOfWorkersWithLWGap, scenario.nrOfWorkersWithLWGap]);
-        sheet.addRow(['Average living wage gap', entry.avgLivingWageGap, scenario.avgLivingWageGap]);
-        sheet.addRow(['Facility wide living wage gap', entry.sumAnnualLivingWageGapAllWorkers, scenario.sumAnnualLivingWageGapAllWorkers]);
+        sheet.addRow(['Employees below living wage', dto.facility.nrOfWorkersBelowLwGap, dto.scenario.nrOfWorkersWithBelowLwGap]);
+        sheet.addRow(['Average living wage gap', dto.facility.avgLivingWageGap, dto.scenario.avgLivingWageGap]);
+        sheet.addRow(['Facility wide living wage gap', dto.facility.sumAnnualLivingWageGapAllWorkers, dto.scenario.sumAnnualLivingWageGapAllWorkers]);
         sheet.addRow([null]);
 
         header.font = { bold: true };
@@ -161,16 +164,15 @@ export class EntryExporter {
 
     private addAnnualCosts(): void {
         const sheet = this.workbook.getWorksheet(SHEET_MAPPING.costs);
-        const facilityReport = this.entry.scenario.report;
-        const buyerReport = this.entry.scenario.getBuyerReport();
+        const dto = ExportCostsDTOFactory.fromEntity(this.entry);
 
         const header = sheet.addRow(['Annual costs', 'Facility', 'Buyer']);
-        sheet.addRow(['Voluntary contribution requested', facilityReport.remunerationIncrease, buyerReport.remunerationIncrease]);
-        sheet.addRow(['Additional labor costs (including taxes)', facilityReport.taxCosts, buyerReport.taxCosts]);
-        sheet.addRow(['Overhead costs', facilityReport.overheadCosts, buyerReport.overheadCosts]);
-        const totalCosts = sheet.addRow(['Total costs', facilityReport.totalCosts, buyerReport.totalCosts]);
-        sheet.addRow(['Annual production', this.entry.facility.productionAmount, this.entry.buyer.amount]); // TODO: fix per unit
-        const costImplication = sheet.addRow(['Cost implication per unit', facilityReport.totalCostsPerUnit, buyerReport.totalCostsPerUnit]);
+        sheet.addRow(['Voluntary contribution requested', dto.facility.remunerationIncrease, dto.buyer.remunerationIncrease]);
+        sheet.addRow(['Additional labor costs (including taxes)',dto.facility.taxCosts, dto.buyer.taxCosts]);
+        sheet.addRow(['Overhead costs' ,dto.facility.overheadCosts, dto.buyer.overheadCosts]);
+        const totalCosts = sheet.addRow(['Total costs', dto.facility.totalCosts, dto.buyer.totalCosts]);
+        sheet.addRow(['Annual production', dto.facility.productionAmount, dto.buyer.amount]);
+        const costImplication = sheet.addRow(['Cost implication per unit', dto.facility.totalCostsPerUnit, dto.buyer.totalCostsPerUnit]);
         sheet.addRow([null]);
 
         header.font = { bold: true };
