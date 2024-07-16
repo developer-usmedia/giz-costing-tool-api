@@ -34,7 +34,11 @@ export class EntryWorkerController extends BaseController {
     ): Promise<WorkerListResponse> {
         const entry = await this.entryService.findOneByUid(entryId);
 
-        paging.filter = { ...paging.filter, _scenario: entry.scenario } as any; // TODO: this needs fixing
+        if (!paging.sort) {
+            paging.sort = { _original: { _nrOfWorkers: 'DESC' } } as any;
+        }
+
+        paging.filter = { ...paging.filter, _scenario: entry.scenario } as any;
         const [workers, count] = await this.workerService.findManyPaged(paging);
 
         // TODO: check hateaos links on this endpoint
@@ -78,7 +82,7 @@ export class EntryWorkerController extends BaseController {
         /* eslint-enable @typescript-eslint/no-unsafe-argument */
         const updated = ScenarioWorkerUpdateForm.updateEntity(original, updateWorkerForm);
 
-        if(updateWorkerForm.remunerationIncrease || updateWorkerForm.distribution) {
+        if (updateWorkerForm.remunerationIncrease || updateWorkerForm.distribution) {
             await this.reportService.calculateReport(entry);
         }
 
@@ -86,5 +90,4 @@ export class EntryWorkerController extends BaseController {
 
         return WorkerDTOFactory.fromEntity(saved);
     }
-
 }
