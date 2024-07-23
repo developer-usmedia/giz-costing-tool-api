@@ -1,0 +1,21 @@
+{
+  "name": "giz-costing-tool-infra",
+  "description": "GIZ Costing Tool - Infra",
+  "main": "src/index.ts",
+  "version": "1.0.0",
+  "author": "Us Media",
+  "scripts": {
+    "up:staging": "pulumi up --refresh -s usmedia/staging",
+    "up:production": "pulumi up --refresh -s usmedia/production"
+  },
+  "dependencies": {
+    "@pulumi/gcp": "^7.32.0",
+    "@pulumi/pulumi": "^3.126.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20"
+  },
+  "engines": {
+    "node": "20"
+  }
+}

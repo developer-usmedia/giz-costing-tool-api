@@ -1,0 +1,25 @@
+config:
+  api:brevo-api-key:
+    secure: AAABAKzwpJqnRf3CufvwcyNSs2/rSwo7f4ZBC2yauQXdIanSbRs5zDYsd57sV2SYPQWjLpB2/C1Bd06lyOmL3af4cb6k/3rpXpM7qUJOIUDCU9W/jCYod63Qst/G6Wk64OVdzSP5oEfgkeAxPvZS8y1ZaqkaHoxV+A==
+  api:cors-origin: 'https://costing-tool.nachhaltige-agrarlieferketten.org'
+  api:email-from-address: 'no-reply@giz.de'
+  api:email-from-name: 'GIZ Costing tool'
+  api:env: 'production'
+  api:jwt-secret:
+    secure: AAABACIkKkmcOQH8vWZoYuSWZpdAwY583R0U8MYtvwC6GrpCIsNXbFcvU7cnXMvcTBjD+6+dUe5FQ5/Lz2OEYA==
+  api:log-level: 'debug'
+  api:url: 'https://api.costing-tool.nachhaltige-agrarlieferketten.org'
+  cloudrun:container: 'gcr.io/cloudrun/hello' # eu.gcr.io/usmedia-containers/giz-costing-tool-api:${TAG/COMMIT}
+  cloudrun:max-instances: '2'
+  cloudrun:min-instances: '0'
+  db:admin-password:
+    secure: AAABAEo6N3m+WoUpEEJbs5UjvCMqhCoEHR84zCR3pWWL7p9UTPueCGbqs8HK0aGlyBYSCw==
+  db:connection-name: 'airy-web-417014:europe-west3:giz-costingtool-postgres'
+  db:name: 'giz-costing-tool-production'
+  db:password:
+    secure: AAABAEObxaLQ7q4Qae7JIwhjTZJQajEuNkmm3IqgwwXaZSdlv+VR1ivDmxs6fUGVsRMn6A==
+  db:username: 'costingtool_prod_rw'
+  gcp:project: 'airy-web-417014'
+  gcp:region: 'europe-west3'
+  project:number: '33650637414'
+  project:prefix: 'giz-costingtool'

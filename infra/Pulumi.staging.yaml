@@ -1,0 +1,25 @@
+config:
+  api:brevo-api-key:
+    secure: AAABAKN74MSmehO0O09XSXCkyt6Hant5y4FHoOz2twGdx1XqHsSRD+QN5b8woaCWAMICbVvjspAdI4EIemQj7jsiOD921ATuACOS8IZ9HPNVeRwJDg0gSH9V365JWTyqyPnNgLFJgOcXxCjAgtt5qEF54DnROJQHDQ==
+  api:cors-origin: '*'
+  api:email-from-address: 'no-reply@giz.de'
+  api:email-from-name: 'GIZ Costing tool'
+  api:env: 'staging'
+  api:jwt-secret:
+    secure: AAABAK6tQVMGpTAJxYuJVtC4kvhN6zR18ht8Mnoq0WtivlQaYpTpHRgHtBSuLSq3PuCVYRaZl6pyeSf42fczLw==
+  api:log-level: 'debug'
+  api:url: 'https://giz-costingtool-api-staging-iv6aj7vr2q-ey.a.run.app'
+  cloudrun:container: 'gcr.io/cloudrun/hello' # eu.gcr.io/usmedia-containers/giz-costing-tool-api:${TAG/COMMIT}
+  cloudrun:max-instances: '2'
+  cloudrun:min-instances: '0'
+  db:admin-password:
+    secure: AAABAEw2HgTMvokj1EThbXdeKO/EFUAMkgWxUR4tO+XyB7Iszl4Y1u4Fk7ykWJcnu3L+tQ==
+  db:connection-name: 'airy-web-417014:europe-west3:giz-costingtool-postgres'
+  db:name: 'giz-costing-tool-staging'
+  db:password:
+    secure: AAABABe08ydXfRCzVwHDgPjYfsMyTsU3C7xrkWKQ9dXU/dE4VRtOK1j79ktjzIwNoXLfVw==
+  db:username: 'costingtool_stage_rw'
+  gcp:project: 'airy-web-417014'
+  gcp:region: 'europe-west3'
+  project:number: '33650637414'
+  project:prefix: 'giz-costingtool'

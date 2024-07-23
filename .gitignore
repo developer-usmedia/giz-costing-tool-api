@@ -36,6 +36,10 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# Pulumi
+infra/bin/
+infra/node_modules/
+
 # dotenv environment variable files
 .env
 .env.development.local

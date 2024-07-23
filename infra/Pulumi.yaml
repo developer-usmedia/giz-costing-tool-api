@@ -1,0 +1,4 @@
+name: giz-costing-tool-infra
+runtime: nodejs
+description: GIZ Costing Tool - Infra
+main: src/index.ts

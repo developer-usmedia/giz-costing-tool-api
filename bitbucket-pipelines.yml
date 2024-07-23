@@ -2,11 +2,12 @@ image: node:20
 
 options:
   max-time: 15 # mins
+  docker: true
 
 definitions:
   services:
     docker:
-      memory: 2048
+      memory: 2048 # mb
 
   caches:
     npm: ${HOME}/.npm
@@ -30,16 +31,16 @@ definitions:
         caches:
           - npm
         script:
-          - npm ci
+          - npm ci --prefer-offline
           - npm run build
         artifacts:
           - dist/**
 
-    - step: &deploy
-        name: Deploy
+    - step: &deploy-container
+        name: Deploy Container
         image: google/cloud-sdk:latest
         services:
-         - docker
+          - docker
         script:
           - export PATH=/usr/bin:$PATH
           - export DOCKER_CONTAINER=eu.gcr.io/usmedia-containers/giz-costing-tool-api
@@ -50,7 +51,33 @@ definitions:
           - docker push ${DOCKER_CONTAINER}:${BITBUCKET_COMMIT}
           - docker tag ${DOCKER_CONTAINER}:${BITBUCKET_COMMIT} ${DOCKER_CONTAINER}:${BITBUCKET_BRANCH}
           - docker push ${DOCKER_CONTAINER}:${BITBUCKET_BRANCH}
-          - gcloud config set project ${GOOGLE_PROJECT_ID}
+          - echo "Container - ${DOCKER_CONTAINER}:${BITBUCKET_COMMIT}"
+
+    - step: &deploy-infra
+        name: Deploy Infra
+        image: pulumi/pulumi-nodejs:latest
+        script:
+          - cd infra/
+          - export DOCKER_CONTAINER=eu.gcr.io/usmedia-containers/giz-costing-tool-api
+          - echo ${GCP_BITBUCKET_PIPELINE_SA} | base64 --decode --ignore-garbage > client-secret.json
+          - export GOOGLE_CREDENTIALS=`pwd`/client-secret.json
+          - npm ci
+          - pulumi stack select -s ${PULUMI_STACK}
+          - pulumi config set cloudrun:container ${DOCKER_CONTAINER}:${BITBUCKET_COMMIT}
+          - pulumi up --yes --refresh
+          - rm client-secret.json
+
+    - step: &deploy-old
+        name: Deploy (OLD)
+        image: google/cloud-sdk:latest
+        services:
+         - docker
+        script:
+          - export PATH=/usr/bin:$PATH
+          - export DOCKER_CONTAINER=eu.gcr.io/usmedia-containers/giz-costing-tool-api
+          - echo ${GCP_BITBUCKET_PIPELINE_SA} | base64 --decode --ignore-garbage > client-secret.json
+          - gcloud auth activate-service-account --key-file client-secret.json && rm client-secret.json
+          - gcloud config set project ${GOOGLE_PROJECT_ID_OLD}
           - gcloud config set run/region europe-west4
           - apt-get update && apt-get install gettext-base
           - >
@@ -70,13 +97,25 @@ pipelines:
     develop:
       - step: *build
       - step:
+          <<: *deploy-container
+      - step:
           name: Deploy to staging
           deployment: staging
-          <<: *deploy
+          <<: *deploy-old
 
-    # master:
-    #   - step:
-    #       name: Deploy to production
-    #       deployment: production
-    #       trigger: manual
-    #       <<: *deploy
+#    develop:
+#      - step: *build
+#      - step:
+#          <<: *deploy-container
+#      - step:
+#          <<: *deploy-infra
+#          deployment: staging
+#      - step: *sonar
+
+#    master:
+#      - step: *build
+#      - step:
+#          <<: *deploy-container
+#      - step:
+#          <<: *deploy-infra
+#          deployment: production
