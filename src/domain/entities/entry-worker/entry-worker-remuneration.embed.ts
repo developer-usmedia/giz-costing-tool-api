@@ -42,17 +42,19 @@ export class EntryWorkerRemuneration {
     @Property({ columnType: 'numeric(12,2)', unsigned: true, fieldName: 'ikb_child_education' })
     private _ikbChildEducation: number;
 
-    constructor(props: EntryWorkerRemunerationProps) {
-        this.baseWage = props.baseWage;
-        this.bonuses = props.bonuses ?? 0;
-        this.ikbHousing = props.ikbHousing ?? 0;
-        this.ikbFood = props.ikbFood ?? 0;
-        this.ikbTransport = props.ikbTransport ?? 0;
-        this.ikbHealthcare = props.ikbHealthcare ?? 0;
-        this.ikbChildcare = props.ikbChildcare ?? 0;
-        this.ikbChildEducation = props.ikbChildEducation ?? 0;
+    constructor(props?: EntryWorkerRemunerationProps) {
+        if (props) {
+            this.baseWage = props.baseWage;
+            this.bonuses = props.bonuses ?? 0;
+            this.ikbHousing = props.ikbHousing ?? 0;
+            this.ikbFood = props.ikbFood ?? 0;
+            this.ikbTransport = props.ikbTransport ?? 0;
+            this.ikbHealthcare = props.ikbHealthcare ?? 0;
+            this.ikbChildcare = props.ikbChildcare ?? 0;
+            this.ikbChildEducation = props.ikbChildEducation ?? 0;
 
-        this.updateIKB();
+            this.updateIKB();
+        }
     }
 
     get baseWage() {

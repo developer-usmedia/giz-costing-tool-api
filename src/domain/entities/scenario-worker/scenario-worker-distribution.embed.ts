@@ -111,7 +111,7 @@ export class ScenarioWorkerDistribution {
     }
 
     private set ikbPerc(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 30 });
+        Guard.check(value, { type: 'number', min: 0, max: 100 });
         this._ikbPerc = value;
     }
 
