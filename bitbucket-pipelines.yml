@@ -105,7 +105,7 @@ pipelines:
       - step:
           name: Deploy to staging with pulimi
           deployment: staging
-          trigger: maunal
+          trigger: manual
           <<: *deploy-infra
 
 #    develop:
