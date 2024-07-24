@@ -102,6 +102,11 @@ pipelines:
           name: Deploy to staging
           deployment: staging
           <<: *deploy-old
+      - step:
+          name: Deploy to staging with pulimi
+          deployment: staging
+          trigger: maunal
+          <<: *deploy-infra
 
 #    develop:
 #      - step: *build

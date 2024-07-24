@@ -35,7 +35,7 @@ export class EntryWorkerController extends BaseController {
         const entry = await this.entryService.findOneByUid(entryId);
 
         if (!paging.sort) {
-            paging.sort = { _original: { _nrOfWorkers: 'DESC' } } as any;
+            paging.sort = { _original: { _nrOfWorkers: 'DESC', _name: 'ASC' } } as any;
         }
 
         paging.filter = { ...paging.filter, _scenario: entry.scenario } as any;
