@@ -274,11 +274,12 @@ export class Entry extends AbstractEntity<Entry> {
                     largestGap = gap;
                 }
 
-                sumOfMonthlyLwGap += worker.livingWage().livingWageGap
+                sumOfMonthlyLwGap += worker.livingWage().livingWageGap;
                 sumOfAnnualLwGap += worker.livingWage().annualLivingWageGapAllWorkers;
         }
 
-        const avgGap = sumOfMonthlyLwGap / nrOfWorkers; // Catch divide by 0?
+        let avgGap = sumOfMonthlyLwGap / nrOfWorkers;
+        avgGap = isNaN(avgGap) ? 0 : avgGap; // Catch 0 / 0 => NaN
 
         this._payroll = new EntryPayroll({
             year: this._payroll.year,

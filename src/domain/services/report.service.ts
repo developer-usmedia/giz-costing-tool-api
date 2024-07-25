@@ -70,7 +70,7 @@ export class ReportService {
                 const monthlyIncrease = worker.getRemunerationIncrease({ forCategory: true });
                 const yearlyIncrease = monthlyIncrease * 12;
 
-                sumOfRemunerationIncrease += yearlyIncrease * (worker.original.percOfYearWorked / 100)
+                sumOfRemunerationIncrease += yearlyIncrease * (worker.original.percOfYearWorked / 100);
                 sumOfTaxes += worker.getTaxes({ forCategory: true });
             }
         }
