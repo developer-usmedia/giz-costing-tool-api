@@ -148,7 +148,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
             return taxes * this.original.nrOfWorkers;
         }
 
-        return taxes * this.original.nrOfWorkers;
+        return taxes;
     }
 
     public getRemunerationIncrease(props?: { forCategory: boolean }): number {
@@ -198,7 +198,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
 
         // This is not correct in OsoPerezoso on export. TODO: test test test
         const monthlyGap = Math.max(livingWageBenchmark - remuneration.total(), 0); 
-        const annualGap = (monthlyGap / 100) * this._original.percOfYearWorked;
+        const annualGap = (monthlyGap * 12) * (this._original.percOfYearWorked / 100);
         const livingWagePerc = (monthlyGap / livingWageBenchmark) * 100;
 
         this.livingWageResult = {
