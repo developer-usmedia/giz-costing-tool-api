@@ -102,6 +102,7 @@ pipelines:
           name: Deploy to staging
           deployment: staging
           <<: *deploy-old
+      - step: *sonar
 
 #    develop:
 #      - step: *build
