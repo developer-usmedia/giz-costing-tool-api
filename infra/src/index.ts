@@ -5,6 +5,7 @@ import { setupCloudrunAccount, } from './serviceaccount';
 import { setupApiCloudrun } from './cloudrun';
 import { setupBrevoApiKeySecret, setupDBPasswordSecret, setupJwtSecret } from './secretmanager';
 import { getPostgresInstance, setupDatabase, setupPostgresInstance } from './sql';
+import { setupApiBackendService, setupLoadBalancer } from './compute';
 
 // TODO: UsMedia Groups Access where needed
 
@@ -67,9 +68,9 @@ const database = setupDatabase(
 // Cloudrun
 //
 const dockerContainer = cloudrunConfig.require('container');
-const envVars =  [
+const envVars = [
     { name: 'ENV',                      value: apiConfig.require('env') },
-    { name: 'LOG_LEVEL',                value: apiConfig.require('log-level')},
+    { name: 'LOG_LEVEL',                value: apiConfig.require('log-level') },
     { name: 'API_URL',                  value: apiConfig.require('url') },
     { name: 'API_PORT',                 value: '80' },
     { name: 'API_CORS_ORIGIN',          value: apiConfig.require('cors-origin') },
@@ -96,8 +97,23 @@ const cloudrun = setupApiCloudrun(
 );
 
 //
+// Load balancer
+//
+let ips: Record<string, pulumi.Output<string> | null> = {
+    ipv4: null,
+    ipv6: null,
+};
+
+if (ctx.stack === 'production') {
+    const apiServiceProd = setupApiBackendService(ctx);
+    ips = setupLoadBalancer(ctx, apiServiceProd.id);
+}
+
+//
 // Export - Stack references
 //
 export const cloudrunId = cloudrun.id;
 export const container = dockerContainer;
 export const dbInstanceId = dbInstance.id;
+export const ipv4 = ips.ipv4;
+export const ipv6 = ips.ipv6;
