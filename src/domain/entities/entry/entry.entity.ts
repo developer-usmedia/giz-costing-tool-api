@@ -221,7 +221,7 @@ export class Entry extends AbstractEntity<Entry> {
             return;
         }
 
-        const hasReport = false; // this.scenario.report.isComplete()
+        const hasReport = this.scenario.report.isComplete() || false;
         if (!hasReport) {
             this._status = 'DISTRIBUTION_DONE';
         }
@@ -262,8 +262,8 @@ export class Entry extends AbstractEntity<Entry> {
 
         let nrOfWorkers = 0;
         let largestGap = 0;
-        let sumOfMonthlyLwGap = 0;
         let sumOfAnnualLwGap = 0;
+        let sumOfMonthlyLwGap = 0;
 
         for (const worker of this.workers) {
             nrOfWorkers += worker.nrOfWorkers;
@@ -274,8 +274,8 @@ export class Entry extends AbstractEntity<Entry> {
                     largestGap = gap;
                 }
 
-                sumOfMonthlyLwGap += worker.livingWage().livingWageGap;
                 sumOfAnnualLwGap += worker.livingWage().annualLivingWageGapAllWorkers;
+                sumOfMonthlyLwGap += worker.livingWage().livingWageGap;
         }
 
         let avgGap = sumOfMonthlyLwGap / nrOfWorkers;
