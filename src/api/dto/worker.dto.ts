@@ -132,7 +132,7 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
             ikbHealthcare: entity.original.remuneration.ikbHealthcare,
             ikbChildcare: entity.original.remuneration.ikbChildcare,
             ikbChildEducation: entity.original.remuneration.ikbChildEducation,
-            total: entity.original.remuneration.baseWage,
+            total: entity.original.remuneration.total(),
         },
         livingWage: {
             livingWageGap: originalLw?.livingWageGap,
