@@ -278,7 +278,7 @@ export class Entry extends AbstractEntity<Entry> {
                 sumOfMonthlyLwGap += worker.livingWage().livingWageGap;
         }
 
-        let avgGap = sumOfMonthlyLwGap / nrOfWorkers;
+        let avgGap = sumOfMonthlyLwGap / this.workers.length;
         avgGap = isNaN(avgGap) ? 0 : avgGap; // Catch 0 / 0 => NaN
 
         this._payroll = new EntryPayroll({
@@ -292,5 +292,9 @@ export class Entry extends AbstractEntity<Entry> {
             nrOfWorkers: this.getNOfWorkers(),
         });
         this.updateStatus();
+    }
+
+    recalculateTemp() {
+        this.calculcateLwGaps();
     }
 }
