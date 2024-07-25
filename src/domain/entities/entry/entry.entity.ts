@@ -260,13 +260,11 @@ export class Entry extends AbstractEntity<Entry> {
             return;
         }
 
-        let nrOfWorkers = 0;
         let largestGap = 0;
         let sumOfAnnualLwGap = 0;
         let sumOfMonthlyLwGap = 0;
 
         for (const worker of this.workers) {
-            nrOfWorkers += worker.nrOfWorkers;
             const gap = worker.livingWage().livingWageGap;
 
             if (gap > 0)
@@ -292,9 +290,5 @@ export class Entry extends AbstractEntity<Entry> {
             nrOfWorkers: this.getNOfWorkers(),
         });
         this.updateStatus();
-    }
-
-    recalculateTemp() {
-        this.calculcateLwGaps();
     }
 }
