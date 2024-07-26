@@ -167,8 +167,9 @@ export class EntryController extends BaseController {
             this.clientError('Cannot export entry with an incomplete status');
         }
 
+        const fileName = `${entry.facility.name}-${entry.payroll.year}-LWCostingToolResults.xlsx`.replace(/ /g,'_');
         res.contentType('.xlsx');
-        res.setHeader('Content-Disposition', `attachment; filename="${entry.facility.name}-${entry.payroll.year}.xlsx"`);
+        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
         res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition');
         res.status(200);
 
