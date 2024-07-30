@@ -38,6 +38,7 @@ export interface EntryDTO extends HalResponse {
         nrOfWorkers: number;
     };
     benchmark?: {
+        name: string;
         year: string;
         source: string;
         region: string;
@@ -157,6 +158,7 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
             nrOfWorkers: entity.payroll.nrOfWorkers,
         },
         benchmark: {
+            name: entity.benchmark.name,
             year: entity.benchmark.year?.toString(),
             source: entity.benchmark.source,
             region: entity.benchmark.region,

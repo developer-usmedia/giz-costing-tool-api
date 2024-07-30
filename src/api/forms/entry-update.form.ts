@@ -7,6 +7,11 @@ import { BUYER_UNIT_OPTIONS, BuyerUnit, Entry } from '@domain/entities';
 // TODO: look at duplicate keys? (year, country...)
 
 class EntryBenchmarkForm {
+    @ApiProperty({ example: '2023 - anker - Caribbean coast, Colombia', nullable: true })
+    @IsString()
+    @IsOptional()
+    name?: string;
+
     @ApiProperty({ example: 2041, nullable: true })
     @IsNumber()
     @IsOptional()
@@ -180,6 +185,7 @@ export class EntryUpdateForm {
         }
         if (form.benchmark) {
             entry.selectBenchmark({
+                name: form.benchmark.name ?? entry.benchmark.name,
                 country: form.benchmark.country ?? entry.benchmark.country,
                 year: form.benchmark.year ?? entry.benchmark.year,
                 region: form.benchmark.region ?? entry.benchmark.region,

@@ -489,6 +489,15 @@
           "nullable": true,
           "mappedType": "string"
         },
+        "benchmark__name": {
+          "name": "benchmark__name",
+          "type": "varchar(255)",
+          "unsigned": false,
+          "autoincrement": false,
+          "primary": false,
+          "nullable": true,
+          "mappedType": "string"
+        },
         "benchmark__year": {
           "name": "benchmark__year",
           "type": "smallint",

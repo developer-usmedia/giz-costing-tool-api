@@ -66,6 +66,7 @@ export class EntryImporter {
         const matrixId = this.entry.matrixId;
         this.entry.matrixId = null;
         this.entry.selectBenchmark({
+            name: this.entry.benchmark.name,
             value: this.benchmarkValue,
             country: this.entry.benchmark.country,
             year: this.entry.benchmark.year,
@@ -192,6 +193,7 @@ export class EntryImporter {
         const infoSheet = this.workbook.getWorksheet(SHEET_MAPPING.info);
 
         return {
+            benchmarkName: infoSheet.getCell(INFO_SHEET_MAPPING.benchmarkName).text,
             matrixId: infoSheet.getCell(INFO_SHEET_MAPPING.matrixId).text,
             facilityName: infoSheet.getCell(INFO_SHEET_MAPPING.facilityName).text,
             facilityId: infoSheet.getCell(INFO_SHEET_MAPPING.facilityId).text,

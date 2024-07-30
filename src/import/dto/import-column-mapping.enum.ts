@@ -22,6 +22,7 @@ export const INFO_SHEET_MAPPING = {
     productName: 'B17',
     year: 'B18',
     currencyCode: 'B19',
+    benchmarkName: 'B20',
     countryCode: '-1',
 } as const;
 

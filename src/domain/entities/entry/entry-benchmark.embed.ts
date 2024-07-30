@@ -4,6 +4,7 @@ import { Guard } from '@domain/utils/guard';
 
 // TODO: Force source
 export interface EntryBenchmarkProps {
+    name: string;
     country: string;
     year: number;
     source?: string;
@@ -20,6 +21,9 @@ export class EntryBenchmark {
 
     // @Property({ length: 2, fieldName: 'country_code' })
     // private _countryCode?: string;
+
+    @Property({ nullable: true })
+    private _name?: string;
 
     @Property({ columnType: 'smallint', length: 4, unsigned: true, nullable: true })
     private _year?: number;
@@ -38,6 +42,7 @@ export class EntryBenchmark {
 
     constructor(props?: EntryBenchmarkProps) {
         if (props) {
+            this.name = props.name;
             this.country = props.country;
             this.year = props.year;
             this.source = props.source ?? null;
@@ -45,6 +50,11 @@ export class EntryBenchmark {
             this.locality = props.locality ?? null;
             this.value = props.value;
         }
+    }
+
+
+    get name() {
+        return this._name ?? null;
     }
 
     get country() {
@@ -74,6 +84,12 @@ export class EntryBenchmark {
 
     get value() {
         return this._value ?? null;
+    }
+
+
+    private set name(value: string) {
+        Guard.check(value, { type: 'string', optional: true });
+        this._name = value;
     }
 
     private set country(value: string) {

@@ -28,6 +28,7 @@ export class EntryFactory {
                 productionAmount: value.productionAmount,
             }),
             benchmark: new EntryBenchmark({
+                name: value.benchmarkName,
                 value: value.benchmarkValue,
                 region: value.region,
                 country: value.country,
