@@ -210,7 +210,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
     }
 
     private determineRemunerationIncrease(): number {
-        if (this._specs.remunerationIncrease) {
+        if (this._specs.remunerationIncrease !== null) {
             return this._specs.remunerationIncrease;
         }
 
