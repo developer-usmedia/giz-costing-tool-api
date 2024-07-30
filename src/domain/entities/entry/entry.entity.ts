@@ -221,7 +221,7 @@ export class Entry extends AbstractEntity<Entry> {
             return;
         }
 
-        const hasReport = false; // this.scenario.report.isComplete()
+        const hasReport = this.scenario.report.isComplete() || false;
         if (!hasReport) {
             this._status = 'DISTRIBUTION_DONE';
         }
@@ -244,12 +244,12 @@ export class Entry extends AbstractEntity<Entry> {
         this.updateStatus();
     }
 
-       // These are calculations that loop over relation -> move to service + sql call
-       private getNOfJobCategories(): number {
+    // These are calculations that loop over relation -> move to service + sql call
+    private getNOfJobCategories(): number {
         return new Set(this.workers?.map((worker) => worker.name)).size;
     }
     private getNOfWorkersBelowLW(): number {
-        return this.workers?.filter((w) => w.isBelowLw).reduce((counter, worker) => counter + worker.nrOfWorkers , 0);
+        return this.workers?.filter((w) => w.isBelowLw).reduce((counter, worker) => counter + worker.nrOfWorkers, 0);
     }
     private getNOfWorkers(): number {
         return this.workers?.reduce((counter, worker) => worker.nrOfWorkers + counter, 0) ?? 0;
@@ -259,22 +259,32 @@ export class Entry extends AbstractEntity<Entry> {
         if (!this.workers.length) {
             return;
         }
-    
-        const benchmarkValue = this.benchmark.value;
-        const lwWorkers = this.workers.filter((worker) => worker.remuneration.total() < benchmarkValue);
-        const lwGaps = lwWorkers.map((w) => w.remuneration.total()).map((value) => benchmarkValue - value);
 
-        const calculatedAvg = (lwGaps?.reduce((counter, value) => value + counter, 0) / lwGaps.length);
-        const avg = isNaN(calculatedAvg) ? 0 : calculatedAvg; // Handle divide by 0
-        const largest = [...lwGaps].sort().at(lwGaps.length - 1) ?? 0;
-        const sumAnnualLivingWageGapAllWorkers = lwWorkers.reduce((index, worker) => index + worker.livingWage().annualLivingWageGap, 0);
+        let largestGap = 0;
+        let sumOfAnnualLwGapAllWorkers = 0;
+        let sumOfMonthlyLwGap = 0;
+
+        for (const worker of this.workers) {
+            const gap = worker.livingWage().livingWageGap;
+
+            if (gap > 0)
+                if (gap > largestGap) {
+                    largestGap = gap;
+                }
+
+                sumOfAnnualLwGapAllWorkers += worker.livingWage().annualLivingWageGapAllWorkers;
+                sumOfMonthlyLwGap += worker.livingWage().livingWageGap;
+        }
+
+        let avgGap = sumOfMonthlyLwGap / this.workers.length;
+        avgGap = isNaN(avgGap) ? 0 : avgGap; // Catch 0 / 0 => NaN
 
         this._payroll = new EntryPayroll({
             year: this._payroll.year,
             currencyCode: this._payroll.currencyCode,
-            avgLivingWageGap: avg,
-            largestLivingWageGap: largest,
-            sumAnnualLivingWageGapAllWorkers: sumAnnualLivingWageGapAllWorkers,
+            avgLivingWageGap: avgGap,
+            largestLivingWageGap: largestGap,
+            sumAnnualLivingWageGapAllWorkers: sumOfAnnualLwGapAllWorkers,
             nrOfWorkersWithLWGap: this.getNOfWorkersBelowLW(),
             nrOfJobCategories: this.getNOfJobCategories(),
             nrOfWorkers: this.getNOfWorkers(),

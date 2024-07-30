@@ -88,4 +88,14 @@ export class ScenarioReport {
         Guard.check(value, { type: 'number', min: 0, max: 9999999999.99 });
         this._totalCostsPerUnit = value;
     }
+
+    public isComplete(): boolean {
+        return (
+            this._remunerationIncrease !== null &&
+            this._taxCosts !== null &&
+            this._overheadCosts !== null &&
+            this._totalCosts !== null &&
+            this._totalCostsPerUnit !== null
+        );
+    }
 }
