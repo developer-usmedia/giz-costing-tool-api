@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
 import { User } from '@domain/entities';
@@ -7,9 +8,11 @@ import { User } from '@domain/entities';
  * toEntity -> Convert to database entity from DTO specification
  */
 export class UserCreateForm {
+    @ApiProperty({ example: 'debug@usmedia.nl' })
     @IsString()
     email!: string;
 
+    @ApiProperty({ example: 'HASHME' })
     @IsString()
     password!: string;
 

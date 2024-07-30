@@ -23,9 +23,10 @@ import { UserDTOFactory, UserResponse } from '@api/dto';
 import {
     ForgotPasswordForm,
     LoginForm,
+    PasswordChangeForm,
     PasswordResetForm,
     RegisterForm,
-    TwoFactorForm,
+    UserDeleteForm,
     VerifyCodeForm,
     VerifyEmailForm,
 } from '@api/forms';
@@ -136,9 +137,9 @@ export class AuthController extends BaseController {
     @UseGuards(JwtAuthGuard)
     public async logout(@Res() res: Response, @CurrentUser() user: User): Promise<{ success: boolean }> {
         user.refreshToken = null;
-        const saved = await this.userService.persist(user);
+        await this.userService.persist(user);
 
-        return this.ok(res, { success: !!saved });
+        return this.ok(res, { success: true });
     }
 
     @Delete('/account')
@@ -146,8 +147,14 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 200, description: 'The deleted user' })
     @ApiResponse({ status: 400, description: 'Missing or invalid two-factor code for user' })
     @UseGuards(JwtAuthGuard)
-    public async deleteAccount(@Body() twoFactorForm: TwoFactorForm, @CurrentUser() user: User): Promise<UserResponse> {
-        this.validate2FAForUser(user, twoFactorForm.twoFactorCode);
+    public async deleteAccount(@Body() userDeleteForm: UserDeleteForm, @CurrentUser() user: User): Promise<UserResponse> {
+        const correctPassword = user.comparePasswords(userDeleteForm.password);
+
+        if (!correctPassword) {
+            return this.clientError('Invalid credentials');
+        }
+
+        this.validate2FAForUser(user, userDeleteForm.otpCode);
 
         const removed = await this.userService.remove(user);
         return UserDTOFactory.fromEntity(removed);
@@ -171,6 +178,61 @@ export class AuthController extends BaseController {
         return this.ok(res, { success: sent });
     }
 
+    @Post('/reset-password')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Reset a users password' })
+    @ApiResponse({ status: 201, description: 'Password reset successful' })
+    @ApiResponse({ status: 400, description: 'Invalid or expired token or user not found' })
+    public async resetPassword(
+        @Body() passwordResetForm: PasswordResetForm,
+        @Res() res: Response,
+    ): Promise<{ success: boolean }> {
+        const { email, newPassword, resetToken } = passwordResetForm;
+
+        const user = await this.userService.findOne({ email: email });
+        if (!user) {
+            return this.clientError('Password reset failed');
+        }
+
+        const saved = await this.userService.resetPassword(user, resetToken, newPassword);
+        if (!saved) {
+            return this.clientError('Invalid or expired token');
+        }
+
+        return this.ok(res, { success: saved });
+    }
+
+    @Post('/change-password')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Reset a users password' })
+    @ApiResponse({ status: 201, description: 'Password reset successful' })
+    @ApiResponse({ status: 400, description: 'Invalid or expired token or user not found' })
+    public async changePassword(
+        @Body() changePasswordForm: PasswordChangeForm,
+        @Res() res: Response,
+    ): Promise<{ success: boolean }> {
+        const { email, password, newPassword, otpCode } = changePasswordForm;
+
+        const user = await this.userService.findOne({ email: email });
+        if (!user) {
+            return this.clientError('Password reset failed');
+        }
+
+        const correctPassword = user.comparePasswords(password);
+        if (!correctPassword) {
+            return this.clientError('Invalid credentials');
+        }
+
+        if(user.twoFactor.enabled) {
+            this.validate2FAForUser(user, otpCode);
+        }
+
+        user.resetPassword(newPassword);
+        await this.userService.persist(user);
+
+        return this.ok(res, { success: true });
+    }
+
     @Post('/verify-code')
     @HttpCode(200)
     @ApiOperation({ summary: 'Validate verification code' })
@@ -188,30 +250,6 @@ export class AuthController extends BaseController {
         }
 
         return this.ok(res, { success: true });
-    }
-
-    @Post('/reset-password')
-    @HttpCode(200)
-    @ApiOperation({ summary: 'Reset a users password' })
-    @ApiResponse({ status: 201, description: 'Password reset successful' })
-    @ApiResponse({ status: 400, description: 'Invalid or expired token or user not found' })
-    public async resetPassword(
-        @Body() resetPasswordForm: PasswordResetForm,
-        @Res() res: Response,
-    ): Promise<{ success: boolean }> {
-        const { email, newPassword, resetToken } = resetPasswordForm;
-
-        const user = await this.userService.findOne({ email: email });
-        if (!user) {
-            return this.clientError('Password reset failed');
-        }
-
-        const saved = await this.userService.resetPassword(user, resetToken, newPassword);
-        if (!saved) {
-            return this.clientError('Invalid or expired token');
-        }
-
-        return this.ok(res, { success: saved });
     }
 
     @Post('/verify-email')
