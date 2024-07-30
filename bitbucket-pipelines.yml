@@ -67,6 +67,24 @@ definitions:
           - pulumi up --yes --refresh
           - rm client-secret.json
 
+    - step: &deploy-old
+        name: Deploy (OLD)
+        image: google/cloud-sdk:latest
+        services:
+         - docker
+        script:
+          - export PATH=/usr/bin:$PATH
+          - export DOCKER_CONTAINER=eu.gcr.io/usmedia-containers/giz-costing-tool-api
+          - echo ${GCP_BITBUCKET_PIPELINE_SA} | base64 --decode --ignore-garbage > client-secret.json
+          - gcloud auth activate-service-account --key-file client-secret.json && rm client-secret.json
+          - gcloud config set project ${GOOGLE_PROJECT_ID_OLD}
+          - gcloud config set run/region europe-west4
+          - apt-get update && apt-get install gettext-base
+          - >
+            envsubst < config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.yml > config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.tmp.yml
+            && mv config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.tmp.yml config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.yml
+          - gcloud run services replace config/cloudrun-${BITBUCKET_DEPLOYMENT_ENVIRONMENT}.yml
+
 pipelines:
   pull-requests:
     '**':
@@ -80,6 +98,10 @@ pipelines:
       - step: *build
       - step:
           <<: *deploy-container
+      - step:
+          name: Deploy to old staging project
+          deployment: staging-old
+          <<: *deploy-old
       - step:
           name: Deploy to staging
           deployment: staging
