@@ -5,8 +5,6 @@ import { SeedManager } from '@mikro-orm/seeder';
 import { NotFoundException } from '@nestjs/common';
 import { join } from 'path';
 
-import { environment } from 'environment';
-import { UserAwareArgs } from '@domain/interceptors';
 import { DatabaseNamingStrategy, migrationFileName, seederFileName } from '@domain/database';
 import {
     Benchmark,
@@ -29,6 +27,8 @@ import {
     User,
     VerificationCode,
 } from '@domain/entities';
+import { UserAwareArgs } from '@domain/interceptors';
+import { environment } from 'environment';
 
 export const entities = [
     Benchmark,
@@ -97,6 +97,11 @@ export const mikroOrmOpts: MikroOrmModuleSyncOptions = {
         [MikroFilters.USER_AWARE]: {
             cond: (args: UserAwareArgs) => (args.enable ? { _userId: args.userId } : {}),
             entity: [ 'Entry' ],
+        },
+    },
+    driverOptions: {
+        connection: {
+            host: environment.db.socket ?? environment.db.host,
         },
     },
 };

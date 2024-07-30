@@ -43,7 +43,7 @@ GIZ`;
 
 We have received a password reset request for your GIZ Costing Tool account.
 
-Your password reset code: ${verificationCode}.
+Your password reset code: ${verificationCode}
 
 If you did not initiate this request, please ignore this email. Should the issue persist, kindly reach out to us at ina@giz.de to report it.
 
