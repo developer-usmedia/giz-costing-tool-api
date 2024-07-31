@@ -46,7 +46,7 @@ export class EntryBuyer {
     }
 
     private set unit(value: BuyerUnit) {
-        Guard.check(value, { type: 'string', options: BUYER_UNIT_OPTIONS });
+        Guard.check(value, { type: 'string', options: BUYER_UNIT_OPTIONS, optional: true });
         this._unit = value;
     }
 

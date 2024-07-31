@@ -165,10 +165,11 @@ export class EntryUpdateForm {
         }
 
         if (form.buyer) {
+            // Note: this has no fallback so the UI can override it with null. -> Find solution for this
             entry.updateBuyerInfo({
-                name: form.buyer.buyerName ?? entry.buyer.name,
-                proportionAmount: form.buyer.buyerProportion ?? entry.buyer.amount,
-                proportionUnit: form.buyer.buyerUnit ?? entry.buyer.unit,
+                name: form.buyer.buyerName,
+                proportionAmount: form.buyer.buyerProportion,
+                proportionUnit: form.buyer.buyerUnit,
             });
         }
 
