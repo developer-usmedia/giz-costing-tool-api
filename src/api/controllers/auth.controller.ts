@@ -6,7 +6,6 @@ import {
     Get,
     HttpCode,
     Logger,
-    Param,
     Post,
     Req,
     Res,
@@ -27,8 +26,8 @@ import {
     PasswordResetForm,
     RegisterForm,
     UserDeleteForm,
-    VerifyCodeForm,
-    VerifyEmailForm,
+    VerifyEmailCodeForm,
+    VerifyOtpCode,
 } from '@api/forms';
 import { User } from '@domain/entities';
 import { UserService } from '@domain/services';
@@ -71,7 +70,7 @@ export class AuthController extends BaseController {
         const user = await this.userService.findOne({ email: loginForm.email });
         const jwt = this.userService.login(user, loginForm.password);
 
-        this.validate2FAForUser(user, loginForm.twoFactorCode);
+        this.validate2FAForUser(user, loginForm.otpCode);
 
         if (!user.emailVerified) {
             if (!loginForm.emailVerificationCode) {
@@ -237,16 +236,16 @@ export class AuthController extends BaseController {
     @HttpCode(200)
     @ApiOperation({ summary: 'Validate verification code' })
     @ApiResponse({ status: 200, description: 'Validation result' })
-    @ApiResponse({ status: 400, description: 'Code verification failed' })
+    @ApiResponse({ status: 400, description: 'Invalid verification code' })
     public async verifyCode(
-        @Body() { email, code }: VerifyCodeForm,
+        @Body() { email, code }: VerifyEmailCodeForm,
         @Res() res: Response,
     ): Promise<{ success: boolean }> {
         const user = await this.userService.findOne({ email });
         const correctCode = user.verifyCode(code);
 
         if (!correctCode) {
-            return this.clientError('Code verification failed');
+            return this.clientError('Invalid verification code');
         }
 
         return this.ok(res, { success: true });
@@ -264,10 +263,10 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 200, description: 'The email has been successfully sent' })
     @ApiResponse({ status: 400, description: 'Email already verified for user' })
     public async sendEmailVerification(
-        @Body() form: VerifyEmailForm,
+        @Body('email') email: string,
         @Res() res: Response,
     ): Promise<{ success: boolean }> {
-        const user = await this.userService.findOne({ email: form.email });
+        const user = await this.userService.findOne({ email: email });
 
         if (user.emailVerified) {
             return this.clientError('User email already verified');
@@ -298,23 +297,28 @@ export class AuthController extends BaseController {
         return this.created(res, { qrcode: qrcode });
     }
 
-    @Post('/2fa/verify/:code')
+    @Post('/2fa/verify')
     @ApiOperation({ summary: 'Verify/enable a 2FA authenticator' })
     @ApiResponse({ status: 200, description: '2FA enabled' })
     @ApiResponse({ status: 400, description: '2FA not setup or invalid verification code' })
     @UseGuards(JwtAuthGuard)
     public verify2FA(
-        @Param('code') code: string,
+        @Body() { password, otpCode }: VerifyOtpCode,
         @CurrentUser() user: User,
         @Res() res: Response,
     ): { success: boolean } {
+        const matchingPassword = user.comparePasswords(password);
+        if (!matchingPassword) {
+            return this.clientError('Invalid credentials');
+        }
+        
         if (!user.twoFactor.enabled && !user.twoFactor.secret) {
             return this.clientError('2FA is disabled');
         }
 
-        const verified = this.otpService.verify2FACode(user.twoFactor.secret, code);
+        const verified = this.otpService.verify2FACode(user.twoFactor.secret, otpCode);
         if (!verified) {
-            return this.clientError('Invalid verfication code');
+            return this.clientError('Invalid verification code');
         }
 
         if (!user.twoFactor.enabled) {

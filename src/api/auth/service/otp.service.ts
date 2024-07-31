@@ -2,17 +2,25 @@ import { Injectable } from '@nestjs/common';
 import * as qrcode from 'qrcode';
 import * as speakeasy from 'speakeasy';
 
+import { environment } from 'environment';
+
 const OTP_AUTHENTICATOR_NAME = 'GIZ Costing Tool';
 const OTP_AUTHENTICATOR_ISSUER = 'GIZ';
 
 @Injectable()
 export class OTPService {
     public generate2FASecret = async (): Promise<{ secret: speakeasy.GeneratedSecret; qrcode: string }> => {
+        let ISSUER_NAME = OTP_AUTHENTICATOR_NAME;
+
+        if (environment.api.env === 'staging' || environment.api.env === 'development') {
+            ISSUER_NAME += ' (Test)';
+        }
+
         const secret = speakeasy.generateSecret({
-            name: OTP_AUTHENTICATOR_NAME,
+            name: ISSUER_NAME,
             issuer: OTP_AUTHENTICATOR_ISSUER,
         });
-        const qrDataUrl = await qrcode.toDataURL(secret.otpauth_url);
+        const qrDataUrl = await qrcode.toDataURL(secret.otpauth_url, { width: 400 });
 
         return { secret: secret, qrcode: qrDataUrl };
     };

@@ -73,10 +73,16 @@ Content-Type: application/json
 POST http://{{host}}:{{port}}/api/{{endpoint}}/2fa/enable
 Authorization: Bearer {{token}}
 
-@2faToken=035863
+@otpCode=035863
 ### Verify a 2fa code from authenticator
-POST http://{{host}}:{{port}}/api/{{endpoint}}/2fa/verify/{{2faToken}}
+POST http://{{host}}:{{port}}/api/{{endpoint}}/2fa/verify
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "password": "CHANGEME",
+    "otpCode": "{{otpCode}}"
+}
 
 ### Send email verification code
 POST http://{{host}}:{{port}}/api/{{endpoint}}/verify-email

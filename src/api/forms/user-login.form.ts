@@ -21,5 +21,5 @@ export class LoginForm {
     @ApiProperty({ example: 'A3FK2Q' })
     @IsString()
     @IsOptional()
-    twoFactorCode?: string;
+    otpCode?: string;
 }
