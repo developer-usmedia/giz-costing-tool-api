@@ -2,7 +2,7 @@ config:
   api:brevo-api-key:
     secure: AAABAKN74MSmehO0O09XSXCkyt6Hant5y4FHoOz2twGdx1XqHsSRD+QN5b8woaCWAMICbVvjspAdI4EIemQj7jsiOD921ATuACOS8IZ9HPNVeRwJDg0gSH9V365JWTyqyPnNgLFJgOcXxCjAgtt5qEF54DnROJQHDQ==
   api:cors-origin: '*'
-  api:email-from-address: 'no-reply@giz.de'
+  api:email-from-address: 'info@usmedia.nl'
   api:email-from-name: 'GIZ Costing tool'
   api:env: 'staging'
   api:jwt-secret:

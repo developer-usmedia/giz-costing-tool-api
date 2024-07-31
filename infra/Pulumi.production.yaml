@@ -2,7 +2,7 @@ config:
   api:brevo-api-key:
     secure: AAABAKzwpJqnRf3CufvwcyNSs2/rSwo7f4ZBC2yauQXdIanSbRs5zDYsd57sV2SYPQWjLpB2/C1Bd06lyOmL3af4cb6k/3rpXpM7qUJOIUDCU9W/jCYod63Qst/G6Wk64OVdzSP5oEfgkeAxPvZS8y1ZaqkaHoxV+A==
   api:cors-origin: 'https://costing-tool.nachhaltige-agrarlieferketten.org'
-  api:email-from-address: 'no-reply@giz.de'
+  api:email-from-address: 'info@usmedia.nl'
   api:email-from-name: 'GIZ Costing tool'
   api:env: 'production'
   api:jwt-secret:
