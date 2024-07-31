@@ -1,31 +1,30 @@
 # GIZ Living Wage Costing Tool API
 
+Google Cloud Project: airy-web-417014
+
 ## Environments - API
 
-| Environment | API                                                    |
-| ----------- | ------------------------------------------------------ |
-| Local       | <http://localhost:3000/>                               |
-| Develop     | <>                                                     |
-| Staging     | <https://giz-costing-tool-api-6qii37ligq-ez.a.run.app> |
-| Production  | <>                                                     |
+| Environment | API                                                                                                                               |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| Local       | <http://localhost:3000/>                                                                                                          |
+| Staging     | <https://giz-costingtool-api-staging-iv6aj7vr2q-ey.a.run.app>                                                                     |
+| Production  | <https://api.costing-tool.nachhaltige-agrarlieferketten.org/> or <https://giz-costingtool-api-production-iv6aj7vr2q-ey.a.run.app> |
 
 ## Environments - Docs
 
-| Environment | API Docs                                                    |
-| ----------- | ----------------------------------------------------------- |
-| Local       | <http://localhost:8080/docs>                                |
-| Develop     | <>                                                          |
-| Staging     | <https://giz-costing-tool-api-6qii37ligq-ez.a.run.app/docs> |
-| Production  | <>                                                          |
+| Environment | API Docs                                                           |
+| ----------- | ------------------------------------------------------------------ |
+| Local       | <http://localhost:8080/docs>                                       |
+| Staging     | <https://giz-costingtool-api-staging-iv6aj7vr2q-ey.a.run.app/docs> |
+| Production  | <https://api.costing-tool.nachhaltige-agrarlieferketten.org/docs>  |
 
 ## Environments - App
 
-| Environment | Frontend / App |
-| ----------- | -------------- |
-| Local       | <>             |
-| Develop     | <>             |
-| Staging     | <>             |
-| Production  | <>             |
+| Environment | Frontend                                                   |
+| ----------- | ---------------------------------------------------------- |
+| Local       | <http://localhost:4200>                                    |
+| Staging     | <https://staging-dot-airy-web-417014.ey.r.appspot.com> |
+| Production  | <https://costing-tool.nachhaltige-agrarlieferketten.org/>  |
 
 ## Getting Started
 
@@ -120,7 +119,6 @@ npm run test:e2e
 npm run test:cov
 ```
 
-
 # Using HTTP files to execute requests
 
 JWT token is returned from the login request that is found in auth.http. In development the jwt token will be valid for 1d so it can be used in development. Login normally and use that access token for a day. You can change the value in environment.ts of you need to debug login / jwt issues
@@ -141,9 +139,8 @@ JWT token is returned from the login request that is found in auth.http. In deve
 -   Copy example json to regular json `cp ./config/settings.vscode.example.json ./.vscode/settings.json`
 -   Go to Rest Client: Switch Environment (cmd/ctrl+shift+p)
 -   And select correct environment
-- Execute request
+-   Execute request
 
 [More info about VSCode Rest Client](https://www.trpkovski.com/2023/03/19/setting-up-global-variables-in-the-rest-client-vs-code-extension)
-
 
 # JWT

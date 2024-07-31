@@ -11,7 +11,7 @@ config:
   api:url: 'https://api.costing-tool.nachhaltige-agrarlieferketten.org'
   cloudrun:container: 'gcr.io/cloudrun/hello' # eu.gcr.io/usmedia-containers/giz-costing-tool-api:${TAG/COMMIT}
   cloudrun:max-instances: '2'
-  cloudrun:min-instances: '0'
+  cloudrun:min-instances: '1'
   db:admin-password:
     secure: AAABAEo6N3m+WoUpEEJbs5UjvCMqhCoEHR84zCR3pWWL7p9UTPueCGbqs8HK0aGlyBYSCw==
   db:connection-name: 'airy-web-417014:europe-west3:giz-costingtool-postgres'
