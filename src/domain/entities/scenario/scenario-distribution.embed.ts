@@ -116,32 +116,32 @@ export class ScenarioDistribution {
     }
 
     private set ikbHousingPerc(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 15 });
+        Guard.check(value, { type: 'number', min: 0, max: 100 });
         this._ikbHousingPerc = value;
     }
 
     private set ikbFoodPerc(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 10 });
+        Guard.check(value, { type: 'number', min: 0, max: 100 });
         this._ikbFoodPerc = value;
     }
 
     private set ikbTransportPerc(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 10 });
+        Guard.check(value, { type: 'number', min: 0, max: 100 });
         this._ikbTransportPerc = value;
     }
 
     private set ikbHealthcarePerc(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 10 });
+        Guard.check(value, { type: 'number', min: 0, max: 100 });
         this._ikbHealthcarePerc = value;
     }
 
     private set ikbChildcarePerc(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 10 });
+        Guard.check(value, { type: 'number', min: 0, max: 100 });
         this._ikbChildcarePerc = value;
     }
 
     private set ikbChildEducationPerc(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 10 });
+        Guard.check(value, { type: 'number', min: 0, max: 100 });
         this._ikbChildEducationPerc = value;
     }
 
