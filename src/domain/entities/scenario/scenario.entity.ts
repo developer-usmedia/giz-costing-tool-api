@@ -9,6 +9,7 @@ import {
     ScenarioDistribution,
     ScenarioDistributionProps,
     ScenarioPayroll,
+    ScenarioPayrollProps,
     ScenarioSpecification,
     ScenarioSpecificationProps,
     ScenarioType,
@@ -42,7 +43,7 @@ export class Scenario extends AbstractEntity<Scenario> {
     private _report: ScenarioReport;
 
     @Embedded({ entity: () => ScenarioPayroll, prefix: 'payroll_' })
-    private readonly _payroll: ScenarioPayroll;
+    private _payroll: ScenarioPayroll;
 
     // eslint-disable-next-line @typescript-eslint/dot-notation
     @OneToMany({ entity: () => ScenarioWorker, mappedBy: (worker) => worker['_scenario'], orphanRemoval: true })
@@ -103,6 +104,11 @@ export class Scenario extends AbstractEntity<Scenario> {
 
     public updateReport(report: ScenarioReportProps) {
         this._report = new ScenarioReport(report);
+        this.entry.updateStatus();
+    }
+
+    public updatePayroll(props: ScenarioPayrollProps) {
+        this._payroll = new ScenarioPayroll(props);
         this.entry.updateStatus();
     }
 

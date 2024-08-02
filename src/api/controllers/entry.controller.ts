@@ -24,11 +24,11 @@ import { EntryCreateForm, EntryUpdateForm } from '@api/forms';
 import { PagingParams, Sort } from '@api/paging/paging-params';
 import { PagingValidationPipe } from '@api/paging/paging-params.pipe';
 import { Entry, User } from '@domain/entities';
-import { EntryService, ReportService, UserService } from '@domain/services';
+import { EntryLivingWageCalculationsService, EntryService, ReportService, UserService } from '@domain/services';
+import { EntryExportService } from '@export/services/entry-export.service';
 import { EntryImportException } from '@import/dto/import-validation.dto';
 import { EntryImporter } from '@import/services/entry-importer';
 import { FileHelper } from '@import/utils/file-helper';
-import { EntryExportService } from 'src/export/services/entry-export.service';
 
 @ApiTags('entries')
 @Controller('entries')
@@ -39,6 +39,7 @@ export class EntryController extends BaseController {
         private readonly entryService: EntryService,
         private readonly reportService: ReportService,
         private readonly exportService: EntryExportService,
+        private readonly lwCalculationService: EntryLivingWageCalculationsService,
     ) {
         super();
     }
@@ -150,7 +151,12 @@ export class EntryController extends BaseController {
             throw new EntryImportException(importer.errors);
         }
 
-        const savedEntry = await this.entryService.persist(importer.entry);
+        // Persist entry + workers
+        await this.entryService.persist(importer.entry);
+
+        // Do calculations with workers (batched) and persist result
+        const savedEntry = await this.lwCalculationService.calculateLwGaps(importer.entry);
+
         return EntryDTOFactory.fromEntity(savedEntry);
     }
 
@@ -178,5 +184,4 @@ export class EntryController extends BaseController {
 
         return res.send();
     }
-
 }

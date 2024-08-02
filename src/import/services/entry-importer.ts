@@ -75,8 +75,6 @@ export class EntryImporter {
         });
         this.entry.matrixId = matrixId;
 
-        this.entry.finalizeImport();
-
         return this.entry;
     }
 

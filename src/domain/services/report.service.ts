@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { Entry } from '@domain/entities';
+import { ScenarioLivingWageCalculationsService } from '@domain/services/scenario-living-wage-calculations.service';
 import { ScenarioWorkerService } from './scenario-worker.service';
 
 export interface ScenarioCosts {
@@ -29,6 +30,7 @@ export class ReportService {
 
     constructor(
         private readonly scenarioWorkerService: ScenarioWorkerService,
+        private readonly lwCalculationService: ScenarioLivingWageCalculationsService,
     ) {}
 
     public async calculateReport(entry: Entry): Promise<ScenarioReport> {
@@ -49,6 +51,8 @@ export class ReportService {
         };
 
         entry.scenario.updateReport(report);
+
+        await this.lwCalculationService.calculateLwGaps(entry.scenario);
 
         return report;
     }

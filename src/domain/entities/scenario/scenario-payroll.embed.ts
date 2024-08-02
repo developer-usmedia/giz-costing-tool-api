@@ -1,5 +1,12 @@
 import { Embeddable, Property } from '@mikro-orm/core';
 
+export interface ScenarioPayrollProps {
+    nrOfWorkersWithLWGap: number;
+    avgLivingWageGap: number;
+    largestLivingWageGap: number;
+    sumAnnualLivingWageGapAllWorkers: number;
+}
+
 @Embeddable()
 export class ScenarioPayroll {
     @Property({ columnType: 'integer', unsigned: true, fieldName: 'num_workers_lwgap' })
@@ -14,12 +21,14 @@ export class ScenarioPayroll {
     @Property({ columnType: 'numeric(12,4)', unsigned: true, fieldName: 'sum_lwgap_allworkers' })
     private readonly _sumAnnualLivingWageGapAllWorkers: number;
 
-    constructor() {
-        // Note: These fields are updated via a custom query (triggered via the service)
-        this._nrOfWorkersWithLWGap = 0;
-        this._avgLivingWageGap = 0;
-        this._largestLivingWageGap = 0;
-        this._sumAnnualLivingWageGapAllWorkers = 0;
+    constructor(props?: ScenarioPayrollProps) {
+        if (props) {
+            // Note: These fields are updated via a custom query (triggered via the service)
+            this._nrOfWorkersWithLWGap = props.nrOfWorkersWithLWGap ?? 0;
+            this._avgLivingWageGap = props.avgLivingWageGap ?? 0;
+            this._largestLivingWageGap = props.largestLivingWageGap ?? 0;
+            this._sumAnnualLivingWageGapAllWorkers = props.sumAnnualLivingWageGapAllWorkers ?? 0;
+        }
     }
 
     get nrOfWorkersWithLWGap() {

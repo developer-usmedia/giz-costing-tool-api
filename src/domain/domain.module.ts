@@ -7,8 +7,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { entities, mikroOrmOpts } from '@domain/database/mikro-orm.config';
 import { UserAwareInterceptor } from '@domain/interceptors';
 import {
+    EntryLivingWageCalculationsService,
     EntryService,
     EntryWorkerService,
+    ScenarioLivingWageCalculationsService,
     ScenarioService,
     ScenarioWorkerService,
     UserService,
@@ -32,18 +34,22 @@ import { ReportService } from './services/report.service';
     exports: [
         EntryService,
         UserService,
-        EntryWorkerService,
         EntryExportService,
+        EntryLivingWageCalculationsService,
+        EntryWorkerService,
         ReportService,
+        ScenarioLivingWageCalculationsService,
         ScenarioService,
         ScenarioWorkerService,
     ],
     providers: [
         EntryService,
         UserService,
-        EntryWorkerService,
         EntryExportService,
+        EntryLivingWageCalculationsService,
+        EntryWorkerService,
         ReportService,
+        ScenarioLivingWageCalculationsService,
         ScenarioService,
         ScenarioWorkerService,
         { provide: APP_INTERCEPTOR, useClass: UserAwareInterceptor },
