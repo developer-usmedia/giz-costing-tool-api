@@ -7,6 +7,7 @@ import {
     Gender, GENDER_OPTIONS,
 } from '@domain/entities';
 import { Guard } from '@domain/utils/guard';
+import Decimal from 'decimal.js';
 
 export interface EntryWorkerProps {
     entry: Entry;
@@ -38,10 +39,10 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
     private _remuneration: EntryWorkerRemuneration;
 
     private livingWageResult: null | {
-        livingWageGap: number;
-        livingWageGapPerc: number;
-        annualLivingWageGap: number;
-        annualLivingWageGapAllWorkers: number;
+        livingWageGap: Decimal;
+        livingWageGapPerc: Decimal;
+        annualLivingWageGap: Decimal;
+        annualLivingWageGapAllWorkers: Decimal;
     };
 
     constructor(props: EntryWorkerProps) {
@@ -81,7 +82,7 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
     }
 
     get isBelowLw(): boolean {
-        return this.livingWageResult?.livingWageGap > 0;
+        return this.livingWageResult?.livingWageGap.greaterThan(0);
     }
 
     set name(value: string) {
@@ -123,17 +124,32 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
             return;
         }
 
-        const livingWageBenchmark = this._entry.benchmark.value;
-        const monthlyTotalRemuneration = this._remuneration.total();
-        const monthlyGap = Math.max(livingWageBenchmark - monthlyTotalRemuneration, 0);
-        const annualGap = (monthlyGap * 12) * (this._percOfYearWorked / 100);
-        const livingWagePerc = (monthlyGap / livingWageBenchmark) * 100;
+        const livingWageBenchmark = new Decimal(this._entry.benchmark.value);
+        const monthlyTotalRemuneration = new Decimal(this._remuneration.total()); // TODO: conver to decimal
+        const monthlyGap = Decimal.max(livingWageBenchmark.minus(monthlyTotalRemuneration), new Decimal(0));
+        const annualGap = monthlyGap.times(12).times((new Decimal(this._percOfYearWorked).dividedBy(100)))
+        const livingWagePerc = monthlyGap.dividedBy(livingWageBenchmark).times(100)
+
+        // console.log({
+        //     livingWageBenchmark: livingWageBenchmark.toDP(4),
+        //     livingWageBenchmark2: this.entry.benchmark.value,
+        //     monthlyTotalRemuneration: monthlyTotalRemuneration.toDP(4),
+        //     monthlyTotalRemuneration2: this._remuneration.total(),
+        //     monthlyGap: monthlyGap.toDP(4),
+        //     monthlyGap2: Math.max(this.entry.benchmark.value - this.remuneration.total(), 0),
+        //     annualGap: annualGap.toDP(4),
+        //     annualGap2: (Math.max(this.entry.benchmark.value - this.remuneration.total(), 0) * 12) * (this._percOfYearWorked / 100),
+        //     livingWagePerc: livingWagePerc.toDP(4),
+        //     livingWagePerc2: (Math.max(this.entry.benchmark.value - this.remuneration.total(), 0) / this.entry.benchmark.value) * 100
+        // })
 
         this.livingWageResult = {
             livingWageGap: monthlyGap,
             livingWageGapPerc: livingWagePerc,
             annualLivingWageGap: annualGap,
-            annualLivingWageGapAllWorkers: annualGap * this._nrOfWorkers,
+            annualLivingWageGapAllWorkers: annualGap.times(this._nrOfWorkers),
         };
+
+        // console.log(this.livingWageResult)
     }
 }

@@ -1,6 +1,7 @@
 import { Embeddable, Property } from '@mikro-orm/core';
 
 import { Guard } from '@domain/utils/guard';
+import Decimal from 'decimal.js';
 
 export interface EntryWorkerRemunerationProps {
     baseWage: number;
@@ -134,16 +135,17 @@ export class EntryWorkerRemuneration {
     }
 
     public total() {
-        return this.baseWage + this.bonuses + this.ikb;
+        return new Decimal(this.baseWage ?? 0).plus(new Decimal(this.bonuses ?? 0)).plus(new Decimal(this.ikb ?? 0))
     }
 
     private updateIKB() {
-        this._ikb =
-            this.ikbHousing +
-            this.ikbFood +
-            this.ikbTransport +
-            this.ikbHealthcare +
-            this.ikbChildcare +
-            this.ikbChildEducation;
+        this._ikb = new Decimal(this.ikbHousing)
+            .plus(new Decimal(this.ikbFood))
+            .plus(new Decimal(this.ikbTransport))
+            .plus(new Decimal(this.ikbHealthcare))
+            .plus(new Decimal(this.ikbChildcare))
+            .plus(new Decimal(this.ikbChildEducation))
+            .toDP(4)
+            .toNumber();
     }
 }

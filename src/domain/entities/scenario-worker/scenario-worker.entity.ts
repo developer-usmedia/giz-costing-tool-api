@@ -197,7 +197,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         const livingWageBenchmark = this._scenario.entry.benchmark.value;
 
         // This is not correct in OsoPerezoso on export. TODO: test test test
-        const monthlyGap = Math.max(livingWageBenchmark - remuneration.total(), 0); 
+        const monthlyGap = Math.max(livingWageBenchmark - remuneration.total().toNumber(), 0); 
         const annualGap = (monthlyGap * 12) * (this._original.percOfYearWorked / 100);
         const livingWagePerc = (monthlyGap / livingWageBenchmark) * 100;
 
@@ -216,7 +216,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
 
         return Math.max(
             this._scenario.specs?.remunerationIncrease || 0,
-            this._original.livingWage()?.livingWageGap || 0,
+            this._original.livingWage()?.livingWageGap.toNumber() || 0,
         );
     }
 

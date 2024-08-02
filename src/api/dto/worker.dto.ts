@@ -132,13 +132,13 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
             ikbHealthcare: entity.original.remuneration.ikbHealthcare,
             ikbChildcare: entity.original.remuneration.ikbChildcare,
             ikbChildEducation: entity.original.remuneration.ikbChildEducation,
-            total: entity.original.remuneration.total(),
+            total: entity.original.remuneration.total().toNumber(),
         },
         livingWage: {
-            livingWageGap: originalLw?.livingWageGap,
-            livingWageGapPerc: originalLw?.livingWageGapPerc,
-            annualLivingWageGap: originalLw?.annualLivingWageGap,
-            annualLivingWageGapAllWorkers: originalLw?.annualLivingWageGapAllWorkers,
+            livingWageGap: originalLw?.livingWageGap.toNumber(),
+            livingWageGapPerc: originalLw?.livingWageGapPerc.toNumber(),
+            annualLivingWageGap: originalLw?.annualLivingWageGap.toNumber(),
+            annualLivingWageGapAllWorkers: originalLw?.annualLivingWageGapAllWorkers.toNumber(),
         },
         scenario: {
             specification: {
@@ -168,7 +168,7 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
                 ikbHealthcare: remuneration.ikbHealthcare,
                 ikbChildcare: remuneration.ikbChildcare,
                 ikbChildEducation: remuneration.ikbChildEducation,
-                total: remuneration.total(),
+                total: remuneration.total().toNumber(),
             }: undefined,
             livingWage: scenarioLw ? {
                 livingWageGap: scenarioLw.livingWageGap,
