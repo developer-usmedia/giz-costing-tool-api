@@ -51,8 +51,12 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 400, description: 'User already registered' })
     public async register(@Body() registerForm: RegisterForm): Promise<UserResponse> {
         const existingUser = await this.userService.findOne({ email: registerForm.email }, {}, false);
+
         if (existingUser) {
-            return this.clientError('User already registered');
+            const message = existingUser.emailVerified ?
+                'User is fully registered. Please login.' :
+                'User is registered, but unverified. Please verify email.';
+            return this.clientError(message);
         }
 
         const user = await this.userService.register(registerForm.email, registerForm.password);
@@ -311,7 +315,7 @@ export class AuthController extends BaseController {
         if (!matchingPassword) {
             return this.clientError('Invalid credentials');
         }
-        
+
         if (!user.twoFactor.enabled && !user.twoFactor.secret) {
             return this.clientError('2FA is disabled');
         }
