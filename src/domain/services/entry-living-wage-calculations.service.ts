@@ -27,6 +27,7 @@ export class EntryLivingWageCalculationsService {
             100,
         )) {
             this.logger.debug(`Processing batch of ${batch.length} workers...`);
+            
             for (const worker of batch) {
                 this.logger.debug(`Processing worker ${worker.id} (${worker.name})`);
                 nrOfJobCategories++;
@@ -37,6 +38,18 @@ export class EntryLivingWageCalculationsService {
                 if (gap.greaterThan(largestGap)) {
                     largestGap = gap;
                 }
+
+                console.log({
+                    name: worker.name,
+                    gender: worker.gender,
+                    remun: worker.remuneration,
+                    total: worker.remuneration.total(),
+                    gap,
+                    annualGap: worker.livingWage().annualLivingWageGapAllWorkers,
+                    gapPerc: worker.livingWage().livingWageGapPerc,
+                    monthlyGap: worker.livingWage().livingWageGap,
+
+                })
 
                 sumOfAnnualLwGapAllWorkers = sumOfAnnualLwGapAllWorkers.plus(worker.livingWage().annualLivingWageGapAllWorkers)
                 sumOfMonthlyLwGap = sumOfMonthlyLwGap.plus(worker.livingWage().livingWageGap)

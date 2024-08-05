@@ -127,8 +127,8 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
         const livingWageBenchmark = new Decimal(this._entry.benchmark.value);
         const monthlyTotalRemuneration = new Decimal(this._remuneration.total()); // TODO: conver to decimal
         const monthlyGap = Decimal.max(livingWageBenchmark.minus(monthlyTotalRemuneration), new Decimal(0));
-        const annualGap = monthlyGap.times(12).times((new Decimal(this._percOfYearWorked).dividedBy(100)))
-        const livingWagePerc = monthlyGap.dividedBy(livingWageBenchmark).times(100)
+        const annualGap = monthlyGap.times(new Decimal(12)).times((new Decimal(this._percOfYearWorked).dividedBy(new Decimal(100))))
+        const livingWagePerc = monthlyGap.dividedBy(livingWageBenchmark).times(new Decimal(100))
 
         // console.log({
         //     livingWageBenchmark: livingWageBenchmark.toDP(4),
