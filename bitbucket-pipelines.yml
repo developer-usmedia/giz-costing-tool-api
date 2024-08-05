@@ -107,7 +107,7 @@ pipelines:
           deployment: staging
           <<: *deploy-infra
       - step: *sonar
- 
+
     master:
      - step: *build
      - step:
@@ -115,3 +115,12 @@ pipelines:
      - step:
          <<: *deploy-infra
          deployment: production
+     - step:
+         name: Sync GitHub Mirror
+         image: alpine/git:latest
+         clone:
+           enabled: false
+         script:
+           - git clone --bare git@bitbucket.org:usmedia/giz-costing-tool-api.git
+           - cd giz-costing-tool-api.git
+           - git push --mirror git@github.com:developer-usmedia/giz-costing-tool-api.git
