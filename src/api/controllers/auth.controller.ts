@@ -5,6 +5,7 @@ import {
     Delete,
     Get,
     HttpCode,
+    Ip,
     Logger,
     Post,
     Req,
@@ -38,7 +39,6 @@ export class AuthController extends BaseController {
     private readonly logger = new Logger(AuthController.name);
 
     constructor(
-        // private readonly authService: AuthService,
         private readonly userService: UserService,
         private readonly otpService: OTPService,
     ) {
@@ -70,9 +70,13 @@ export class AuthController extends BaseController {
     @ApiResponse({ status: 200, description: 'Successfull login' })
     public async login(
         @Body() loginForm: LoginForm,
+        @Ip() ip: string,
     ): Promise<{ accessToken: string; refreshToken: string; user: UserResponse }> {
         const user = await this.userService.findOne({ email: loginForm.email });
-        const jwt = this.userService.login(user, loginForm.password);
+        
+        if (user.isLoginLocked(ip)) {
+            throw new BadRequestException('Too many failed login attempts, login locked.');
+        }
 
         this.validate2FAForUser(user, loginForm.otpCode);
 
@@ -92,7 +96,19 @@ export class AuthController extends BaseController {
             }
         }
 
-        user.refreshToken = jwt.refreshToken;
+        const validCredentials = this.userService.validateCredentials(user, loginForm.password);
+        if (!validCredentials) {
+            user.saveFailedLogin(ip);
+            await this.userService.persist(user);
+
+            return this.clientError('Invalid credentials');
+        }
+
+        if(user.isLoginLocked(ip)) {
+            user.resetLoginLock();
+        }
+
+        const jwt = this.userService.generateJwt(user);
         await this.userService.persist(user);
 
         return {
@@ -119,8 +135,13 @@ export class AuthController extends BaseController {
         @Req() req: any,
         @CurrentUser() currentUser: JwtPayload, // Because of RefreshJwtGuard
         @Res() res: Response,
+        @Ip() ip: string,
     ): Promise<{ accessToken: string; refreshToken: string }> {
         const user = await this.userService.findOneByUid(currentUser.userId);
+
+        if (user.isLoginLocked(ip)) {
+            throw new BadRequestException('Too many failed login attempts, login locked.');
+        }
 
         if (user?.refreshToken !== req.body.refreshToken) {
             throw new BadRequestException('Invalid refresh token');

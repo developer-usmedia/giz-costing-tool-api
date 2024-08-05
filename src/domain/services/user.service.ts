@@ -1,14 +1,14 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityManager, EntityRepository } from '@mikro-orm/postgresql';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
+import { JwtPayload } from '@api/auth';
+import { UserCreateForm } from '@api/forms';
 import { User } from '@domain/entities';
 import { DatabaseService } from '@domain/services';
 import { BrevoService } from '@email/brevo.service';
-import { JwtService } from '@nestjs/jwt';
-import { UserCreateForm } from '@api/forms';
 import { environment } from 'environment';
-import { JwtPayload } from '@api/auth';
 
 export interface JwtToken {
     accessToken: string;
@@ -37,12 +37,10 @@ export class UserService extends DatabaseService<User> {
         return saved;
     }
 
-    public login(user: User, password: string): JwtToken {
+    public validateCredentials(user: User, password: string): boolean {
         const isMatch = user?.comparePasswords(password);
 
-        if (!user || !isMatch) throw new UnauthorizedException('Invalid credentials');
-
-        return this.generateJwt(user, false);
+        return user && isMatch;
     }
 
     public generateJwt(user: User, saveRefreshToken = true): JwtToken {

@@ -1,6 +1,5 @@
 export * from './database.service';
 
-export * from './auth.service';
 export * from './entry-living-wage-calculations.service';
 export * from './entry-worker.service';
 export * from './entry.service';

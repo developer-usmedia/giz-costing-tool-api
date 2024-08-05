@@ -6,6 +6,9 @@ import { Guard, GuardRegex } from '@domain/utils/guard';
 import { TwoFactor } from './two-factor.embed';
 import { VerificationCode } from './verification-code.embed';
 
+const FAILED_LOGIN_LOCK_THRESHOLD = 5;
+const FAILED_LOGIN_LOCKOUT_TIME = 1000 * 60 * 60 * 24; // 1 Day
+
 @Entity()
 export class User extends AbstractEntity<User> {
     @Property({ unique: true })
@@ -33,6 +36,15 @@ export class User extends AbstractEntity<User> {
     @Property({ columnType: 'varchar(400)', nullable: true })
     private _refreshToken: string;
 
+    @Property({ columnType: 'integer', default: 0, unsigned: true })
+    private _failedLoginAttempts: number;
+
+    @Property({ columnType: 'timestamp', nullable: true })
+    private _failedLoginLockUntil?: Date;
+
+    @Property({ columnType: 'varchar(50)', nullable: true })
+    private _failedLoginIp?: string;
+    
     constructor(props: { email: string; password: string }) {
         super();
 
@@ -66,6 +78,15 @@ export class User extends AbstractEntity<User> {
     }
     get refreshToken() {
         return this._refreshToken;
+    }
+    get failedLoginAttempts() {
+        return this._failedLoginAttempts;
+    }
+    get failedLoginLockUntil() {
+        return this._failedLoginLockUntil;
+    }
+    get failedLoginIp() {
+        return this._failedLoginIp;
     }
 
     set email(value: string) {
@@ -145,6 +166,26 @@ export class User extends AbstractEntity<User> {
     public set2FASecret(secret: string) {
         this.twoFactor.secret = secret;
     }
+
+    public saveFailedLogin(ip: string) {
+        this._failedLoginAttempts += 1;
+
+        if(this._failedLoginAttempts >= FAILED_LOGIN_LOCK_THRESHOLD) {
+            this._failedLoginIp = ip;
+            this._failedLoginLockUntil = new Date(Date.now() + FAILED_LOGIN_LOCKOUT_TIME);
+        }
+    }
+
+    public isLoginLocked(ip: string): boolean {
+        return this.failedLoginLockUntil > new Date() && this._failedLoginIp === ip;
+    }
+
+    public resetLoginLock() {
+        this._failedLoginAttempts = 0;
+        this._failedLoginIp = null;
+        this._failedLoginLockUntil = null;
+    }
+
 
     private hashPassword(password: string, salt: string): string {
         return bcrypt.hashSync(password, salt);

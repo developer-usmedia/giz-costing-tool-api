@@ -213,7 +213,7 @@ export class EntryImporter {
             healthcare: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbHealthcare).text) / 12,
             childcare: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbChildCare).text) / 12,
             childEducation: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbChildEducation).text) / 12,
-        }
+        };
 
         return {
             name: row.getCell(COLUMN_MAPPING_PAYROLL.name).text,

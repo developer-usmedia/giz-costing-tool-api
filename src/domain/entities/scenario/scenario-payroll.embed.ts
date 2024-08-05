@@ -9,16 +9,16 @@ export interface ScenarioPayrollProps {
 
 @Embeddable()
 export class ScenarioPayroll {
-    @Property({ columnType: 'integer', unsigned: true, fieldName: 'num_workers_lwgap' })
+    @Property({ columnType: 'integer', unsigned: true, default: 0, fieldName: 'num_workers_lwgap' })
     private readonly _nrOfWorkersWithLWGap: number;
 
-    @Property({ columnType: 'numeric(12,4)', unsigned: true, fieldName: 'avg_lwgap' })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true, default: 0, fieldName: 'avg_lwgap' })
     private readonly _avgLivingWageGap: number;
 
-    @Property({ columnType: 'numeric(12,4)', unsigned: true, fieldName: 'largest_lwgap' })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true, default: 0, fieldName: 'largest_lwgap' })
     private readonly _largestLivingWageGap: number;
 
-    @Property({ columnType: 'numeric(12,4)', unsigned: true, fieldName: 'sum_lwgap_allworkers' })
+    @Property({ columnType: 'numeric(12,4)', unsigned: true, default: 0, fieldName: 'sum_lwgap_allworkers' })
     private readonly _sumAnnualLivingWageGapAllWorkers: number;
 
     constructor(props?: ScenarioPayrollProps) {
