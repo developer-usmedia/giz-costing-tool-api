@@ -45,8 +45,6 @@ export class EntryWorkerRemuneration {
     private _ikbChildEducation: Decimal;
 
     constructor(props?: EntryWorkerRemunerationProps) {
-        console.log('entry-worker-remunderation-props');
-        console.log(props);
         if (props) {
             this.baseWage = props.baseWage;
             this.bonuses = props.bonuses ?? new Decimal(0);
@@ -150,15 +148,25 @@ export class EntryWorkerRemuneration {
         // ikb 29.1666
         // total 999.9999
 
+        // The in between summing and storing the amount for totalIkb in the _ikb property (4 dp)
+        // and using that to sum up the total() did not resul the correct total
+        return this.baseWage
+                .plus(this.bonuses)
+                .plus(this.ikbFood)
+                .plus(this.ikbTransport)
+                .plus(this.ikbHealthcare)
+                .plus(this.ikbChildcare)
+                .plus(this.ikbChildEducation);
+
         return new Decimal(this.baseWage ?? 0).plus(new Decimal(this.bonuses ?? 0)).plus(new Decimal(this.ikb ?? 0));
     }
 
     private updateIKB() {
-        this._ikb = new Decimal(this.ikbHousing)
-            .plus(new Decimal(this.ikbFood))
-            .plus(new Decimal(this.ikbTransport))
-            .plus(new Decimal(this.ikbHealthcare))
-            .plus(new Decimal(this.ikbChildcare))
-            .plus(new Decimal(this.ikbChildEducation));
+        this._ikb = this.ikbHousing
+            .plus(this.ikbFood)
+            .plus(this.ikbTransport)
+            .plus(this.ikbHealthcare)
+            .plus(this.ikbChildcare)
+            .plus(this.ikbChildEducation);
     }
 }
