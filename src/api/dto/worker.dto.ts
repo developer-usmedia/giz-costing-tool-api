@@ -1,5 +1,3 @@
-import Decimal from 'decimal.js';
-
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
@@ -23,16 +21,16 @@ export interface WorkerDTO extends HalResponse {
     nrOfWorkers: number;
     percOfYearWorked: number;
     remuneration?: {
-        baseWage: Decimal;
-        bonuses: Decimal;
-        ikb: Decimal;
-        ikbHousing: Decimal;
-        ikbFood: Decimal;
-        ikbTransport: Decimal;
-        ikbHealthcare: Decimal;
-        ikbChildcare: Decimal;
-        ikbChildEducation: Decimal;
-        total: Decimal;
+        baseWage: number;
+        bonuses: number;
+        ikb: number;
+        ikbHousing: number;
+        ikbFood: number;
+        ikbTransport: number;
+        ikbHealthcare: number;
+        ikbChildcare: number;
+        ikbChildEducation: number;
+        total: number;
     };
     livingWage?: {
         livingWageGap: number;
@@ -59,22 +57,22 @@ export interface WorkerDTO extends HalResponse {
             ikbChildEducationPerc: number;
         };
         remuneration?: {
-            baseWage: Decimal;
-            bonuses: Decimal;
-            ikb: Decimal;
-            ikbHousing: Decimal;
-            ikbFood: Decimal;
-            ikbTransport: Decimal;
-            ikbHealthcare: Decimal;
-            ikbChildcare: Decimal;
-            ikbChildEducation: Decimal;
-            total: Decimal;
+            baseWage: number;
+            bonuses: number;
+            ikb: number;
+            ikbHousing: number;
+            ikbFood: number;
+            ikbTransport: number;
+            ikbHealthcare: number;
+            ikbChildcare: number;
+            ikbChildEducation: number;
+            total: number;
         };
         livingWage?: {
-            livingWageGap: Decimal;
-            livingWageGapPerc: Decimal;
-            annualLivingWageGap: Decimal;
-            annualLivingWageGapAllWorkers: Decimal;
+            livingWageGap: number;
+            livingWageGapPerc: number;
+            annualLivingWageGap: number;
+            annualLivingWageGapAllWorkers: number;
         };
     };
     _links: {
@@ -123,16 +121,16 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
         nrOfWorkers: entity.original.nrOfWorkers,
         percOfYearWorked: entity.original.percOfYearWorked,
         remuneration: {
-            baseWage: entity.original.remuneration.baseWage, // TODO: Do .toDP() here?
-            bonuses: entity.original.remuneration.bonuses,
-            ikb: entity.original.remuneration.ikb,
-            ikbHousing: entity.original.remuneration.ikbHousing,
-            ikbFood: entity.original.remuneration.ikbFood,
-            ikbTransport: entity.original.remuneration.ikbTransport,
-            ikbHealthcare: entity.original.remuneration.ikbHealthcare,
-            ikbChildcare: entity.original.remuneration.ikbChildcare,
-            ikbChildEducation: entity.original.remuneration.ikbChildEducation,
-            total: entity.original.remuneration.total(),
+            baseWage: entity.original.remuneration.baseWage.toNumber(), // TODO: Do .toDP() here?
+            bonuses: entity.original.remuneration.bonuses.toNumber(),
+            ikb: entity.original.remuneration.ikb.toNumber(),
+            ikbHousing: entity.original.remuneration.ikbHousing.toNumber(),
+            ikbFood: entity.original.remuneration.ikbFood.toNumber(),
+            ikbTransport: entity.original.remuneration.ikbTransport.toNumber(),
+            ikbHealthcare: entity.original.remuneration.ikbHealthcare.toNumber(),
+            ikbChildcare: entity.original.remuneration.ikbChildcare.toNumber(),
+            ikbChildEducation: entity.original.remuneration.ikbChildEducation.toNumber(),
+            total: entity.original.remuneration.total().toNumber(),
         },
         livingWage: {
             livingWageGap: originalLw?.livingWageGap.toNumber(),
@@ -159,22 +157,22 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
                 ikbChildEducationPerc: entity.distro.ikbChildEducationPerc,
             } : undefined,
             remuneration: remuneration ? {
-                baseWage: remuneration.baseWage,
-                bonuses: remuneration.bonuses,
-                ikb: remuneration.ikb,
-                ikbHousing: remuneration.ikbHousing,
-                ikbFood: remuneration.ikbFood,
-                ikbTransport: remuneration.ikbTransport,
-                ikbHealthcare: remuneration.ikbHealthcare,
-                ikbChildcare: remuneration.ikbChildcare,
-                ikbChildEducation: remuneration.ikbChildEducation,
-                total: remuneration.total(),
+                baseWage: remuneration.baseWage.toNumber(),
+                bonuses: remuneration.bonuses.toNumber(),
+                ikb: remuneration.ikb.toNumber(),
+                ikbHousing: remuneration.ikbHousing.toNumber(),
+                ikbFood: remuneration.ikbFood.toNumber(),
+                ikbTransport: remuneration.ikbTransport.toNumber(),
+                ikbHealthcare: remuneration.ikbHealthcare.toNumber(),
+                ikbChildcare: remuneration.ikbChildcare.toNumber(),
+                ikbChildEducation: remuneration.ikbChildEducation.toNumber(),
+                total: remuneration.total().toNumber(),
             }: undefined,
             livingWage: scenarioLw ? {
-                livingWageGap: scenarioLw.livingWageGap,
-                livingWageGapPerc: scenarioLw.livingWageGapPerc,
-                annualLivingWageGap: scenarioLw.annualLivingWageGap,
-                annualLivingWageGapAllWorkers: scenarioLw.annualLivingWageGapAllWorkers,
+                livingWageGap: scenarioLw.livingWageGap.toNumber(),
+                livingWageGapPerc: scenarioLw.livingWageGapPerc.toNumber(),
+                annualLivingWageGap: scenarioLw.annualLivingWageGap.toNumber(),
+                annualLivingWageGapAllWorkers: scenarioLw.annualLivingWageGapAllWorkers.toNumber(),
             }: undefined,
         },
         _links: {
