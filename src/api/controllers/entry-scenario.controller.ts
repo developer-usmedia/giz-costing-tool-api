@@ -45,8 +45,6 @@ export class EntryScenarioController extends BaseController {
         await this.entryService.persist(entry);
         await this.workerService.importWorkers(entry.scenario);
 
-        console.log('importing workers)')
-
         return EntryDTOFactory.fromEntity(entry);
     }
 

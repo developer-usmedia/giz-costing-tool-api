@@ -129,8 +129,8 @@ export class Scenario extends AbstractEntity<Scenario> {
             multiplier = 1 / (this.entry.facility.productionAmount / this.entry.buyer.amount);
         }
 
-        console.log(this.report)
-        
+
+        // TODO: fix this.report.remunerationIncrease === null
         return {
             remunerationIncrease: this.report.remunerationIncrease?.times(multiplier).toNumber(),
             taxCosts: this.report.taxCosts?.times(multiplier).toNumber(),

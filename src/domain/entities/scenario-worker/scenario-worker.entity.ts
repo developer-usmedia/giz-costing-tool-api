@@ -216,11 +216,12 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         // }
 
         if (monthlyGap.greaterThan(0)) {
+            console.log("---")
             console.log(this.livingWageResult)
-            console.log(livingWageBenchmark)
-            console.log(remuneration.total())
-            console.log(this.remunerationResult)
+            console.log('Benchmark', livingWageBenchmark)
+            console.log('Total', remuneration.total())
             console.log(remuneration)
+            console.log("---")
         }
     }
 

@@ -61,20 +61,20 @@ export class EntryLivingWageCalculationsService {
         let avgGap = sumOfMonthlyLwGap.dividedBy(nrOfJobCategories)
         avgGap = avgGap.isNaN() ? new Decimal(0) : avgGap; // Catch 0 / 0 => NaN
 
-        console.log({
-            avgGap,
-            largestGap,
-            sumOfAnnualLwGapAllWorkers,
-        })
+        // console.log({
+        //     avgGap,
+        //     largestGap,
+        //     sumOfAnnualLwGapAllWorkers,
+        // })
 
-        console.log({
-            avgLivingWageGap: avgGap.toNumber(),
-            largestLivingWageGap: largestGap.toNumber(),
-            sumAnnualLivingWageGapAllWorkers: sumOfAnnualLwGapAllWorkers.toNumber(),
-            nrOfWorkersWithLWGap: workersBelowLw,
-            year: entry.payroll.year,
-            currencyCode: entry.payroll.currencyCode,
-        })
+        // console.log({
+        //     avgLivingWageGap: avgGap.toNumber(),
+        //     largestLivingWageGap: largestGap.toNumber(),
+        //     sumAnnualLivingWageGapAllWorkers: sumOfAnnualLwGapAllWorkers.toNumber(),
+        //     nrOfWorkersWithLWGap: workersBelowLw,
+        //     year: entry.payroll.year,
+        //     currencyCode: entry.payroll.currencyCode,
+        // })
 
         entry.updatePayrollInfo({
             avgLivingWageGap: avgGap.toNumber(),
