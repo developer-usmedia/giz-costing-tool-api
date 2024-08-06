@@ -42,6 +42,6 @@ export class TestController {
 
         this.lwService.calculateLwGaps(entry);
 
-        return 'done'
+        return 'done';
     }
 }

@@ -15,7 +15,7 @@ export class EntryLivingWageCalculationsService {
     ) {}
 
     async calculateLwGaps(entry: Entry): Promise<Entry> {
-        let nrOfJobCategories = 0
+        let nrOfJobCategories = 0;
         let workersBelowLw = 0;
         let largestGap = new Decimal(0);
         let sumOfAnnualLwGapAllWorkers = new Decimal(0);
@@ -46,19 +46,19 @@ export class EntryLivingWageCalculationsService {
                     gender: worker.gender,
                     remun: worker.remuneration,
                     total: worker.remuneration.total(),
-                    gap,
+                    gap: gap,
                     annualGap: worker.livingWage().annualLivingWageGapAllWorkers,
                     gapPerc: worker.livingWage().livingWageGapPerc,
                     monthlyGap: worker.livingWage().livingWageGap,
 
-                })
+                });
 
-                sumOfAnnualLwGapAllWorkers = sumOfAnnualLwGapAllWorkers.plus(worker.livingWage().annualLivingWageGapAllWorkers)
-                sumOfMonthlyLwGap = sumOfMonthlyLwGap.plus(worker.livingWage().livingWageGap)
+                sumOfAnnualLwGapAllWorkers = sumOfAnnualLwGapAllWorkers.plus(worker.livingWage().annualLivingWageGapAllWorkers);
+                sumOfMonthlyLwGap = sumOfMonthlyLwGap.plus(worker.livingWage().livingWageGap);
             }
         }
 
-        let avgGap = sumOfMonthlyLwGap.dividedBy(nrOfJobCategories)
+        let avgGap = sumOfMonthlyLwGap.dividedBy(nrOfJobCategories);
         avgGap = avgGap.isNaN() ? new Decimal(0) : avgGap; // Catch 0 / 0 => NaN
 
         // console.log({

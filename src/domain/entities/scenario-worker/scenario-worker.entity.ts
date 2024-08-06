@@ -145,7 +145,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         const taxes = this.determineRemunerationIncrease().times(increase);
 
         if(props?.forCategory) {
-            return taxes.times(this.original.nrOfWorkers)
+            return taxes.times(this.original.nrOfWorkers);
         }
 
         return taxes;
@@ -198,8 +198,8 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
 
         const monthlyTotalRemuneration = remuneration.total();
         const monthlyGap = Decimal.max(livingWageBenchmark.minus(monthlyTotalRemuneration), new Decimal(0));
-        const annualGap = monthlyGap.times(new Decimal(12)).times((new Decimal(this.original.percOfYearWorked).dividedBy(new Decimal(100))))
-        const livingWagePerc = monthlyGap.dividedBy(livingWageBenchmark).times(new Decimal(100))
+        const annualGap = monthlyGap.times(new Decimal(12)).times((new Decimal(this.original.percOfYearWorked).dividedBy(new Decimal(100))));
+        const livingWagePerc = monthlyGap.dividedBy(livingWageBenchmark).times(new Decimal(100));
 
         this.livingWageResult = {
             livingWageGap: monthlyGap,
@@ -216,12 +216,12 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         // }
 
         if (monthlyGap.greaterThan(0)) {
-            console.log("---")
-            console.log(this.livingWageResult)
-            console.log('Benchmark', livingWageBenchmark)
-            console.log('Total', remuneration.total())
-            console.log(remuneration)
-            console.log("---")
+            console.log('---');
+            console.log(this.livingWageResult);
+            console.log('Benchmark', livingWageBenchmark);
+            console.log('Total', remuneration.total());
+            console.log(remuneration);
+            console.log('---');
         }
     }
 

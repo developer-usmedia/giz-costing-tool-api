@@ -78,8 +78,8 @@ export class ReportService {
                 const yearlyIncrease = monthlyIncrease.times(12);
                 const percOfYearWorkedMultiplier = new Decimal(worker.original.percOfYearWorked).dividedBy(100);
 
-                sumOfRemunerationIncrease = sumOfRemunerationIncrease.plus(yearlyIncrease.times(percOfYearWorkedMultiplier))
-                sumOfTaxes = sumOfTaxes.plus(worker.getTaxes({ forCategory: true }))
+                sumOfRemunerationIncrease = sumOfRemunerationIncrease.plus(yearlyIncrease.times(percOfYearWorkedMultiplier));
+                sumOfTaxes = sumOfTaxes.plus(worker.getTaxes({ forCategory: true }));
             }
         }
 

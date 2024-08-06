@@ -149,7 +149,7 @@ export class EntryImporter {
             } else {
                 this.logger.debug('Entity creation error while creating worker from import');
                 this.logger.error(error);
-                this.errors.push({ errorType: CellValidationError.UNKNOWN })
+                this.errors.push({ errorType: CellValidationError.UNKNOWN });
                 return;
             }
 
@@ -174,7 +174,7 @@ export class EntryImporter {
             } else {
                 this.logger.debug('Entity creation error while creating entry from import');
                 this.logger.error(error);
-                this.errors.push({ errorType: CellValidationError.UNKNOWN })
+                this.errors.push({ errorType: CellValidationError.UNKNOWN });
                 throw error;
             }
 

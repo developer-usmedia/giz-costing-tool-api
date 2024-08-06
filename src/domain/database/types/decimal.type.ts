@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   EntityProperty,
   Platform,
@@ -23,7 +24,7 @@ export class DecimalType extends Type<Decimal, string> {
     return new Decimal(value);
   }
 
-  getColumnType(_: EntityProperty, platform: Platform) {
+  getColumnType(_prop: EntityProperty, _platform: Platform) {
     return 'numeric';
   }
 }

@@ -45,8 +45,8 @@ export class EntryWorkerRemuneration {
     private _ikbChildEducation: Decimal;
 
     constructor(props?: EntryWorkerRemunerationProps) {
-        console.log("entry-worker-remunderation-props")
-        console.log(props)
+        console.log('entry-worker-remunderation-props');
+        console.log(props);
         if (props) {
             this.baseWage = props.baseWage;
             this.bonuses = props.bonuses ?? new Decimal(0);
@@ -139,10 +139,10 @@ export class EntryWorkerRemuneration {
     }
 
     public total() {
-        console.log('basewage', this.baseWage.toDP(4))
-        console.log('bonuses', this.bonuses.toDP(4))
-        console.log('ikb', this.ikb.toDP(4))
-        console.log('total', this.baseWage.plus(this.bonuses).plus(this.ikb).toDP(4));
+        // console.log('basewage', this.baseWage.toDP(4))
+        // console.log('bonuses', this.bonuses.toDP(4))
+        // console.log('ikb', this.ikb.toDP(4))
+        // console.log('total', this.baseWage.plus(this.bonuses).plus(this.ikb).toDP(4));
 
         // Benchmark 1000
         // basewage 958.3333
@@ -150,7 +150,7 @@ export class EntryWorkerRemuneration {
         // ikb 29.1666
         // total 999.9999
 
-        return new Decimal(this.baseWage ?? 0).plus(new Decimal(this.bonuses ?? 0)).plus(new Decimal(this.ikb ?? 0))
+        return new Decimal(this.baseWage ?? 0).plus(new Decimal(this.bonuses ?? 0)).plus(new Decimal(this.ikb ?? 0));
     }
 
     private updateIKB() {
@@ -159,6 +159,6 @@ export class EntryWorkerRemuneration {
             .plus(new Decimal(this.ikbTransport))
             .plus(new Decimal(this.ikbHealthcare))
             .plus(new Decimal(this.ikbChildcare))
-            .plus(new Decimal(this.ikbChildEducation))
+            .plus(new Decimal(this.ikbChildEducation));
     }
 }
