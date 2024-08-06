@@ -10,7 +10,7 @@ import {
     SHEET_PAYROLL_INDEX,
     SHEET_PAYROLL_START_ROW,
 } from '@import/dto/import-column-mapping.enum';
-import { ImportValidationErrorDTOFactory, ImportValidationErrorDto } from '@import/dto/import-validation.dto';
+import { CellValidationError, ImportValidationErrorDTOFactory, ImportValidationErrorDto } from '@import/dto/import-validation.dto';
 import { EntityValidationError } from '@import/errors/entity-validation.error';
 import { EntryWorkerFactory } from '@import/factories/entry-worker.factory';
 import { EntryFactory } from '@import/factories/entry.factory';
@@ -149,6 +149,7 @@ export class EntryImporter {
             } else {
                 this.logger.debug('Entity creation error while creating worker from import');
                 this.logger.error(error);
+                this.errors.push({ errorType: CellValidationError.UNKNOWN })
                 return;
             }
 
@@ -173,6 +174,7 @@ export class EntryImporter {
             } else {
                 this.logger.debug('Entity creation error while creating entry from import');
                 this.logger.error(error);
+                this.errors.push({ errorType: CellValidationError.UNKNOWN })
                 throw error;
             }
 
