@@ -1,9 +1,10 @@
 import { Logger } from '@nestjs/common';
+import Decimal from 'decimal.js';
 
 import { Entry, EntryWorker } from '@domain/entities';
 import { EntityValidationError } from '@import/errors/entity-validation.error';
-import { EntryWorkerData, getEntryWorkerSchema } from '@import/schemas/entry-worker.schema';
 import { ValidationResult } from '@import/errors/schema-validation.error';
+import { EntryWorkerData, getEntryWorkerSchema } from '@import/schemas/entry-worker.schema';
 import { validate } from '@import/utils/validate';
 
 export class EntryWorkerFactory {
@@ -19,14 +20,14 @@ export class EntryWorkerFactory {
             nrOfWorkers: value.nrOfWorkers,
             percOfYearWorked: value.percOfYearWorked,
             remuneration: {
-                baseWage: value.monthlyWage,
-                bonuses: value.monthlyBonus,
-                ikbHousing: value.ikbHousing,
-                ikbFood: value.ikbFood,
-                ikbTransport: value.ikbTransport,
-                ikbHealthcare: value.ikbHealthcare,
-                ikbChildcare: value.ikbChildcare,
-                ikbChildEducation: value.ikbChildEducation,
+                baseWage: new Decimal(value.monthlyWage),
+                bonuses: new Decimal(value.monthlyBonus),
+                ikbHousing: new Decimal(value.ikbHousing),
+                ikbFood: new Decimal(value.ikbFood),
+                ikbTransport: new Decimal(value.ikbTransport),
+                ikbHealthcare: new Decimal(value.ikbHealthcare),
+                ikbChildcare: new Decimal(value.ikbChildcare),
+                ikbChildEducation: new Decimal(value.ikbChildEducation),
             },
         });
     }

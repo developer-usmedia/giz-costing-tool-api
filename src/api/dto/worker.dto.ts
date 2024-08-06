@@ -1,11 +1,11 @@
+import Decimal from 'decimal.js';
+
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
 import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/paging/paging-response';
 import { Gender, ScenarioWorker } from '@domain/entities';
 import { WORKER_LINKS } from './worker.links';
-
-// TODO: split into two EntryWorker & ScenarioWorker?
 
 /**
  * API layer DTO used in the request response for the workers endpoint
@@ -23,16 +23,16 @@ export interface WorkerDTO extends HalResponse {
     nrOfWorkers: number;
     percOfYearWorked: number;
     remuneration?: {
-        baseWage: number;
-        bonuses: number;
-        ikb: number;
-        ikbHousing: number;
-        ikbFood: number;
-        ikbTransport: number;
-        ikbHealthcare: number;
-        ikbChildcare: number;
-        ikbChildEducation: number;
-        total: number;
+        baseWage: Decimal;
+        bonuses: Decimal;
+        ikb: Decimal;
+        ikbHousing: Decimal;
+        ikbFood: Decimal;
+        ikbTransport: Decimal;
+        ikbHealthcare: Decimal;
+        ikbChildcare: Decimal;
+        ikbChildEducation: Decimal;
+        total: Decimal;
     };
     livingWage?: {
         livingWageGap: number;
@@ -59,22 +59,22 @@ export interface WorkerDTO extends HalResponse {
             ikbChildEducationPerc: number;
         };
         remuneration?: {
-            baseWage: number;
-            bonuses: number;
-            ikb: number;
-            ikbHousing: number;
-            ikbFood: number;
-            ikbTransport: number;
-            ikbHealthcare: number;
-            ikbChildcare: number;
-            ikbChildEducation: number;
-            total: number;
+            baseWage: Decimal;
+            bonuses: Decimal;
+            ikb: Decimal;
+            ikbHousing: Decimal;
+            ikbFood: Decimal;
+            ikbTransport: Decimal;
+            ikbHealthcare: Decimal;
+            ikbChildcare: Decimal;
+            ikbChildEducation: Decimal;
+            total: Decimal;
         };
         livingWage?: {
-            livingWageGap: number;
-            livingWageGapPerc: number;
-            annualLivingWageGap: number;
-            annualLivingWageGapAllWorkers: number;
+            livingWageGap: Decimal;
+            livingWageGapPerc: Decimal;
+            annualLivingWageGap: Decimal;
+            annualLivingWageGapAllWorkers: Decimal;
         };
     };
     _links: {
@@ -123,7 +123,7 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
         nrOfWorkers: entity.original.nrOfWorkers,
         percOfYearWorked: entity.original.percOfYearWorked,
         remuneration: {
-            baseWage: entity.original.remuneration.baseWage,
+            baseWage: entity.original.remuneration.baseWage, // TODO: Do .toDP() here?
             bonuses: entity.original.remuneration.bonuses,
             ikb: entity.original.remuneration.ikb,
             ikbHousing: entity.original.remuneration.ikbHousing,
@@ -132,7 +132,7 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
             ikbHealthcare: entity.original.remuneration.ikbHealthcare,
             ikbChildcare: entity.original.remuneration.ikbChildcare,
             ikbChildEducation: entity.original.remuneration.ikbChildEducation,
-            total: entity.original.remuneration.total().toNumber(),
+            total: entity.original.remuneration.total(),
         },
         livingWage: {
             livingWageGap: originalLw?.livingWageGap.toNumber(),
@@ -168,7 +168,7 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
                 ikbHealthcare: remuneration.ikbHealthcare,
                 ikbChildcare: remuneration.ikbChildcare,
                 ikbChildEducation: remuneration.ikbChildEducation,
-                total: remuneration.total().toNumber(),
+                total: remuneration.total(),
             }: undefined,
             livingWage: scenarioLw ? {
                 livingWageGap: scenarioLw.livingWageGap,

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import Decimal from 'decimal.js';
 
 import { Scenario } from '@domain/entities';
 import { ScenarioWorkerService } from './scenario-worker.service';
@@ -16,9 +17,9 @@ export class ScenarioLivingWageCalculationsService {
     async calculateLwGaps(scenario: Scenario): Promise<Scenario> {
         let nrOfJobCategories = 0;
         let workersBelowLw = 0;
-        let largestGap = 0;
-        let sumOfAnnualLwGapAllWorkers = 0;
-        let sumOfMonthlyLwGap = 0;
+        let largestGap = new Decimal(0);
+        let sumOfAnnualLwGapAllWorkers = new Decimal(0);
+        let sumOfMonthlyLwGap = new Decimal(0);
 
         for await (const batch of this.workerService.getBatched(
             /* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -31,19 +32,21 @@ export class ScenarioLivingWageCalculationsService {
                 nrOfJobCategories++;
 
                 const gap = worker.livingWage().livingWageGap;
-                if (gap > 0) workersBelowLw += worker.original.nrOfWorkers;
+                if (gap.greaterThan(0)) {
+                    workersBelowLw += worker.original.nrOfWorkers;
+                }
 
-                if (gap > largestGap) {
+                if (gap.greaterThan(largestGap)) {
                     largestGap = gap;
                 }
 
-                sumOfAnnualLwGapAllWorkers += worker.livingWage().annualLivingWageGapAllWorkers;
-                sumOfMonthlyLwGap += worker.livingWage().livingWageGap;
+                sumOfAnnualLwGapAllWorkers = sumOfAnnualLwGapAllWorkers.plus(worker.livingWage().annualLivingWageGapAllWorkers);
+                sumOfMonthlyLwGap = sumOfMonthlyLwGap.plus(worker.livingWage().livingWageGap);
             }
         }
 
-        let avgGap = sumOfMonthlyLwGap / nrOfJobCategories;
-        avgGap = isNaN(avgGap) ? 0 : avgGap; // Catch 0 / 0 => NaN
+        let avgGap = sumOfMonthlyLwGap.dividedBy(nrOfJobCategories);
+        // avgGap = isNaN(avgGap) ? 0 : avgGap; // Catch 0 / 0 => NaN
 
         scenario.updatePayroll({
             avgLivingWageGap: avgGap,

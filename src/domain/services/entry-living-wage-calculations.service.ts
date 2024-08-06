@@ -33,7 +33,9 @@ export class EntryLivingWageCalculationsService {
                 nrOfJobCategories++;
 
                 const gap = worker.livingWage().livingWageGap;
-                if (gap.greaterThan(0)) workersBelowLw += worker.nrOfWorkers;
+                if (gap.greaterThan(0)) {
+                    workersBelowLw += worker.nrOfWorkers;
+                }
 
                 if (gap.greaterThan(largestGap)) {
                     largestGap = gap;

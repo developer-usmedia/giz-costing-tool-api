@@ -1,4 +1,5 @@
 import { Embedded, Entity, ManyToOne } from '@mikro-orm/core';
+import Decimal from 'decimal.js';
 
 import {
     AbstractEntity,
@@ -6,7 +7,6 @@ import {
     EntryWorkerRemuneration,
     Scenario,
     ScenarioDistribution,
-    ScenarioSpecification,
     ScenarioWorkerDistribution,
     ScenarioWorkerDistributionProps,
     ScenarioWorkerSpecification,
@@ -35,21 +35,21 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
     private _distro: ScenarioWorkerDistribution;
 
     private remunerationResult: null | {
-        baseWage: number;
-        bonuses: number;
-        ikbHousing: number;
-        ikbFood: number;
-        ikbTransport: number;
-        ikbHealthcare: number;
-        ikbChildcare: number;
-        ikbChildEducation: number;
+        baseWage: Decimal;
+        bonuses: Decimal;
+        ikbHousing: Decimal;
+        ikbFood: Decimal;
+        ikbTransport: Decimal;
+        ikbHealthcare: Decimal;
+        ikbChildcare: Decimal;
+        ikbChildEducation: Decimal;
     };
 
     private livingWageResult: null | {
-        livingWageGap: number;
-        livingWageGapPerc: number;
-        annualLivingWageGap: number;
-        annualLivingWageGapAllWorkers: number;
+        livingWageGap: Decimal;
+        livingWageGapPerc: Decimal;
+        annualLivingWageGap: Decimal;
+        annualLivingWageGapAllWorkers: Decimal;
     };
 
     constructor(props: ScenarioWorkerProps) {
@@ -138,24 +138,24 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         this.calculateLivingWage();
     }
 
-    public getTaxes(props?: { forCategory: boolean }): number {
+    public getTaxes(props?: { forCategory: boolean }): Decimal {
         const { taxEmployee, taxEmployer } = this.scenario.specs;
         const increase = (taxEmployee + taxEmployer) / 100;
 
-        const taxes = this.determineRemunerationIncrease() * increase;
+        const taxes = this.determineRemunerationIncrease().times(increase);
 
         if(props?.forCategory) {
-            return taxes * this.original.nrOfWorkers;
+            return taxes.times(this.original.nrOfWorkers)
         }
 
         return taxes;
     }
 
-    public getRemunerationIncrease(props?: { forCategory: boolean }): number {
+    public getRemunerationIncrease(props?: { forCategory: boolean }): Decimal {
         const increase = this.determineRemunerationIncrease();
         
         if(props?.forCategory) {
-            return increase * this.original.nrOfWorkers;
+            return increase.times(this.original.nrOfWorkers);
         }
         return increase;
     }
@@ -173,60 +173,67 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         };
 
         const increase = this.determineRemunerationIncrease();
-        if (increase === 0) {
+        if (increase.equals(0)) {
             return;
         }
 
-        const increaseOnePerc = increase / 100;
+        const increaseOnePerc = increase.dividedBy(100);
         const distro = this.determineDistro();
 
         this.remunerationResult = {
-            baseWage: this.remunerationResult.baseWage + (increaseOnePerc * distro.baseWagePerc),
-            bonuses: this.remunerationResult.bonuses + (increaseOnePerc * distro.bonusesPerc),
-            ikbHousing: this.remunerationResult.ikbHousing + (increaseOnePerc * distro.ikbHousingPerc),
-            ikbFood: this.remunerationResult.ikbFood + (increaseOnePerc * distro.ikbFoodPerc),
-            ikbTransport: this.remunerationResult.ikbTransport + (increaseOnePerc * distro.ikbTransportPerc),
-            ikbHealthcare: this.remunerationResult.ikbHealthcare + (increaseOnePerc * distro.ikbHealthcarePerc),
-            ikbChildcare: this.remunerationResult.ikbChildcare + (increaseOnePerc * distro.ikbChildcarePerc),
-            ikbChildEducation: this.remunerationResult.ikbChildEducation + (increaseOnePerc * distro.ikbChildEducationPerc),
+            baseWage: this.remunerationResult.baseWage.plus(increaseOnePerc.times(distro.baseWagePerc)),
+            bonuses: this.remunerationResult.bonuses.plus(increaseOnePerc.times(distro.bonusesPerc)),
+            ikbHousing: this.remunerationResult.ikbHousing.plus(increaseOnePerc.times(distro.ikbHousingPerc)),
+            ikbFood: this.remunerationResult.ikbFood.plus(increaseOnePerc.times(distro.ikbFoodPerc)),
+            ikbTransport: this.remunerationResult.ikbTransport.plus(increaseOnePerc.times(distro.ikbTransportPerc)),
+            ikbHealthcare: this.remunerationResult.ikbHealthcare.plus(increaseOnePerc.times(distro.ikbHealthcarePerc)),
+            ikbChildcare: this.remunerationResult.ikbChildcare.plus(increaseOnePerc.times(distro.ikbChildcarePerc)),
+            ikbChildEducation: this.remunerationResult.ikbChildEducation.plus(increaseOnePerc.times(distro.ikbChildEducationPerc)),
         };
     }
 
     private calculateLivingWage() {
         const remuneration = new EntryWorkerRemuneration(this.remunerationResult);
-        const livingWageBenchmark = this._scenario.entry.benchmark.value;
+        const livingWageBenchmark = new Decimal(this.scenario.entry.benchmark.value);
 
-        // This is not correct in OsoPerezoso on export. TODO: test test test
-        const monthlyGap = Math.max(livingWageBenchmark - remuneration.total().toNumber(), 0); 
-        const annualGap = (monthlyGap * 12) * (this._original.percOfYearWorked / 100);
-        const livingWagePerc = (monthlyGap / livingWageBenchmark) * 100;
+        const monthlyTotalRemuneration = remuneration.total();
+        const monthlyGap = Decimal.max(livingWageBenchmark.minus(monthlyTotalRemuneration), new Decimal(0));
+        const annualGap = monthlyGap.times(new Decimal(12)).times((new Decimal(this.original.percOfYearWorked).dividedBy(new Decimal(100))))
+        const livingWagePerc = monthlyGap.dividedBy(livingWageBenchmark).times(new Decimal(100))
 
         this.livingWageResult = {
             livingWageGap: monthlyGap,
             livingWageGapPerc: livingWagePerc,
             annualLivingWageGap: annualGap,
-            annualLivingWageGapAllWorkers: annualGap * this._original.nrOfWorkers,
+            annualLivingWageGapAllWorkers: annualGap.times(this._original.nrOfWorkers),
         };
+
+        // {
+        //     livingWageGap: 0.010000000009313226,
+        //     livingWageGapPerc: 0.000002062208586070034,
+        //     annualLivingWageGap: 0.12000000011175871,
+        //     annualLivingWageGapAllWorkers: 0.12000000011175871
+        // }
+
+        if (monthlyGap.greaterThan(0)) {
+            console.log(this.livingWageResult)
+            console.log(livingWageBenchmark)
+            console.log(remuneration.total())
+            console.log(this.remunerationResult)
+            console.log(remuneration)
+        }
     }
 
-    private determineRemunerationIncrease(): number {
+    private determineRemunerationIncrease(): Decimal {
         if (this._specs.remunerationIncrease !== null) {
-            return this._specs.remunerationIncrease;
+            return new Decimal(this._specs.remunerationIncrease);
         }
 
-        return Math.max(
+        // ??
+        return Decimal.max(
             this._scenario.specs?.remunerationIncrease || 0,
             this._original.livingWage()?.livingWageGap.toNumber() || 0,
         );
-    }
-
-    private determineSpecs(): ScenarioSpecification {
-        return new ScenarioSpecification({
-            taxEmployee: this._scenario.specs.taxEmployee,
-            taxEmployer: this._scenario.specs.taxEmployer,
-            overheadCosts: this._scenario.specs.overheadCosts,
-            remunerationIncrease: this.determineRemunerationIncrease(),
-        });
     }
 
     private determineDistro(): ScenarioDistribution {

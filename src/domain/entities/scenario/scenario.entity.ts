@@ -128,13 +128,15 @@ export class Scenario extends AbstractEntity<Scenario> {
 
             multiplier = 1 / (this.entry.facility.productionAmount / this.entry.buyer.amount);
         }
+
+        console.log(this.report)
         
         return {
-            remunerationIncrease: this.report.remunerationIncrease * multiplier,
-            taxCosts: this.report.taxCosts * multiplier,
+            remunerationIncrease: this.report.remunerationIncrease?.times(multiplier).toNumber(),
+            taxCosts: this.report.taxCosts?.times(multiplier).toNumber(),
             overheadCosts: this.report.overheadCosts * multiplier,
-            totalCosts: this.report.totalCosts * multiplier,
-            totalCostsPerUnit: this.report.totalCostsPerUnit * multiplier,
+            totalCosts: this.report.totalCosts?.times(multiplier).toNumber(),
+            totalCostsPerUnit: this.report.totalCostsPerUnit?.times(multiplier).toNumber()
         };
     }
 }

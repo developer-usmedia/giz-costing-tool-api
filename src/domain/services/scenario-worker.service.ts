@@ -97,9 +97,11 @@ export class ScenarioWorkerService extends DatabaseService<ScenarioWorker> {
     async importWorkers(scenario: Scenario, batchSize = 20) {
         /* eslint-disable @typescript-eslint/no-unsafe-argument */
         for await (const batch of this.entryWorkerService.getBatched({ _entry: scenario.entry } as any, batchSize)) {
+            this.logger.log('new batch')
             const scenarioWorkers = [];
 
             for (const entryWorker of batch) {
+                this.logger.log("new worker")
                 const scenarioWorker = new ScenarioWorker({
                     scenario: scenario,
                     worker: entryWorker,

@@ -47,10 +47,10 @@ const mapEntityToDTO = (entity: ScenarioWorker): ExportWorkerDTO => {
         annualLivingWageGapAllWorkers: livingWage.annualLivingWageGapAllWorkers.toFixed(2),
         remunerationIncrease: entity.getRemunerationIncrease().toFixed(2),
         baseWagePerc: distro.baseWagePerc.toFixed(2),
-        baseWageIncrease: (entity.remuneration.baseWage - entity.original.remuneration.baseWage).toFixed(2),
+        baseWageIncrease: entity.remuneration.baseWage.minus(entity.original.remuneration.baseWage).toFixed(2),
         bonusesPerc: distro.bonusesPerc.toFixed(2),
-        bonusesIncrease: (entity.remuneration.bonuses - entity.original.remuneration.bonuses).toFixed(2),
+        bonusesIncrease: entity.remuneration.bonuses.minus(entity.original.remuneration.bonuses).toFixed(2),
         ikbPerc: distro.ikbPerc.toFixed(2),
-        ikbIncrease: (entity.remuneration.ikb - entity.original.remuneration.ikb).toFixed(2),
+        ikbIncrease: entity.remuneration.ikb.minus(entity.original.remuneration.ikb).toFixed(2),
     };
 };

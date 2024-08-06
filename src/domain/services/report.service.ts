@@ -1,20 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
+import Decimal from 'decimal.js';
 
 import { Entry } from '@domain/entities';
 import { ScenarioLivingWageCalculationsService } from '@domain/services/scenario-living-wage-calculations.service';
 import { ScenarioWorkerService } from './scenario-worker.service';
 
 export interface ScenarioCosts {
-    sumOfRemunerationIncrease: number;
-    sumOfTaxes: number;
+    sumOfRemunerationIncrease: Decimal;
+    sumOfTaxes: Decimal;
 }
 
 export interface ScenarioReport {
-    remunerationIncrease: number;
-    taxCosts: number;
+    remunerationIncrease: Decimal;
+    taxCosts: Decimal;
     overheadCosts: number;
-    totalCosts: number;
-    totalCostsPerUnit: number;
+    totalCosts: Decimal;
+    totalCostsPerUnit: Decimal;
 }
 
 /**
@@ -40,14 +41,16 @@ export class ReportService {
         }
 
         const { sumOfRemunerationIncrease, sumOfTaxes } = await this.calculateScenarioCosts(entry);
-        const totalCosts = sumOfRemunerationIncrease + sumOfTaxes + entry.scenario.specs.overheadCosts;
+        const totalCosts = sumOfRemunerationIncrease
+                            .plus(sumOfTaxes)
+                            .plus(entry.scenario.specs.overheadCosts);
 
         const report: ScenarioReport = {
             remunerationIncrease: sumOfRemunerationIncrease,
             taxCosts: sumOfTaxes,
             overheadCosts: entry.scenario.specs.overheadCosts,
             totalCosts: totalCosts,
-            totalCostsPerUnit: totalCosts / entry.facility.productionAmount,
+            totalCostsPerUnit: totalCosts.dividedBy(entry.facility.productionAmount),
         };
 
         entry.scenario.updateReport(report);
@@ -58,8 +61,8 @@ export class ReportService {
     }
 
     private async calculateScenarioCosts(entry: Entry): Promise<ScenarioCosts> {
-        let sumOfRemunerationIncrease = 0;
-        let sumOfTaxes = 0;
+        let sumOfRemunerationIncrease = new Decimal(0);
+        let sumOfTaxes = new Decimal(0);
 
         for await (const batch of this.scenarioWorkerService.getBatched(
             /* eslint-disable-next-line @typescript-eslint/no-unsafe-argument */
@@ -72,10 +75,11 @@ export class ReportService {
                 this.logger.debug(`Processing worker ${worker.id} (${worker.original.name})`);
 
                 const monthlyIncrease = worker.getRemunerationIncrease({ forCategory: true });
-                const yearlyIncrease = monthlyIncrease * 12;
+                const yearlyIncrease = monthlyIncrease.times(12);
+                const percOfYearWorkedMultiplier = new Decimal(worker.original.percOfYearWorked).dividedBy(100);
 
-                sumOfRemunerationIncrease += yearlyIncrease * (worker.original.percOfYearWorked / 100);
-                sumOfTaxes += worker.getTaxes({ forCategory: true });
+                sumOfRemunerationIncrease = sumOfRemunerationIncrease.plus(yearlyIncrease.times(percOfYearWorkedMultiplier))
+                sumOfTaxes = sumOfTaxes.plus(worker.getTaxes({ forCategory: true }))
             }
         }
 

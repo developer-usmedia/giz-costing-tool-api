@@ -1,3 +1,4 @@
+
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';
@@ -206,16 +207,16 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
             }: undefined,
             livingWage: {
                 nrOfWorkersBelowLivingWage: entity.scenario.payroll.nrOfWorkersWithLWGap,
-                avgLivingWageGap: entity.scenario.payroll.avgLivingWageGap,
-                largestLivingWageGap: entity.scenario.payroll.largestLivingWageGap,
-                annualFacilityLivingWageGap: entity.scenario.payroll.sumAnnualLivingWageGapAllWorkers,
+                avgLivingWageGap: entity.scenario.payroll.avgLivingWageGap.toNumber(),
+                largestLivingWageGap: entity.scenario.payroll.largestLivingWageGap.toNumber(),
+                annualFacilityLivingWageGap: entity.scenario.payroll.sumAnnualLivingWageGapAllWorkers.toNumber(),
             },
             annualCosts: scenarioReport ? {
-                remunerationIncrease: scenarioReport.remunerationIncrease,
-                taxCosts: scenarioReport.taxCosts,
+                remunerationIncrease: scenarioReport.remunerationIncrease?.toNumber(),
+                taxCosts: scenarioReport.taxCosts?.toNumber(),
                 overheadCosts: scenarioReport.overheadCosts,
-                totalCosts: scenarioReport.totalCosts,
-                totalCostsPerUnit: scenarioReport.totalCostsPerUnit,
+                totalCosts: scenarioReport.totalCosts?.toNumber(),
+                totalCostsPerUnit: scenarioReport.totalCostsPerUnit?.toNumber(),
             } : undefined,
         } : undefined,
         createdAt: entity.createdAt,
