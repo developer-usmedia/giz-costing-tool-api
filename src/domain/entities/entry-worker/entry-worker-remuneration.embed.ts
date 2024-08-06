@@ -17,34 +17,36 @@ export interface EntryWorkerRemunerationProps {
 
 @Embeddable()
 export class EntryWorkerRemuneration {
-    @Property({ columnType: 'numeric(12,2)', type: DecimalType, unsigned: true, fieldName: 'base_wage' })
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, unsigned: true, fieldName: 'base_wage' })
     private _baseWage: Decimal;
 
-    @Property({ columnType: 'numeric(12,2)', type: DecimalType, unsigned: true, fieldName: 'bonuses' })
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, unsigned: true, fieldName: 'bonuses' })
     private _bonuses: Decimal;
 
-    @Property({ columnType: 'numeric(12,2)', type: DecimalType, unsigned: true, fieldName: 'ikb' })
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, unsigned: true, fieldName: 'ikb' })
     private _ikb: Decimal;
 
-    @Property({ columnType: 'numeric(12,2)', type: DecimalType, unsigned: true, fieldName: 'ikb_housing' })
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, unsigned: true, fieldName: 'ikb_housing' })
     private _ikbHousing: Decimal;
 
-    @Property({ columnType: 'numeric(12,2)', type: DecimalType, unsigned: true, fieldName: 'ikb_food' })
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, unsigned: true, fieldName: 'ikb_food' })
     private _ikbFood: Decimal;
 
-    @Property({ columnType: 'numeric(12,2)', type: DecimalType, unsigned: true, fieldName: 'ikb_transport' })
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, unsigned: true, fieldName: 'ikb_transport' })
     private _ikbTransport: Decimal;
 
-    @Property({ columnType: 'numeric(12,2)', type: DecimalType, unsigned: true, fieldName: 'ikb_healthcare' })
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, unsigned: true, fieldName: 'ikb_healthcare' })
     private _ikbHealthcare: Decimal;
 
-    @Property({ columnType: 'numeric(12,2)', type: DecimalType, unsigned: true, fieldName: 'ikb_childcare' })
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, unsigned: true, fieldName: 'ikb_childcare' })
     private _ikbChildcare: Decimal;
 
-    @Property({ columnType: 'numeric(12,2)', type: DecimalType, unsigned: true, fieldName: 'ikb_child_education' })
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, unsigned: true, fieldName: 'ikb_child_education' })
     private _ikbChildEducation: Decimal;
 
     constructor(props?: EntryWorkerRemunerationProps) {
+        console.log("entry-worker-remunderation-props")
+        console.log(props)
         if (props) {
             this.baseWage = props.baseWage;
             this.bonuses = props.bonuses ?? new Decimal(0);
@@ -96,7 +98,7 @@ export class EntryWorkerRemuneration {
     }
 
     private set baseWage(value: Decimal) {
-        Guard.check(value, { type: 'number', min: 0, max: 9999999999.99 });
+        Guard.check(value.toNumber(), { type: 'number', min: 0, max: 9999999999.99 });
         this._baseWage = value;
     }
 
@@ -132,10 +134,22 @@ export class EntryWorkerRemuneration {
 
     private set ikbChildEducation(value: Decimal) {
         Guard.check(value.toNumber(), { type: 'number', min: 0, max: 9999999999.99 });
+        // TODO: fix guard checka dn importer error
         this._ikbChildEducation = value;
     }
 
     public total() {
+        console.log('basewage', this.baseWage.toDP(4))
+        console.log('bonuses', this.bonuses.toDP(4))
+        console.log('ikb', this.ikb.toDP(4))
+        console.log('total', this.baseWage.plus(this.bonuses).plus(this.ikb).toDP(4));
+
+        // Benchmark 1000
+        // basewage 958.3333
+        // bonuses 12.5
+        // ikb 29.1666
+        // total 999.9999
+
         return new Decimal(this.baseWage ?? 0).plus(new Decimal(this.bonuses ?? 0)).plus(new Decimal(this.ikb ?? 0))
     }
 
