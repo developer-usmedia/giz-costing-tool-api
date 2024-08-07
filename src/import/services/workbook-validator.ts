@@ -44,6 +44,7 @@ export class WorkbookValidator {
                 column: templateVersion.col,
                 property: 'templateVersion',
                 errorType: CellValidationError.VERSION_MISMATCH,
+                message: `Template version ${templateVersion.text} does not match supported version: ${this.ACCEPTED_VERSION}`,
             });
 
             return this.errors;
