@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, no-console */
 import { Controller, Get, Logger, UseGuards } from '@nestjs/common';
 
+import { environment } from 'environment';
 import { JwtAuthGuard } from '@api/auth';
 import { ScenarioWorkerService } from '@domain/services';
-import { environment } from 'environment';
 
 @Controller('tests')
 @UseGuards(JwtAuthGuard)
@@ -21,8 +21,8 @@ export class TestController {
             return;
         }
 
-        // this.workerService.resetSpecificationsForWorkers('abc');
-        // this.workerService.resetDistributionForWorkers('abc');
-        // this.workerService.createMissingWorkers('abc');
+        this.workerService.resetSpecificationsForWorkers('abc');
+        this.workerService.resetDistributionForWorkers('abc');
+        this.workerService.createMissingWorkers('abc');
     }
 }

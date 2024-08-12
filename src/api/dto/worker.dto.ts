@@ -111,6 +111,7 @@ export class WorkerDTOFactory {
 const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
     const originalLw = entity.original.livingWage();
     const scenarioLw = entity.livingWage();
+    const originalRemuneration = entity.original.remuneration;
     const scenarioRemuneration = entity.remuneration;
 
     return {
@@ -120,18 +121,18 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
         gender: entity.original.gender,
         nrOfWorkers: entity.original.nrOfWorkers,
         percOfYearWorked: entity.original.percOfYearWorked,
-        remuneration: {
-            baseWage: entity.original.remuneration.baseWage.toNumber(),
-            bonuses: entity.original.remuneration.bonuses.toNumber(),
-            ikb: entity.original.remuneration.ikb.toNumber(),
-            ikbHousing: entity.original.remuneration.ikbHousing.toNumber(),
-            ikbFood: entity.original.remuneration.ikbFood.toNumber(),
-            ikbTransport: entity.original.remuneration.ikbTransport.toNumber(),
-            ikbHealthcare: entity.original.remuneration.ikbHealthcare.toNumber(),
-            ikbChildcare: entity.original.remuneration.ikbChildcare.toNumber(),
-            ikbChildEducation: entity.original.remuneration.ikbChildEducation.toNumber(),
-            total: entity.original.remuneration.total().toNumber(),
-        },
+        remuneration: originalRemuneration ? {
+            baseWage: originalRemuneration.baseWage.toNumber(),
+            bonuses: originalRemuneration.bonuses.toNumber(),
+            ikb: originalRemuneration.ikb.toNumber(),
+            ikbHousing: originalRemuneration.ikbHousing.toNumber(),
+            ikbFood: originalRemuneration.ikbFood.toNumber(),
+            ikbTransport: originalRemuneration.ikbTransport.toNumber(),
+            ikbHealthcare: originalRemuneration.ikbHealthcare.toNumber(),
+            ikbChildcare: originalRemuneration.ikbChildcare.toNumber(),
+            ikbChildEducation: originalRemuneration.ikbChildEducation.toNumber(),
+            total: originalRemuneration.total().toNumber(),
+        } : undefined,
         livingWage: originalLw ? {
             livingWageGap: originalLw.livingWageGap.toNumber(),
             livingWageGapPerc: originalLw.livingWageGapPerc.toNumber(),
@@ -157,15 +158,15 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
                 ikbChildEducationPerc: entity.distro.ikbChildEducationPerc,
             } : undefined,
             remuneration: scenarioRemuneration ? {
-                baseWage: scenarioRemuneration.baseWage?.toNumber(),
-                bonuses: scenarioRemuneration.bonuses?.toNumber(),
-                ikb: scenarioRemuneration.ikb?.toNumber(),
-                ikbHousing: scenarioRemuneration.ikbHousing?.toNumber(),
-                ikbFood: scenarioRemuneration.ikbFood?.toNumber(),
-                ikbTransport: scenarioRemuneration.ikbTransport?.toNumber(),
-                ikbHealthcare: scenarioRemuneration.ikbHealthcare?.toNumber(),
-                ikbChildcare: scenarioRemuneration.ikbChildcare?.toNumber(),
-                ikbChildEducation: scenarioRemuneration.ikbChildEducation?.toNumber(),
+                baseWage: scenarioRemuneration.baseWage.toNumber(),
+                bonuses: scenarioRemuneration.bonuses.toNumber(),
+                ikb: scenarioRemuneration.ikb.toNumber(),
+                ikbHousing: scenarioRemuneration.ikbHousing.toNumber(),
+                ikbFood: scenarioRemuneration.ikbFood.toNumber(),
+                ikbTransport: scenarioRemuneration.ikbTransport.toNumber(),
+                ikbHealthcare: scenarioRemuneration.ikbHealthcare.toNumber(),
+                ikbChildcare: scenarioRemuneration.ikbChildcare.toNumber(),
+                ikbChildEducation: scenarioRemuneration.ikbChildEducation.toNumber(),
                 total: scenarioRemuneration.total().toNumber(),
             }: undefined,
             livingWage: scenarioLw ? {

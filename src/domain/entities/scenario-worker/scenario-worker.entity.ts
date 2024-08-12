@@ -88,7 +88,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
             // Entry could be incorrect status so this.calculate() will not update value
             return null;
         }
-        
+
         return new EntryWorkerRemuneration(this.remunerationResult);
     }
 

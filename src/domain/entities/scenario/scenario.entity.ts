@@ -130,11 +130,11 @@ export class Scenario extends AbstractEntity<Scenario> {
         }
 
         return {
-            remunerationIncrease: this.report.remunerationIncrease.times(multiplier).toNumber(),
-            taxCosts: this.report.taxCosts.times(multiplier).toNumber(),
+            remunerationIncrease: this.report.remunerationIncrease?.times(multiplier).toNumber(),
+            taxCosts: this.report.taxCosts?.times(multiplier).toNumber(),
             overheadCosts: this.report.overheadCosts * multiplier,
-            totalCosts: this.report.totalCosts.times(multiplier).toNumber(),
-            totalCostsPerUnit: this.report.totalCostsPerUnit.times(multiplier).toNumber(),
+            totalCosts: this.report.totalCosts?.times(multiplier).toNumber(),
+            totalCostsPerUnit: this.report.totalCostsPerUnit?.times(multiplier).toNumber(),
         };
     }
 }

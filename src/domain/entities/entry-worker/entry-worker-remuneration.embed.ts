@@ -47,52 +47,52 @@ export class EntryWorkerRemuneration {
     constructor(props?: EntryWorkerRemunerationProps) {
         if (props) {
             this.baseWage = props.baseWage;
-            this.bonuses = props.bonuses ?? new Decimal(0);
-            this.ikbHousing = props.ikbHousing ?? new Decimal(0);
-            this.ikbFood = props.ikbFood ?? new Decimal(0);
-            this.ikbTransport = props.ikbTransport ?? new Decimal(0);
-            this.ikbHealthcare = props.ikbHealthcare ?? new Decimal(0);
-            this.ikbChildcare = props.ikbChildcare ?? new Decimal(0);
-            this.ikbChildEducation = props.ikbChildEducation ?? new Decimal(0);
+            this.bonuses = props.bonuses;
+            this.ikbHousing = props.ikbHousing;
+            this.ikbFood = props.ikbFood;
+            this.ikbTransport = props.ikbTransport;
+            this.ikbHealthcare = props.ikbHealthcare;
+            this.ikbChildcare = props.ikbChildcare;
+            this.ikbChildEducation = props.ikbChildEducation;
 
             this.updateIKB();
         }
     }
 
     get baseWage() {
-        return this._baseWage;
+        return this._baseWage ?? new Decimal(0);
     }
 
     get bonuses() {
-        return this._bonuses;
+        return this._bonuses ?? new Decimal(0);
     }
 
     get ikb() {
-        return this._ikb;
+        return this._ikb ?? new Decimal(0);
     }
 
     get ikbHousing() {
-        return this._ikbHousing;
+        return this._ikbHousing ?? new Decimal(0);
     }
 
     get ikbFood() {
-        return this._ikbFood;
+        return this._ikbFood ?? new Decimal(0);
     }
 
     get ikbTransport() {
-        return this._ikbTransport;
+        return this._ikbTransport ?? new Decimal(0);
     }
 
     get ikbHealthcare() {
-        return this._ikbHealthcare;
+        return this._ikbHealthcare ?? new Decimal(0);
     }
 
     get ikbChildcare() {
-        return this._ikbChildcare;
+        return this._ikbChildcare ?? new Decimal(0);
     }
 
     get ikbChildEducation() {
-        return this._ikbChildEducation;
+        return this._ikbChildEducation ?? new Decimal(0);
     }
 
     private set baseWage(value: Decimal) {
