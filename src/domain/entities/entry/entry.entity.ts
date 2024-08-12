@@ -148,7 +148,7 @@ export class Entry extends AbstractEntity<Entry> {
         this.updateStatus();
     }
 
-    public updatePayrollInfo(payroll: EntryPayrollProps, skipLock = false) {
+    public updatePayrollInfo(payroll: EntryPayrollProps, { skipLock = false }) {
         if (this.isLocked() && !skipLock){
             throw Error('Cannot update payroll info on locked entry.');
         }

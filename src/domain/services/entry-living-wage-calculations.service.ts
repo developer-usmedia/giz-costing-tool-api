@@ -43,18 +43,6 @@ export class EntryLivingWageCalculationsService {
                     largestGap = gap;
                 }
 
-                console.log({
-                    name: worker.name,
-                    gender: worker.gender,
-                    remun: worker.remuneration,
-                    total: worker.remuneration.total(),
-                    gap: gap,
-                    annualGap: worker.livingWage().annualLivingWageGapAllWorkers,
-                    gapPerc: worker.livingWage().livingWageGapPerc,
-                    monthlyGap: worker.livingWage().livingWageGap,
-
-                });
-
                 sumOfAnnualLwGapAllWorkers = sumOfAnnualLwGapAllWorkers.plus(worker.livingWage().annualLivingWageGapAllWorkers);
                 sumOfMonthlyLwGap = sumOfMonthlyLwGap.plus(worker.livingWage().livingWageGap);
             }
@@ -71,7 +59,7 @@ export class EntryLivingWageCalculationsService {
             year: entry.payroll.year,
             currencyCode: entry.payroll.currencyCode,
             nrOfWorkers: nrOfWorkers,
-        }, true);
+        }, { skipLock: true });
 
         return await this.entryService.persist(entry);
     }

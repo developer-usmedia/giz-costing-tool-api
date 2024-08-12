@@ -33,11 +33,11 @@ export class ScenarioReport {
     private readonly _calculatedAt!: Date;
 
     constructor(props: ScenarioReportProps) {
-        this.remunerationIncrease = props.remunerationIncrease;
-        this.taxCosts = props.taxCosts;
-        this.overheadCosts = props.overheadCosts;
-        this.totalCosts = props.totalCosts;
-        this.totalCostsPerUnit = props.totalCostsPerUnit;
+        this.remunerationIncrease = props.remunerationIncrease ?? new Decimal(0);
+        this.taxCosts = props.taxCosts ?? new Decimal(0);
+        this.overheadCosts = props.overheadCosts ?? 0;
+        this.totalCosts = props.totalCosts ?? new Decimal(0);
+        this.totalCostsPerUnit = props.totalCostsPerUnit ?? new Decimal(0);
 
         this._calculatedAt = new Date();
     }

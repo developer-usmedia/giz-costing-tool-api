@@ -1,4 +1,5 @@
 import { Embedded, Entity, Enum, ManyToOne, Property } from '@mikro-orm/core';
+import Decimal from 'decimal.js';
 
 import {
     AbstractEntity,
@@ -7,7 +8,6 @@ import {
     Gender, GENDER_OPTIONS,
 } from '@domain/entities';
 import { Guard } from '@domain/utils/guard';
-import Decimal from 'decimal.js';
 
 export interface EntryWorkerProps {
     entry: Entry;
@@ -130,26 +130,11 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
         const annualGap = monthlyGap.times(new Decimal(12)).times((new Decimal(this._percOfYearWorked).dividedBy(new Decimal(100))));
         const livingWagePerc = monthlyGap.dividedBy(livingWageBenchmark).times(new Decimal(100));
 
-        // console.log({
-        //     livingWageBenchmark: livingWageBenchmark.toDP(4),
-        //     livingWageBenchmark2: this.entry.benchmark.value,
-        //     monthlyTotalRemuneration: monthlyTotalRemuneration.toDP(4),
-        //     monthlyTotalRemuneration2: this._remuneration.total(),
-        //     monthlyGap: monthlyGap.toDP(4),
-        //     monthlyGap2: Math.max(this.entry.benchmark.value - this.remuneration.total(), 0),
-        //     annualGap: annualGap.toDP(4),
-        //     annualGap2: (Math.max(this.entry.benchmark.value - this.remuneration.total(), 0) * 12) * (this._percOfYearWorked / 100),
-        //     livingWagePerc: livingWagePerc.toDP(4),
-        //     livingWagePerc2: (Math.max(this.entry.benchmark.value - this.remuneration.total(), 0) / this.entry.benchmark.value) * 100
-        // })
-
         this.livingWageResult = {
             livingWageGap: monthlyGap,
             livingWageGapPerc: livingWagePerc,
             annualLivingWageGap: annualGap,
             annualLivingWageGapAllWorkers: annualGap.times(this._nrOfWorkers),
         };
-
-        // console.log(this.livingWageResult)
     }
 }

@@ -5,15 +5,3 @@
 ### Sql
 GET http://{{host}}:{{port}}/api/{{endpoint}}/sql
 Authorization: Bearer {{token}}
-
-### Recalculate 2 digits
-GET http://{{host}}:{{port}}/api/{{endpoint}}/recalculate/5b26c8e3-f970-4f62-b51e-5ba05f024af8
-Authorization: Bearer {{token}}
-
-### Recalculate 4 digits
-GET http://{{host}}:{{port}}/api/{{endpoint}}/recalculate/dfd847c9-6dc0-4d64-b666-a3150523e534
-Authorization: Bearer {{token}}
-
-### Recalculate aaa
-GET http://{{host}}:{{port}}/api/{{endpoint}}/recalculate/903ae176-80e6-42b2-a288-9f091b72be90
-Authorization: Bearer {{token}}

@@ -26,7 +26,6 @@ export class ScenarioPayroll {
 
     constructor(props?: ScenarioPayrollProps) {
         if (props) {
-            // const zero = new Decimal(0);
             // Note: These fields are updated via a custom query (triggered via the service)
             this._nrOfWorkersWithLWGap = props.nrOfWorkersWithLWGap ?? 0;
             this._avgLivingWageGap = props.avgLivingWageGap ?? new Decimal(0);

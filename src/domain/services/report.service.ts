@@ -42,8 +42,8 @@ export class ReportService {
 
         const { sumOfRemunerationIncrease, sumOfTaxes } = await this.calculateScenarioCosts(entry);
         const totalCosts = sumOfRemunerationIncrease
-                            .plus(sumOfTaxes)
-                            .plus(entry.scenario.specs.overheadCosts);
+            .plus(sumOfTaxes)
+            .plus(entry.scenario.specs.overheadCosts);
 
         const report: ScenarioReport = {
             remunerationIncrease: sumOfRemunerationIncrease,
