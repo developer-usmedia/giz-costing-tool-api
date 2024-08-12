@@ -45,8 +45,8 @@ export class ScenarioLivingWageCalculationsService {
             }
         }
 
-        const avgGap = sumOfMonthlyLwGap.dividedBy(nrOfJobCategories);
-        // avgGap = isNaN(avgGap) ? 0 : avgGap; // Catch 0 / 0 => NaN
+        let avgGap = sumOfMonthlyLwGap.dividedBy(nrOfJobCategories);
+        avgGap = sumOfMonthlyLwGap.isNaN() ? new Decimal(0) : avgGap; // Catch 0 / 0 => NaN
 
         scenario.updatePayroll({
             avgLivingWageGap: avgGap,

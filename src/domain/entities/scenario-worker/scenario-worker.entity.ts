@@ -207,22 +207,6 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
             annualLivingWageGap: annualGap,
             annualLivingWageGapAllWorkers: annualGap.times(this._original.nrOfWorkers),
         };
-
-        // {
-        //     livingWageGap: 0.010000000009313226,
-        //     livingWageGapPerc: 0.000002062208586070034,
-        //     annualLivingWageGap: 0.12000000011175871,
-        //     annualLivingWageGapAllWorkers: 0.12000000011175871
-        // }
-
-        if (monthlyGap.greaterThan(0)) {
-            console.log('---');
-            console.log(this.livingWageResult);
-            console.log('Benchmark', livingWageBenchmark);
-            console.log('Total', remuneration.total());
-            console.log(remuneration);
-            console.log('---');
-        }
     }
 
     private determineRemunerationIncrease(): Decimal {
@@ -230,10 +214,9 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
             return new Decimal(this._specs.remunerationIncrease);
         }
 
-        // ??
         return Decimal.max(
             this._scenario.specs?.remunerationIncrease || 0,
-            this._original.livingWage()?.livingWageGap.toNumber() || 0,
+            this._original.livingWage()?.livingWageGap || 0,
         );
     }
 

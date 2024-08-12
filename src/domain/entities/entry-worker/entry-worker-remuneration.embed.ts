@@ -132,37 +132,21 @@ export class EntryWorkerRemuneration {
 
     private set ikbChildEducation(value: Decimal) {
         Guard.check(value.toNumber(), { type: 'number', min: 0, max: 9999999999.99 });
-        // TODO: fix guard checka dn importer error
         this._ikbChildEducation = value;
     }
 
     public total() {
-        // console.log('basewage', this.baseWage.toDP(4))
-        // console.log('bonuses', this.bonuses.toDP(4))
-        // console.log('ikb', this.ikb.toDP(4))
-        // console.log('total', this.baseWage.plus(this.bonuses).plus(this.ikb).toDP(4));
-
-        // Benchmark 1000
-        // basewage 958.3333
-        // bonuses 12.5
-        // ikb 29.1666
-        // total 999.9999
-
-        // The in between summing and storing the amount for totalIkb in the _ikb property (4 dp)
-        // and using that to sum up the total() did not resul the correct total
-        return this.baseWage
+        return new Decimal(this.baseWage ?? 0)
                 .plus(this.bonuses)
                 .plus(this.ikbFood)
                 .plus(this.ikbTransport)
                 .plus(this.ikbHealthcare)
                 .plus(this.ikbChildcare)
                 .plus(this.ikbChildEducation);
-
-        return new Decimal(this.baseWage ?? 0).plus(new Decimal(this.bonuses ?? 0)).plus(new Decimal(this.ikb ?? 0));
     }
 
     private updateIKB() {
-        this._ikb = this.ikbHousing
+        this._ikb = new Decimal(this.ikbHousing ?? 0)
             .plus(this.ikbFood)
             .plus(this.ikbTransport)
             .plus(this.ikbHealthcare)

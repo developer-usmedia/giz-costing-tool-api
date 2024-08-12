@@ -16,6 +16,7 @@ export class EntryLivingWageCalculationsService {
 
     async calculateLwGaps(entry: Entry): Promise<Entry> {
         let nrOfJobCategories = 0;
+        let nrOfWorkers = 0;
         let workersBelowLw = 0;
         let largestGap = new Decimal(0);
         let sumOfAnnualLwGapAllWorkers = new Decimal(0);
@@ -31,6 +32,7 @@ export class EntryLivingWageCalculationsService {
             for (const worker of batch) {
                 this.logger.debug(`Processing worker ${worker.id} (${worker.name})`);
                 nrOfJobCategories++;
+                nrOfWorkers += worker.nrOfWorkers;
 
                 const gap = worker.livingWage().livingWageGap;
                 if (gap.greaterThan(0)) {
@@ -61,21 +63,6 @@ export class EntryLivingWageCalculationsService {
         let avgGap = sumOfMonthlyLwGap.dividedBy(nrOfJobCategories);
         avgGap = avgGap.isNaN() ? new Decimal(0) : avgGap; // Catch 0 / 0 => NaN
 
-        // console.log({
-        //     avgGap,
-        //     largestGap,
-        //     sumOfAnnualLwGapAllWorkers,
-        // })
-
-        // console.log({
-        //     avgLivingWageGap: avgGap.toNumber(),
-        //     largestLivingWageGap: largestGap.toNumber(),
-        //     sumAnnualLivingWageGapAllWorkers: sumOfAnnualLwGapAllWorkers.toNumber(),
-        //     nrOfWorkersWithLWGap: workersBelowLw,
-        //     year: entry.payroll.year,
-        //     currencyCode: entry.payroll.currencyCode,
-        // })
-
         entry.updatePayrollInfo({
             avgLivingWageGap: avgGap.toNumber(),
             largestLivingWageGap: largestGap.toNumber(),
@@ -83,6 +70,7 @@ export class EntryLivingWageCalculationsService {
             nrOfWorkersWithLWGap: workersBelowLw,
             year: entry.payroll.year,
             currencyCode: entry.payroll.currencyCode,
+            nrOfWorkers: nrOfWorkers,
         }, true);
 
         return await this.entryService.persist(entry);
