@@ -136,7 +136,7 @@ export class EntryWorkerRemuneration {
     }
 
     public total() {
-        return new Decimal(this.baseWage ?? 0)
+        return this.baseWage
                 .plus(this.bonuses)
                 .plus(this.ikbFood)
                 .plus(this.ikbTransport)
@@ -146,7 +146,7 @@ export class EntryWorkerRemuneration {
     }
 
     private updateIKB() {
-        this._ikb = new Decimal(this.ikbHousing ?? 0)
+        this._ikb = this.ikbHousing
             .plus(this.ikbFood)
             .plus(this.ikbTransport)
             .plus(this.ikbHealthcare)
