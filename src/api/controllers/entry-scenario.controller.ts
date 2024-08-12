@@ -5,7 +5,7 @@ import { JwtAuthGuard } from '@api/auth';
 import { BaseController } from '@api/controllers';
 import { EntryDTOFactory, EntryResponse } from '@api/dto';
 import { ScenarioCreateForm, ScenarioUpdateForm } from '@api/forms';
-import { EntryService, ScenarioService, ScenarioWorkerService, ReportService } from '@domain/services';
+import { EntryService, ReportService, ScenarioService, ScenarioWorkerService } from '@domain/services';
 
 @ApiTags('entries')
 @Controller('entries/:entryId/scenario')

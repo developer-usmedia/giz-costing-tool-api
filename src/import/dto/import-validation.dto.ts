@@ -24,6 +24,7 @@ export enum CellValidationError {
     MISSING_INFO_SHEET = 'MISSING_INFO_SHEET',
     MISSING_PAYROLL_SHEET = 'MISSING_PAYROLL_SHEET',
     VERSION_MISMATCH = 'VERSION_MISMATCH',
+    UNKNOWN = 'unknown',
 }
 
 export interface ImportValidationErrorDto {

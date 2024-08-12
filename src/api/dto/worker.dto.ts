@@ -5,8 +5,6 @@ import { CollectionResponse, EntityResponse, HalResponse, Link } from '@api/pagi
 import { Gender, ScenarioWorker } from '@domain/entities';
 import { WORKER_LINKS } from './worker.links';
 
-// TODO: split into two EntryWorker & ScenarioWorker?
-
 /**
  * API layer DTO used in the request response for the workers endpoint
  *
@@ -113,7 +111,8 @@ export class WorkerDTOFactory {
 const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
     const originalLw = entity.original.livingWage();
     const scenarioLw = entity.livingWage();
-    const remuneration = entity.remuneration;
+    const originalRemuneration = entity.original.remuneration;
+    const scenarioRemuneration = entity.remuneration;
 
     return {
         id: entity.id,
@@ -122,24 +121,24 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
         gender: entity.original.gender,
         nrOfWorkers: entity.original.nrOfWorkers,
         percOfYearWorked: entity.original.percOfYearWorked,
-        remuneration: {
-            baseWage: entity.original.remuneration.baseWage,
-            bonuses: entity.original.remuneration.bonuses,
-            ikb: entity.original.remuneration.ikb,
-            ikbHousing: entity.original.remuneration.ikbHousing,
-            ikbFood: entity.original.remuneration.ikbFood,
-            ikbTransport: entity.original.remuneration.ikbTransport,
-            ikbHealthcare: entity.original.remuneration.ikbHealthcare,
-            ikbChildcare: entity.original.remuneration.ikbChildcare,
-            ikbChildEducation: entity.original.remuneration.ikbChildEducation,
-            total: entity.original.remuneration.total(),
-        },
-        livingWage: {
-            livingWageGap: originalLw?.livingWageGap,
-            livingWageGapPerc: originalLw?.livingWageGapPerc,
-            annualLivingWageGap: originalLw?.annualLivingWageGap,
-            annualLivingWageGapAllWorkers: originalLw?.annualLivingWageGapAllWorkers,
-        },
+        remuneration: originalRemuneration ? {
+            baseWage: originalRemuneration.baseWage.toNumber(),
+            bonuses: originalRemuneration.bonuses.toNumber(),
+            ikb: originalRemuneration.ikb.toNumber(),
+            ikbHousing: originalRemuneration.ikbHousing.toNumber(),
+            ikbFood: originalRemuneration.ikbFood.toNumber(),
+            ikbTransport: originalRemuneration.ikbTransport.toNumber(),
+            ikbHealthcare: originalRemuneration.ikbHealthcare.toNumber(),
+            ikbChildcare: originalRemuneration.ikbChildcare.toNumber(),
+            ikbChildEducation: originalRemuneration.ikbChildEducation.toNumber(),
+            total: originalRemuneration.total().toNumber(),
+        } : undefined,
+        livingWage: originalLw ? {
+            livingWageGap: originalLw.livingWageGap.toNumber(),
+            livingWageGapPerc: originalLw.livingWageGapPerc.toNumber(),
+            annualLivingWageGap: originalLw.annualLivingWageGap.toNumber(),
+            annualLivingWageGapAllWorkers: originalLw.annualLivingWageGapAllWorkers.toNumber(),
+        } : undefined,
         scenario: {
             specification: {
                 remunerationIncrease: entity.specs.remunerationIncrease,
@@ -158,23 +157,23 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
                 ikbChildcarePerc: entity.distro.ikbChildcarePerc,
                 ikbChildEducationPerc: entity.distro.ikbChildEducationPerc,
             } : undefined,
-            remuneration: remuneration ? {
-                baseWage: remuneration.baseWage,
-                bonuses: remuneration.bonuses,
-                ikb: remuneration.ikb,
-                ikbHousing: remuneration.ikbHousing,
-                ikbFood: remuneration.ikbFood,
-                ikbTransport: remuneration.ikbTransport,
-                ikbHealthcare: remuneration.ikbHealthcare,
-                ikbChildcare: remuneration.ikbChildcare,
-                ikbChildEducation: remuneration.ikbChildEducation,
-                total: remuneration.total(),
+            remuneration: scenarioRemuneration ? {
+                baseWage: scenarioRemuneration.baseWage.toNumber(),
+                bonuses: scenarioRemuneration.bonuses.toNumber(),
+                ikb: scenarioRemuneration.ikb.toNumber(),
+                ikbHousing: scenarioRemuneration.ikbHousing.toNumber(),
+                ikbFood: scenarioRemuneration.ikbFood.toNumber(),
+                ikbTransport: scenarioRemuneration.ikbTransport.toNumber(),
+                ikbHealthcare: scenarioRemuneration.ikbHealthcare.toNumber(),
+                ikbChildcare: scenarioRemuneration.ikbChildcare.toNumber(),
+                ikbChildEducation: scenarioRemuneration.ikbChildEducation.toNumber(),
+                total: scenarioRemuneration.total().toNumber(),
             }: undefined,
             livingWage: scenarioLw ? {
-                livingWageGap: scenarioLw.livingWageGap,
-                livingWageGapPerc: scenarioLw.livingWageGapPerc,
-                annualLivingWageGap: scenarioLw.annualLivingWageGap,
-                annualLivingWageGapAllWorkers: scenarioLw.annualLivingWageGapAllWorkers,
+                livingWageGap: scenarioLw.livingWageGap?.toNumber(),
+                livingWageGapPerc: scenarioLw.livingWageGapPerc?.toNumber(),
+                annualLivingWageGap: scenarioLw.annualLivingWageGap?.toNumber(),
+                annualLivingWageGapAllWorkers: scenarioLw.annualLivingWageGapAllWorkers?.toNumber(),
             }: undefined,
         },
         _links: {

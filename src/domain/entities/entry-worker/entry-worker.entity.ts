@@ -1,4 +1,5 @@
 import { Embedded, Entity, Enum, ManyToOne, Property } from '@mikro-orm/core';
+import Decimal from 'decimal.js';
 
 import {
     AbstractEntity,
@@ -38,10 +39,10 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
     private _remuneration: EntryWorkerRemuneration;
 
     private livingWageResult: null | {
-        livingWageGap: number;
-        livingWageGapPerc: number;
-        annualLivingWageGap: number;
-        annualLivingWageGapAllWorkers: number;
+        livingWageGap: Decimal;
+        livingWageGapPerc: Decimal;
+        annualLivingWageGap: Decimal;
+        annualLivingWageGapAllWorkers: Decimal;
     };
 
     constructor(props: EntryWorkerProps) {
@@ -81,7 +82,7 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
     }
 
     get isBelowLw(): boolean {
-        return this.livingWageResult?.livingWageGap > 0;
+        return this.livingWageResult?.livingWageGap.greaterThan(0);
     }
 
     set name(value: string) {
@@ -123,17 +124,17 @@ export class EntryWorker extends AbstractEntity<EntryWorker> {
             return;
         }
 
-        const livingWageBenchmark = this._entry.benchmark.value;
-        const monthlyTotalRemuneration = this._remuneration.total();
-        const monthlyGap = Math.max(livingWageBenchmark - monthlyTotalRemuneration, 0);
-        const annualGap = (monthlyGap * 12) * (this._percOfYearWorked / 100);
-        const livingWagePerc = (monthlyGap / livingWageBenchmark) * 100;
+        const livingWageBenchmark = new Decimal(this._entry.benchmark.value);
+        const monthlyTotalRemuneration = new Decimal(this._remuneration.total());
+        const monthlyGap = Decimal.max(livingWageBenchmark.minus(monthlyTotalRemuneration), new Decimal(0));
+        const annualGap = monthlyGap.times(new Decimal(12)).times((new Decimal(this._percOfYearWorked).dividedBy(new Decimal(100))));
+        const livingWagePerc = monthlyGap.dividedBy(livingWageBenchmark).times(new Decimal(100));
 
         this.livingWageResult = {
             livingWageGap: monthlyGap,
             livingWageGapPerc: livingWagePerc,
             annualLivingWageGap: annualGap,
-            annualLivingWageGapAllWorkers: annualGap * this._nrOfWorkers,
+            annualLivingWageGapAllWorkers: annualGap.times(this._nrOfWorkers),
         };
     }
 }

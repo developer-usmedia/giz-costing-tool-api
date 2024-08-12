@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import Decimal from 'decimal.js';
 
 import { Entry } from '@domain/entities';
 import { EntryWorkerService } from './entry-worker.service';
@@ -15,10 +16,11 @@ export class EntryLivingWageCalculationsService {
 
     async calculateLwGaps(entry: Entry): Promise<Entry> {
         let nrOfJobCategories = 0;
+        let nrOfWorkers = 0;
         let workersBelowLw = 0;
-        let largestGap = 0;
-        let sumOfAnnualLwGapAllWorkers = 0;
-        let sumOfMonthlyLwGap = 0;
+        let largestGap = new Decimal(0);
+        let sumOfAnnualLwGapAllWorkers = new Decimal(0);
+        let sumOfMonthlyLwGap =  new Decimal(0);
 
         for await (const batch of this.workerService.getBatched(
             /* eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -26,33 +28,38 @@ export class EntryLivingWageCalculationsService {
             100,
         )) {
             this.logger.debug(`Processing batch of ${batch.length} workers...`);
+            
             for (const worker of batch) {
                 this.logger.debug(`Processing worker ${worker.id} (${worker.name})`);
                 nrOfJobCategories++;
+                nrOfWorkers += worker.nrOfWorkers;
 
                 const gap = worker.livingWage().livingWageGap;
-                if (gap > 0) workersBelowLw += worker.nrOfWorkers;
+                if (gap.greaterThan(0)) {
+                    workersBelowLw += worker.nrOfWorkers;
+                }
 
-                if (gap > largestGap) {
+                if (gap.greaterThan(largestGap)) {
                     largestGap = gap;
                 }
 
-                sumOfAnnualLwGapAllWorkers += worker.livingWage().annualLivingWageGapAllWorkers;
-                sumOfMonthlyLwGap += worker.livingWage().livingWageGap;
+                sumOfAnnualLwGapAllWorkers = sumOfAnnualLwGapAllWorkers.plus(worker.livingWage().annualLivingWageGapAllWorkers);
+                sumOfMonthlyLwGap = sumOfMonthlyLwGap.plus(worker.livingWage().livingWageGap);
             }
         }
 
-        let avgGap = sumOfMonthlyLwGap / nrOfJobCategories;
-        avgGap = isNaN(avgGap) ? 0 : avgGap; // Catch 0 / 0 => NaN
+        let avgGap = sumOfMonthlyLwGap.dividedBy(nrOfJobCategories);
+        avgGap = avgGap.isNaN() ? new Decimal(0) : avgGap; // Catch 0 / 0 => NaN
 
         entry.updatePayrollInfo({
-            avgLivingWageGap: avgGap,
-            largestLivingWageGap: largestGap,
-            sumAnnualLivingWageGapAllWorkers: sumOfAnnualLwGapAllWorkers,
+            avgLivingWageGap: avgGap.toNumber(),
+            largestLivingWageGap: largestGap.toNumber(),
+            sumAnnualLivingWageGapAllWorkers: sumOfAnnualLwGapAllWorkers. toNumber(),
             nrOfWorkersWithLWGap: workersBelowLw,
             year: entry.payroll.year,
             currencyCode: entry.payroll.currencyCode,
-        }, true);
+            nrOfWorkers: nrOfWorkers,
+        }, { skipLock: true });
 
         return await this.entryService.persist(entry);
     }

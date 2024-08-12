@@ -1,41 +1,43 @@
 import { Embeddable, Property } from '@mikro-orm/core';
+import Decimal from 'decimal.js';
 
+import { DecimalType } from '@domain/database/types/decimal.type';
 import { Guard } from '@domain/utils/guard';
 
 export interface ScenarioReportProps {
-    remunerationIncrease: number;
-    taxCosts: number;
+    remunerationIncrease: Decimal;
+    taxCosts: Decimal;
     overheadCosts: number;
-    totalCosts: number;
-    totalCostsPerUnit: number;
+    totalCosts: Decimal;
+    totalCostsPerUnit: Decimal;
 }
 
 @Embeddable()
 export class ScenarioReport {
-    @Property({ columnType: 'numeric(14,4)', fieldName: 'remuneration_increase' })
-    private _remunerationIncrease?: number;
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, fieldName: 'remuneration_increase' })
+    private _remunerationIncrease?: Decimal;
 
-    @Property({ columnType: 'numeric(14,4)', fieldName: 'tax_costs' })
-    private _taxCosts?: number;
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType,fieldName: 'tax_costs' })
+    private _taxCosts?: Decimal;
 
     @Property({ columnType: 'numeric(14,4)', fieldName: 'overhead_costs' })
     private _overheadCosts?: number;
 
-    @Property({ columnType: 'numeric(14,4)', fieldName: 'total_costs' })
-    private _totalCosts?: number;
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType,fieldName: 'total_costs' })
+    private _totalCosts?: Decimal;
 
-    @Property({ columnType: 'numeric(14,4)', fieldName: 'total_costs_per_unit' })
-    private _totalCostsPerUnit?: number;
+    @Property({ columnType: 'numeric(14,4)', type: DecimalType, fieldName: 'total_costs_per_unit' })
+    private _totalCostsPerUnit?: Decimal;
 
     @Property({ columnType: 'timestamp', defaultRaw: 'now()' })
     private readonly _calculatedAt!: Date;
 
     constructor(props: ScenarioReportProps) {
-        this.remunerationIncrease = props.remunerationIncrease;
-        this.taxCosts = props.taxCosts;
-        this.overheadCosts = props.overheadCosts;
-        this.totalCosts = props.totalCosts;
-        this.totalCostsPerUnit = props.totalCostsPerUnit;
+        this.remunerationIncrease = props.remunerationIncrease ?? new Decimal(0);
+        this.taxCosts = props.taxCosts ?? new Decimal(0);
+        this.overheadCosts = props.overheadCosts ?? 0;
+        this.totalCosts = props.totalCosts ?? new Decimal(0);
+        this.totalCostsPerUnit = props.totalCostsPerUnit ?? new Decimal(0);
 
         this._calculatedAt = new Date();
     }
@@ -64,13 +66,13 @@ export class ScenarioReport {
         return this._calculatedAt;
     }
 
-    private set remunerationIncrease(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 9999999999.99 });
+    private set remunerationIncrease(value: Decimal) {
+        Guard.check(value.toNumber(), { type: 'number', min: 0, max: 9999999999.99 });
         this._remunerationIncrease = value;
     }
 
-    private set taxCosts(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 9999999999.99 });
+    private set taxCosts(value: Decimal) {
+        Guard.check(value.toNumber(), { type: 'number', min: 0, max: 9999999999.99 });
         this._taxCosts = value;
     }
 
@@ -79,13 +81,13 @@ export class ScenarioReport {
         this._overheadCosts = value;
     }
 
-    private set totalCosts(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 9999999999.99 });
+    private set totalCosts(value: Decimal) {
+        Guard.check(value.toNumber(), { type: 'number', min: 0, max: 9999999999.99 });
         this._totalCosts = value;
     }
 
-    private set totalCostsPerUnit(value: number) {
-        Guard.check(value, { type: 'number', min: 0, max: 9999999999.99 });
+    private set totalCostsPerUnit(value: Decimal) {
+        Guard.check(value.toNumber(), { type: 'number', min: 0, max: 9999999999.99 });
         this._totalCostsPerUnit = value;
     }
 
