@@ -4,8 +4,7 @@ import Decimal from 'decimal.js';
 
 export class DecimalType extends Type<Decimal, string> {
     convertToDatabaseValue(value: Decimal, _platform: Platform): string {
-        if (value === null) return null;
-        if (value.isNaN() || !value.isFinite()) {
+        if (value === null || value.isNaN() || !value.isFinite()) {
             return null;
         }
 

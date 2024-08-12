@@ -138,6 +138,7 @@ export class EntryWorkerRemuneration {
     public total() {
         return this.baseWage
                 .plus(this.bonuses)
+                .plus(this.ikbHousing)
                 .plus(this.ikbFood)
                 .plus(this.ikbTransport)
                 .plus(this.ikbHealthcare)
