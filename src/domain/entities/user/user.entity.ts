@@ -7,7 +7,7 @@ import { TwoFactor } from './two-factor.embed';
 import { VerificationCode } from './verification-code.embed';
 
 const FAILED_LOGIN_LOCK_THRESHOLD = 5;
-const FAILED_LOGIN_LOCKOUT_TIME = 1000 * 60 * 60 * 24; // 1 Day
+const FAILED_LOGIN_LOCKOUT_TIME = 1000 * 60 * 30; // 30 min
 
 @Entity()
 export class User extends AbstractEntity<User> {
