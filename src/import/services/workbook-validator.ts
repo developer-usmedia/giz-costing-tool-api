@@ -6,7 +6,7 @@ import { INFO_SHEET_MAPPING, SHEET_MAPPING } from '@import/dto/import-column-map
 export class WorkbookValidator {
     public errors: ImportValidationErrorDto[] = [];
 
-    private readonly ACCEPTED_VERSION = '2.2.0';
+    private readonly ACCEPTED_VERSION = '2.3.0';
     private readonly workbook: Workbook;
 
     constructor(workbook: Workbook) {
