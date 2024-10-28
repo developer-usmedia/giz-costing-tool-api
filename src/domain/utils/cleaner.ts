@@ -15,7 +15,7 @@ export const cleanObject = <T = Record<string, any>>(data: T): T => {
     Object.keys(data)
         .forEach(key => {
             if (data[key] && Array.isArray(data[key])) {
-                data[key].map((item: any) => cleanObject(item));
+                data[key].forEach((item: any) => cleanObject(item));
             }
             else if (data[key] && typeof data[key] === 'object') {
                 cleanObject(data[key]);

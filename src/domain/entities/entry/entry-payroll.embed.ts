@@ -38,7 +38,7 @@ export class EntryPayroll {
     @Property({ columnType: 'numeric(12,4)', unsigned: true, default: 0, fieldName: 'largest_lwgap' })
     private readonly _largestLivingWageGap: number;
 
-    @Property({ columnType: 'numeric(12,4)', unsigned: true, default: 0, fieldName: 'sum_lwgap_allworkers' })
+    @Property({ columnType: 'numeric(16,4)', unsigned: true, default: 0, fieldName: 'sum_lwgap_allworkers' })
     private readonly _sumAnnualLivingWageGapAllWorkers: number;
     // TODO: End
 

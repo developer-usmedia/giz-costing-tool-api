@@ -684,12 +684,12 @@
         },
         "payroll_sum_lwgap_allworkers": {
           "name": "payroll_sum_lwgap_allworkers",
-          "type": "numeric(12,4)",
+          "type": "numeric(16,4)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
-          "precision": 12,
+          "precision": 16,
           "scale": 4,
           "default": "0",
           "mappedType": "decimal"
