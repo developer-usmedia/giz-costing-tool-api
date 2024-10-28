@@ -23,7 +23,7 @@ export const INFO_SHEET_MAPPING = {
     year: 'B18',
     currencyCode: 'B19',
     benchmarkName: 'B20',
-    countryCode: '-1',
+    countryCode: 'C7',
 } as const;
 
 export const COLUMN_MAPPING_PAYROLL = {

@@ -198,6 +198,7 @@ export class EntryImporter {
             facilityName: infoSheet.getCell(INFO_SHEET_MAPPING.facilityName).text,
             facilityId: infoSheet.getCell(INFO_SHEET_MAPPING.facilityId).text,
             country: infoSheet.getCell(INFO_SHEET_MAPPING.country).text,
+            countryCode: infoSheet.getCell(INFO_SHEET_MAPPING.countryCode).text,
             region: infoSheet.getCell(INFO_SHEET_MAPPING.region).text,
             productionAmount: parseIntCell(infoSheet.getCell(INFO_SHEET_MAPPING.productionAmount).text),
             productionUnit: infoSheet.getCell(INFO_SHEET_MAPPING.productionUnit).text,

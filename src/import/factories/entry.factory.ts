@@ -22,6 +22,7 @@ export class EntryFactory {
             facility: new EntryFacility({
                 name: value.facilityName,
                 country: value.country,
+                countryCode: value.countryCode,
                 facilityId: value.facilityId,
                 products: value.productName,
                 productionUnit: value.productionUnit,

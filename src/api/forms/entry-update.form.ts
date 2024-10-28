@@ -177,7 +177,7 @@ export class EntryUpdateForm {
             entry.updateFacilityInfo({
                 name: form.facility.name ?? entry.facility.name,
                 country: form.facility.country ?? entry.facility.country,
-                // countryCode: form.facility.countryCode ?? entry.facility.countryCode,
+                countryCode: form.facility.countryCode ?? entry.facility.countryCode,
                 facilityId: form.facility.facilityId ?? entry.facility.facilityId,
                 products: form.facility.product ?? entry.facility.products,
                 productionUnit: form.facility.productionUnit ?? entry.facility.productionUnit,

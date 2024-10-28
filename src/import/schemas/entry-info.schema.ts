@@ -9,6 +9,7 @@ export interface EntryInfo {
     benchmarkName: string;
     benchmarkValue?: number;
     country: string;
+    countryCode: string;
     region: string;
     productionAmount: number;
     productionUnit: string;
@@ -26,6 +27,7 @@ const entryInfoSchema = (): joi.ObjectSchema => {
         benchmarkName:          joi.string().trim().max(255),
         benchmarkValue:         joi.number().min(0),
         country:                joi.string().trim().max(255).required(),
+        countryCode:            joi.string().trim().min(2).max(3).required(),
         region:                 joi.string().trim().max(255).required(),
         productionAmount:       joi.number().min(1).required(),
         productionUnit:         joi.string().trim().max(255).required(),
