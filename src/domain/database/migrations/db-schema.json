@@ -462,13 +462,14 @@
           "nullable": false,
           "mappedType": "string"
         },
-        "facility__country": {
-          "name": "facility__country",
-          "type": "varchar(255)",
+        "facility_country_code": {
+          "name": "facility_country_code",
+          "type": "varchar(2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
           "nullable": false,
+          "length": 2,
           "mappedType": "string"
         },
         "facility_id": {
@@ -509,13 +510,14 @@
           "scale": 2,
           "mappedType": "decimal"
         },
-        "benchmark__country": {
-          "name": "benchmark__country",
-          "type": "varchar(255)",
+        "benchmark_country_code": {
+          "name": "benchmark_country_code",
+          "type": "varchar(2)",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
-          "nullable": true,
+          "nullable": false,
+          "length": 2,
           "mappedType": "string"
         },
         "benchmark__name": {

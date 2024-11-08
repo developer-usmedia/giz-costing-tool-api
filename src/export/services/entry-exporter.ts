@@ -128,7 +128,7 @@ export class EntryExporter {
         sheet.addRow(['Matrix ID', dto.matrixId]);
         sheet.addRow(['Facility ID', dto.facilityId]);
         sheet.addRow(['Facility Name', dto.facilityName]);
-        sheet.addRow(['Country', this.entry.facility.country]);
+        sheet.addRow(['Country Code', dto.facilityCountryCode]);
         sheet.addRow(['Currency', dto.currency]);
         sheet.addRow(['Products', dto.products]);
         sheet.addRow(['Annual production', `${dto.productionAmount} ${dto.productionUnit}`]);

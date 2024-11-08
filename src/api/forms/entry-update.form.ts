@@ -17,10 +17,10 @@ class EntryBenchmarkForm {
     @IsOptional()
     year?: number;
 
-    @ApiProperty({ example: 'Nederland', minLength: 3, nullable: true })
+    @ApiProperty({ example: 'NL', minLength: 2, maxLength: 2, nullable: true })
     @IsString()
     @IsOptional()
-    country?: string;
+    countryCode?: string;
 
     @ApiProperty({ example: 'São Paulo', maxLength: 50 })
     @IsString()
@@ -65,15 +65,10 @@ class EntryFacilityForm {
     @IsOptional()
     name?: string;
 
-    @ApiProperty({ example: 'NLD', minLength: 2, maxLength: 3, nullable: true })
+    @ApiProperty({ example: 'NL', minLength: 2, maxLength: 2, nullable: true })
     @IsString()
     @IsOptional()
     countryCode?: string;
-
-    @ApiProperty({ example: 'Nederland', minLength: 3, nullable: true })
-    @IsString()
-    @IsOptional()
-    country?: string;
 
     @ApiProperty({ example: 'Bananas', nullable: true })
     @IsString()
@@ -176,8 +171,7 @@ export class EntryUpdateForm {
         if (form.facility) {
             entry.updateFacilityInfo({
                 name: form.facility.name ?? entry.facility.name,
-                country: form.facility.country ?? entry.facility.country,
-                // countryCode: form.facility.countryCode ?? entry.facility.countryCode,
+                countryCode: form.facility.countryCode ?? entry.facility.countryCode,
                 facilityId: form.facility.facilityId ?? entry.facility.facilityId,
                 products: form.facility.product ?? entry.facility.products,
                 productionUnit: form.facility.productionUnit ?? entry.facility.productionUnit,
@@ -187,7 +181,7 @@ export class EntryUpdateForm {
         if (form.benchmark) {
             entry.selectBenchmark({
                 name: form.benchmark.name ?? entry.benchmark.name,
-                country: form.benchmark.country ?? entry.benchmark.country,
+                countryCode: form.benchmark.countryCode ?? entry.benchmark.countryCode,
                 year: form.benchmark.year ?? entry.benchmark.year,
                 region: form.benchmark.region ?? entry.benchmark.region,
                 value: form.benchmark.value ?? entry.benchmark.value,

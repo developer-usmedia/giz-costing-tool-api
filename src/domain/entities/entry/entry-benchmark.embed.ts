@@ -5,7 +5,7 @@ import { Guard } from '@domain/utils/guard';
 // TODO: Force source
 export interface EntryBenchmarkProps {
     name: string;
-    country: string;
+    countryCode: string;
     year: number;
     source?: string;
     region: string;
@@ -15,12 +15,8 @@ export interface EntryBenchmarkProps {
 
 @Embeddable()
 export class EntryBenchmark {
-    // TODO: Replace with countryCode when possible
-    @Property({ nullable: true })
-    private _country?: string;
-
-    // @Property({ length: 2, fieldName: 'country_code' })
-    // private _countryCode?: string;
+    @Property({ length: 2, fieldName: 'country_code' })
+    private _countryCode: string;
 
     @Property({ nullable: true })
     private _name?: string;
@@ -43,7 +39,7 @@ export class EntryBenchmark {
     constructor(props?: EntryBenchmarkProps) {
         if (props) {
             this.name = props.name;
-            this.country = props.country;
+            this.countryCode = props.countryCode;
             this.year = props.year;
             this.source = props.source ?? null;
             this.region = props.region;
@@ -57,13 +53,9 @@ export class EntryBenchmark {
         return this._name ?? null;
     }
 
-    get country() {
-        return this._country ?? null;
+    get countryCode() {
+        return this._countryCode ?? null;
     }
-
-    // get countryCode() {
-    //     return this._countryCode ?? null;
-    // }
 
     get year() {
         return this._year ?? null;
@@ -92,15 +84,10 @@ export class EntryBenchmark {
         this._name = value;
     }
 
-    private set country(value: string) {
-        Guard.check(value, { type: 'string', optional: true, minLength: 3 });
-        this._country = value;
+    private set countryCode(value: string) {
+        Guard.check(value, { type: 'string', optional: true, maxLength: 2, minLength: 2 });
+        this._countryCode = value;
     }
-
-    // private set countryCode(value: string) {
-    //     Guard.check(value, { type: 'string', optional: true, maxLength: 2, minLength: 2 });
-    //     this._countryCode = value;
-    // }
 
     private set year(value: number) {
         Guard.check(value, { type: 'number', optional: true, min: 2000, max: 2100 });
@@ -128,9 +115,8 @@ export class EntryBenchmark {
     }
 
     public isComplete(): boolean {
-        // Replace country with countryCode when possible
         return !!this._value
-            && !!this._country
+            && !!this._countryCode
             && !!this._year
             && !!this._region;
             // && !!this._source; // Renable when required

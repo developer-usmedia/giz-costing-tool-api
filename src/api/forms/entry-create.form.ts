@@ -25,9 +25,10 @@ export class EntryCreateForm {
     @IsNumber()
     year: number;
 
-    @ApiProperty({ example: 'Nederland', required: true })
+    @ApiProperty({ example: 'NL', minLength: 2, maxLength: 2, nullable: true })
     @IsString()
-    country: string;
+    @IsOptional()
+    countryCode?: string;
 
     @ApiProperty({ example: 'Bananas', required: true })
     @IsString()
@@ -59,7 +60,7 @@ export class EntryCreateForm {
             }),
             facility: new EntryFacility({
                 name: form.facilityName,
-                country: form.country,
+                countryCode: form.countryCode,
                 facilityId: form.facilityId,
                 products: form.product,
                 productionUnit: form.productionUnit,

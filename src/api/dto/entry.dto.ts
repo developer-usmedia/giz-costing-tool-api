@@ -20,7 +20,7 @@ export interface EntryDTO extends HalResponse {
     facility: {
         id?: string;
         name: string;
-        country?: string;
+        countryCode?: string;
         products?: string;
         production?: {
             unit: string;
@@ -140,7 +140,7 @@ const mapEntityToDTO = (entity: Entry): EntryDTO => {
         facility: {
             name: entity.facility.name,
             id: entity.facility.facilityId,
-            country: entity.facility.country,
+            countryCode: entity.facility.countryCode,
             products: entity.facility.products,
             production: {
                 unit: entity.facility.productionUnit,

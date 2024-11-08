@@ -23,7 +23,7 @@ Content-Type: application/json
 
 {
     "facilityName": "My facility",
-    "country": "Nederland",
+    "countryCode": "NL",
     "year": 2031,
     "currencyCode": "EUR"
 }
@@ -50,7 +50,7 @@ Content-Type: application/json
     },
     "benchmark": {
         "year": 2039,
-        "country": "Nederland",
+        "countryCode": "NL",
         "region": "São Paulo",
         "value": 465,
         "locality": "Rural"

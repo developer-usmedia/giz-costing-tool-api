@@ -68,7 +68,7 @@ export class EntryImporter {
         this.entry.selectBenchmark({
             name: this.entry.benchmark.name,
             value: this.benchmarkValue,
-            country: this.entry.benchmark.country,
+            countryCode: this.entry.benchmark.countryCode,
             year: this.entry.benchmark.year,
             source: this.entry.benchmark.source,
             region: this.entry.benchmark.region,
@@ -197,7 +197,7 @@ export class EntryImporter {
             matrixId: infoSheet.getCell(INFO_SHEET_MAPPING.matrixId).text,
             facilityName: infoSheet.getCell(INFO_SHEET_MAPPING.facilityName).text,
             facilityId: infoSheet.getCell(INFO_SHEET_MAPPING.facilityId).text,
-            country: infoSheet.getCell(INFO_SHEET_MAPPING.country).text,
+            countryCode: infoSheet.getCell(INFO_SHEET_MAPPING.countryCode).text,
             region: infoSheet.getCell(INFO_SHEET_MAPPING.region).text,
             productionAmount: parseIntCell(infoSheet.getCell(INFO_SHEET_MAPPING.productionAmount).text),
             productionUnit: infoSheet.getCell(INFO_SHEET_MAPPING.productionUnit).text,

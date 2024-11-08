@@ -15,7 +15,7 @@ export const INFO_SHEET_MAPPING = {
     facilityName: 'B2',
     facilityId: 'B3',
     templateVersion: 'B22',
-    country: 'B7',
+    countryCode: 'C7',
     region: 'B8',
     productionAmount: 'B11',
     productionUnit: 'B14',
@@ -23,7 +23,6 @@ export const INFO_SHEET_MAPPING = {
     year: 'B18',
     currencyCode: 'B19',
     benchmarkName: 'B20',
-    countryCode: '-1',
 } as const;
 
 export const COLUMN_MAPPING_PAYROLL = {

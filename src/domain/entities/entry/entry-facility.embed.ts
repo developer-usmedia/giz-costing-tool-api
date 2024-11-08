@@ -4,8 +4,7 @@ import { Guard } from '@domain/utils/guard';
 
 export interface EntryFacilityProps {
     name: string;
-    country: string;
-    // countryCode: string;
+    countryCode: string;
     facilityId?: string;
     products?: string;
     productionUnit?: string;
@@ -17,12 +16,8 @@ export class EntryFacility {
     @Property()
     private _name: string;
 
-    // TODO: Replace with countryCode when possible
-    @Property()
-    private _country: string;
-
-    // @Property({ length: 2, fieldName: 'country_code' })
-    // private _countryCode?: string;
+    @Property({ length: 2, fieldName: 'country_code' })
+    private _countryCode: string;
 
     @Property({ nullable: true, fieldName: 'id' })
     private _facilityId?: string; // Facility ID - Known when imported from Salary Matrix tool
@@ -38,8 +33,7 @@ export class EntryFacility {
 
     constructor(props: EntryFacilityProps) {
         this.name = props.name;
-        this.country = props.country;
-        // this.countryCode = props.countryCode;
+        this.countryCode = props.countryCode;
 
         this.facilityId = props.facilityId ?? null;
         this.products = props.products ?? null;
@@ -51,13 +45,9 @@ export class EntryFacility {
         return this._name;
     }
 
-    get country() {
-        return this._country;
+    get countryCode() {
+        return this._countryCode;
     }
-
-    // get countryCode() {
-    //     return this._countryCode;
-    // }
 
     get facilityId() {
         return this._facilityId ?? null;
@@ -80,15 +70,10 @@ export class EntryFacility {
         this._name = value;
     }
 
-    private set country(value: string) {
-        Guard.check(value, { type: 'string' });
-        this._country = value;
+    private set countryCode(value: string) {
+        Guard.check(value, { type: 'string', optional: true, maxLength: 2, minLength: 2 });
+        this._countryCode = value;
     }
-
-    // private set countryCode(value: string) {
-    //     Guard.check(value, { type: 'string', optional: true, maxLength: 2, minLength: 2 });
-    //     this._countryCode = value;
-    // }
 
     private set facilityId(value: string) {
         Guard.check(value, { type: 'string', optional: true, minLength: 3 });
@@ -114,6 +99,6 @@ export class EntryFacility {
         return !!this._productionAmount
             && !!this._productionUnit
             && !!this._name
-            && !!this._country;
+            && !!this._countryCode;
     }
 }

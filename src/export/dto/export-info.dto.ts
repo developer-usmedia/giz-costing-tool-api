@@ -5,7 +5,7 @@ export interface ExportInfoDTO {
     matrixId: string;
     facilityId: string;
     facilityName: string;
-    facilityCountry: string;
+    facilityCountryCode: string;
     currency: string;
     products: string;
     productionAmount: string;
@@ -31,7 +31,7 @@ const mapEntityToDTO = (entity: Entry): ExportInfoDTO => {
         matrixId: entity.matrixId,
         facilityId: entity.facility.facilityId,
         facilityName: entity.facility.name,
-        facilityCountry: entity.facility.country,
+        facilityCountryCode: entity.facility.countryCode,
         currency: entity.payroll.currencyCode,
         products: entity.facility.products,
         productionAmount: entity.facility.productionAmount.toFixed(2),
