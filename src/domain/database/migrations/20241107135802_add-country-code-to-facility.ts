@@ -15,6 +15,7 @@ export class Migration20241107135802_AddCountryCodeToFacility extends Migration 
     this.addSql('update "giz_entry" set "facility_country_code"=\'NL\' where "facility__country"=\'Netherlands\'');
     this.addSql('update "giz_entry" set "facility_country_code"=\'NI\' where "facility__country"=\'Nicaragua\'');
     this.addSql('update "giz_entry" set "facility_country_code"=\'US\' where "facility__country"=\'United States\'');
+    this.addSql('update "giz_entry" set "facility_country_code"=\'MX\' where "facility__country"=\'North America\'');
     this.addSql('update "giz_entry" set "facility_country_code"=\'CA\' where "facility__country"=\'Canada\'');
     this.addSql('update "giz_entry" set "facility_country_code"=\'PE\' where "facility__country"=\'Peru\'');
     this.addSql('update "giz_entry" set "facility_country_code"=\'TH\' where "facility__country"=\'Thailand\'');
@@ -33,6 +34,7 @@ export class Migration20241107135802_AddCountryCodeToFacility extends Migration 
     this.addSql('update "giz_entry" set "benchmark_country_code"=\'NL\' where "facility__country"=\'Netherlands\'');
     this.addSql('update "giz_entry" set "benchmark_country_code"=\'NI\' where "facility__country"=\'Nicaragua\'');
     this.addSql('update "giz_entry" set "benchmark_country_code"=\'US\' where "facility__country"=\'United States\'');
+    this.addSql('update "giz_entry" set "benchmark_country_code"=\'MX\' where "facility__country"=\'North America\'');
     this.addSql('update "giz_entry" set "benchmark_country_code"=\'CA\' where "facility__country"=\'Canada\'');
     this.addSql('update "giz_entry" set "benchmark_country_code"=\'PE\' where "facility__country"=\'Peru\'');
     this.addSql('update "giz_entry" set "benchmark_country_code"=\'TH\' where "facility__country"=\'Thailand\'');

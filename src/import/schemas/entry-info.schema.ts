@@ -25,7 +25,7 @@ const entryInfoSchema = (): joi.ObjectSchema => {
         facilityId:             joi.string().trim().max(255).required(),
         benchmarkName:          joi.string().trim().max(255),
         benchmarkValue:         joi.number().min(0),
-        countryCode:            joi.string().trim().min(2).max(3).required(),
+        countryCode:            joi.string().trim().min(2).max(2).required(),
         region:                 joi.string().trim().max(255).required(),
         productionAmount:       joi.number().min(1).required(),
         productionUnit:         joi.string().trim().max(255).required(),
