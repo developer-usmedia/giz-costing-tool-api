@@ -1,5 +1,6 @@
 import { Collection, Embedded, Entity, Enum, OneToMany, OneToOne } from '@mikro-orm/core';
 import { Logger } from '@nestjs/common';
+import Decimal from 'decimal.js';
 
 import {
     AbstractEntity,
@@ -113,28 +114,36 @@ export class Scenario extends AbstractEntity<Scenario> {
     }
 
     public getBuyerReport(): AnnualCosts {
-        if (!this.report) {
-            return undefined;
+        if (!this.report || this.entry.buyer.amount < 1) {
+            return null;
         }
 
         let multiplier = this.entry.buyer.amount / 100;
+        let productionAmount = new Decimal(this.entry.facility.productionAmount ?? 0).times(multiplier);
 
         if (this.entry.buyer.unit === 'UNIT') {
-            if(this.entry.buyer.amount > this.entry.facility.productionAmount) {
+            if (this.entry.buyer.amount > this.entry.facility.productionAmount) {
                 this.logger.error(`this.entry.buyer.amount > this.entry.facility.productionAmount (entry: ${this.entry.id}`);
                 this.logger.error(`Buyer can't buy more than the facility sells (${this.entry.buyer.amount}/${this.entry.facility.productionAmount})`);
                 return null;
             }
 
             multiplier = 1 / (this.entry.facility.productionAmount / this.entry.buyer.amount);
+            productionAmount = new Decimal(this.entry.buyer.amount);
         }
 
+        const remuneractionIncrease = new Decimal(this.report.remunerationIncrease ?? 0).times(multiplier);
+        const taxCosts = new Decimal(this.report.taxCosts ?? 0).times(multiplier);
+        const overheadCosts = new Decimal(this.report.overheadCosts ?? 0); // Every buyer pays for full overhead
+        const totalCosts = remuneractionIncrease.plus(taxCosts).plus(overheadCosts);
+        const totalCostsPerUnit = totalCosts.dividedBy(productionAmount);
+
         return {
-            remunerationIncrease: this.report.remunerationIncrease?.times(multiplier).toNumber(),
-            taxCosts: this.report.taxCosts?.times(multiplier).toNumber(),
-            overheadCosts: this.report.overheadCosts * multiplier,
-            totalCosts: this.report.totalCosts?.times(multiplier).toNumber(),
-            totalCostsPerUnit: this.report.totalCostsPerUnit?.times(multiplier).toNumber(),
+            remunerationIncrease: remuneractionIncrease.toNumber(),
+            taxCosts: taxCosts.toNumber(),
+            overheadCosts: overheadCosts.toNumber(),
+            totalCosts: totalCosts.toNumber(),
+            totalCostsPerUnit: totalCostsPerUnit.toNumber(),
         };
     }
 }
