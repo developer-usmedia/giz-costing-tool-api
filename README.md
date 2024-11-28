@@ -129,7 +129,7 @@ JWT token is returned from the login request that is found in auth.http. In deve
 -   Go to http file
 -   And [select the correct environment](https://www.jetbrains.com/help/phpstorm/exploring-http-syntax.html#environment-variables)
 -   See all environment options: `./config/http-client.env.json`
--   Setup variables by executing `cp ./config/http-client.env.example.json ./config/http-client.env.json` and fillin in the values.
+-   Setup variables by executing `cp ./config/http-client.env.example.json ./config/http-client.env.json` and fill in the values.
 -   Then run one or more of the requests.
 
 ## VSCode
