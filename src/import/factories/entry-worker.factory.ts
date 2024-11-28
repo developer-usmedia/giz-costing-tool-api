@@ -22,12 +22,7 @@ export class EntryWorkerFactory {
             remuneration: {
                 baseWage: new Decimal(value.monthlyWage),
                 bonuses: new Decimal(value.monthlyBonus),
-                ikbHousing: new Decimal(value.ikbHousing),
-                ikbFood: new Decimal(value.ikbFood),
-                ikbTransport: new Decimal(value.ikbTransport),
-                ikbHealthcare: new Decimal(value.ikbHealthcare),
-                ikbChildcare: new Decimal(value.ikbChildcare),
-                ikbChildEducation: new Decimal(value.ikbChildEducation),
+                ikb: new Decimal(value.monthlyIkbCapped),
             },
         });
     }
@@ -37,7 +32,6 @@ export class EntryWorkerFactory {
         const result = validate<EntryWorkerData>(schema, data);
 
         if (!result.isValid && result.errors?.length) {
-
             EntryWorkerFactory.LOGGER.error('Validation failed ', data);
             EntryWorkerFactory.LOGGER.debug('Errors: ', result.errors);
 

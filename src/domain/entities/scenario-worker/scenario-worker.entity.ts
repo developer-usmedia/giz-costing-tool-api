@@ -37,12 +37,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
     private remunerationResult: null | {
         baseWage: Decimal;
         bonuses: Decimal;
-        ikbHousing: Decimal;
-        ikbFood: Decimal;
-        ikbTransport: Decimal;
-        ikbHealthcare: Decimal;
-        ikbChildcare: Decimal;
-        ikbChildEducation: Decimal;
+        ikb: Decimal;
     };
 
     private livingWageResult: null | {
@@ -105,7 +100,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
             ikbChildEducationPerc: (this.distro.ikbChildEducationPerc ?? this.scenario?.distro?.ikbChildEducationPerc) ?? 0,
         };
     }
-    
+
     public updateSpecs(specs: ScenarioWorkerSpecificationProps) {
         this._specs = new ScenarioWorkerSpecification(specs);
     }
@@ -153,7 +148,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
 
     public getRemunerationIncrease(props?: { forCategory: boolean }): Decimal {
         const increase = this.determineRemunerationIncrease();
-        
+
         if(props?.forCategory) {
             return increase.times(this.original.nrOfWorkers);
         }
@@ -164,12 +159,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         this.remunerationResult = {
             baseWage: this._original.remuneration.baseWage,
             bonuses: this._original.remuneration.bonuses,
-            ikbHousing: this._original.remuneration.ikbHousing,
-            ikbFood: this._original.remuneration.ikbFood,
-            ikbTransport: this._original.remuneration.ikbTransport,
-            ikbHealthcare: this._original.remuneration.ikbHealthcare,
-            ikbChildcare: this._original.remuneration.ikbChildcare,
-            ikbChildEducation: this._original.remuneration.ikbChildEducation,
+            ikb: this._original.remuneration.ikb,
         };
 
         const increase = this.determineRemunerationIncrease();
@@ -183,12 +173,7 @@ export class ScenarioWorker extends AbstractEntity<ScenarioWorker> {
         this.remunerationResult = {
             baseWage: this.remunerationResult.baseWage.plus(increaseOnePerc.times(distro.baseWagePerc)),
             bonuses: this.remunerationResult.bonuses.plus(increaseOnePerc.times(distro.bonusesPerc)),
-            ikbHousing: this.remunerationResult.ikbHousing.plus(increaseOnePerc.times(distro.ikbHousingPerc)),
-            ikbFood: this.remunerationResult.ikbFood.plus(increaseOnePerc.times(distro.ikbFoodPerc)),
-            ikbTransport: this.remunerationResult.ikbTransport.plus(increaseOnePerc.times(distro.ikbTransportPerc)),
-            ikbHealthcare: this.remunerationResult.ikbHealthcare.plus(increaseOnePerc.times(distro.ikbHealthcarePerc)),
-            ikbChildcare: this.remunerationResult.ikbChildcare.plus(increaseOnePerc.times(distro.ikbChildcarePerc)),
-            ikbChildEducation: this.remunerationResult.ikbChildEducation.plus(increaseOnePerc.times(distro.ikbChildEducationPerc)),
+            ikb: this.remunerationResult.ikb.plus(increaseOnePerc.times(distro.ikbPerc)),
         };
     }
 

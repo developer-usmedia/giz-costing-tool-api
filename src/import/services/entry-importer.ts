@@ -208,28 +208,14 @@ export class EntryImporter {
     }
 
     private readonly convertRowToWorkerDto = (row: Row): EntryWorkerData => {
-        const ikb = {
-            food: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbFood).text) / 12,
-            transport: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbTransportation).text) / 12,
-            housing: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbHousing).text) / 12,
-            healthcare: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbHealthcare).text) / 12,
-            childcare: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbChildCare).text) / 12,
-            childEducation: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.ikbChildEducation).text) / 12,
-        };
-
         return {
             name: row.getCell(COLUMN_MAPPING_PAYROLL.name).text,
             gender: parseGenderCell(row.getCell(COLUMN_MAPPING_PAYROLL.gender).text),
             nrOfWorkers: parseIntCell(row.getCell(COLUMN_MAPPING_PAYROLL.nrOfWorkers).text),
             monthlyWage: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyWage).text),
             monthlyBonus: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyBonus).text),
+            monthlyIkbCapped: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.monthlyIkbCapped).text),
             percOfYearWorked: parseFloatCell(row.getCell(COLUMN_MAPPING_PAYROLL.percentageOfYearsWorked).text),
-            ikbFood: ikb.food,
-            ikbTransport: ikb.transport,
-            ikbHousing: ikb.housing,
-            ikbHealthcare: ikb.healthcare,
-            ikbChildcare: ikb.childcare,
-            ikbChildEducation: ikb.childEducation,
         };
     };
 }

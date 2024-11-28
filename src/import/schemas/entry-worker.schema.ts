@@ -10,13 +10,8 @@ export interface EntryWorkerData {
     nrOfWorkers: number;
     monthlyWage: number;
     monthlyBonus: number;
+    monthlyIkbCapped: number;
     percOfYearWorked: number;
-    ikbFood: number;
-    ikbTransport: number;
-    ikbHousing: number;
-    ikbHealthcare: number;
-    ikbChildcare: number;
-    ikbChildEducation: number;
 }
 
 const entryWorkerSchema = (): joi.ObjectSchema => {
@@ -26,13 +21,8 @@ const entryWorkerSchema = (): joi.ObjectSchema => {
         nrOfWorkers:                joi.number().min(1).required(),
         monthlyWage:                joi.number().min(1).required(),
         monthlyBonus:               joi.number().min(0).required(),
+        monthlyIkbCapped:           joi.number().min(0).required(),
         percOfYearWorked:           joi.number().min(0).max(100).required(),
-        ikbFood:                    joi.number().min(0).required(),
-        ikbTransport:               joi.number().min(0).required(),
-        ikbHousing:                 joi.number().min(0).required(),
-        ikbHealthcare:              joi.number().min(0).required(),
-        ikbChildcare:               joi.number().min(0).required(),
-        ikbChildEducation:          joi.number().min(0).required(),
     });
 
     return schema;

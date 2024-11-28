@@ -31,14 +31,8 @@ export const COLUMN_MAPPING_PAYROLL = {
     nrOfWorkers: 'E',
     monthlyWage: 'AQ',
     monthlyBonus: 'AR',
+    monthlyIkbCapped: 'AO',
     percentageOfYearsWorked: 'AT',
-
-    ikbFood: 'AB',
-    ikbTransportation: 'AD',
-    ikbHousing: 'AF',
-    ikbHealthcare: 'AH',
-    ikbChildEducation: 'AJ',
-    ikbChildCare: 'AL',
 
     benchmarkValue: 'AW',
 } as const;

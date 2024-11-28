@@ -24,12 +24,6 @@ export interface WorkerDTO extends HalResponse {
         baseWage: number;
         bonuses: number;
         ikb: number;
-        ikbHousing: number;
-        ikbFood: number;
-        ikbTransport: number;
-        ikbHealthcare: number;
-        ikbChildcare: number;
-        ikbChildEducation: number;
         total: number;
     };
     livingWage?: {
@@ -60,12 +54,6 @@ export interface WorkerDTO extends HalResponse {
             baseWage: number;
             bonuses: number;
             ikb: number;
-            ikbHousing: number;
-            ikbFood: number;
-            ikbTransport: number;
-            ikbHealthcare: number;
-            ikbChildcare: number;
-            ikbChildEducation: number;
             total: number;
         };
         livingWage?: {
@@ -125,12 +113,6 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
             baseWage: originalRemuneration.baseWage.toNumber(),
             bonuses: originalRemuneration.bonuses.toNumber(),
             ikb: originalRemuneration.ikb.toNumber(),
-            ikbHousing: originalRemuneration.ikbHousing.toNumber(),
-            ikbFood: originalRemuneration.ikbFood.toNumber(),
-            ikbTransport: originalRemuneration.ikbTransport.toNumber(),
-            ikbHealthcare: originalRemuneration.ikbHealthcare.toNumber(),
-            ikbChildcare: originalRemuneration.ikbChildcare.toNumber(),
-            ikbChildEducation: originalRemuneration.ikbChildEducation.toNumber(),
             total: originalRemuneration.total().toNumber(),
         } : undefined,
         livingWage: originalLw ? {
@@ -161,12 +143,6 @@ const mapEntityToDTO = (entity: ScenarioWorker): WorkerDTO => {
                 baseWage: scenarioRemuneration.baseWage.toNumber(),
                 bonuses: scenarioRemuneration.bonuses.toNumber(),
                 ikb: scenarioRemuneration.ikb.toNumber(),
-                ikbHousing: scenarioRemuneration.ikbHousing.toNumber(),
-                ikbFood: scenarioRemuneration.ikbFood.toNumber(),
-                ikbTransport: scenarioRemuneration.ikbTransport.toNumber(),
-                ikbHealthcare: scenarioRemuneration.ikbHealthcare.toNumber(),
-                ikbChildcare: scenarioRemuneration.ikbChildcare.toNumber(),
-                ikbChildEducation: scenarioRemuneration.ikbChildEducation.toNumber(),
                 total: scenarioRemuneration.total().toNumber(),
             }: undefined,
             livingWage: scenarioLw ? {
