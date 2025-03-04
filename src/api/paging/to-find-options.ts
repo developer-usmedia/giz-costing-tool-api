@@ -6,7 +6,7 @@ export function toFindOptions<T, P extends string = never>(params: PagingParams<
     return {
         limit: params.size,
         offset: params.index * params.size,
-        orderBy: params.sort as QueryOrderMap<T>,
+        orderBy: params.sort as unknown as QueryOrderMap<T>,
         populate: params.include as any,
     };
 }

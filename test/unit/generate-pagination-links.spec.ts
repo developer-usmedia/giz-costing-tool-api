@@ -1,9 +1,9 @@
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { Sort } from '@api/paging/paging-params';
-import { resolveLink } from '@common/utils/link-resolver';
+import { resolveLink } from '@api/paging/link-resolver';
 
 // Mocking the resolveLink function
-jest.mock('@common/utils/link-resolver');
+jest.mock('@api/paging/link-resolver');
 
 const mockResolveLink = resolveLink as jest.MockedFunction<typeof resolveLink>;
 
@@ -12,10 +12,10 @@ describe('generatePaginationLinks', () => {
     const totalItems = 100;
 
     beforeEach(() => {
-        // Mock link-resolver implementation 
+        // Mock link-resolver implementation
         mockResolveLink.mockImplementation((url, params) => {
             const queryString = new URLSearchParams(params as Record<string, string>).toString();
-            return `${url.toString()}?${queryString}`;
+            return `${url.href}?${queryString}`;
         });
     });
 

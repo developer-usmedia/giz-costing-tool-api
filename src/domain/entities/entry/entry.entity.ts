@@ -203,7 +203,8 @@ export class Entry extends AbstractEntity<Entry> {
         }
 
         const hasPayrollInfo = this._payroll?.isComplete() || false;
-        const nrOfWorkers = this._workers?.isInitialized() ? this._workers.count() : 0; // TODO: remove when payroll (summary) is inserted via sql / service
+        // TODO: remove when payroll (summary) is inserted via sql / service
+        const nrOfWorkers = this._workers?.isInitialized() ? this._workers.count() : 0;
         if (!hasPayrollInfo && nrOfWorkers === 0) {
             this._status = 'INFO_DONE';
             return;
@@ -225,7 +226,7 @@ export class Entry extends AbstractEntity<Entry> {
         if (!hasReport) {
             this._status = 'DISTRIBUTION_DONE';
         }
-        
+
         // All Done!
         this._status = 'COMPLETED';
     }

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import Decimal from 'decimal.js';
+import { Decimal } from 'decimal.js';
 
 import { Scenario } from '@domain/entities';
 import { ScenarioWorkerService } from './scenario-worker.service';

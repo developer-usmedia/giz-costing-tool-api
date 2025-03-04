@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, no-console */
 import { Controller, Get, Logger, UseGuards } from '@nestjs/common';
 
 import { environment } from 'environment';

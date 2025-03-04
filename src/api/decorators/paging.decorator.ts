@@ -3,7 +3,6 @@ import { Request } from 'express';
 
 import { PageFilter, PageSort, PagingParams, Sort } from '@api/paging/paging-params';
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const Paging = createParamDecorator((entityName: string, ctx: ExecutionContext): PagingParams<any> => {
     try {
         const request = ctx.switchToHttp().getRequest<Request>();
@@ -15,7 +14,7 @@ export const Paging = createParamDecorator((entityName: string, ctx: ExecutionCo
             filter: getFilterFromRequest(request),
             include: getIncludesFromRequest(request),
         };
-    } catch (error) {
+    } catch {
         throw new BadRequestException('Pagination query parameters are incorrect');
     }
 });

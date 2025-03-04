@@ -14,14 +14,6 @@ export class UserAwareInterceptor implements NestInterceptor {
 
     constructor(private readonly em: EntityManager) {}
 
-    public isUserAware(request: Request): UserAwareArgs {
-        const user = request.user as User;
-        const userId = user?.id ?? '-1';
-
-        // Optionally check origin or role of user
-        return { enable: true, userId: userId };
-    }
-
     public intercept(ctx: ExecutionContext, next: CallHandler): Observable<any> {
         const request: Request = ctx.switchToHttp().getRequest();
         const userAware = this.isUserAware(request);
@@ -35,5 +27,13 @@ export class UserAwareInterceptor implements NestInterceptor {
         this.em.setFilterParams(MikroFilters.USER_AWARE, userAware);
 
         return next.handle();
+    }
+
+    public isUserAware(request: Request): UserAwareArgs {
+        const user = request.user as User;
+        const userId = user?.id ?? '-1';
+
+        // Optionally check origin or role of user
+        return { enable: true, userId: userId };
     }
 }

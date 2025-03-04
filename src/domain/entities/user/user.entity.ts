@@ -1,4 +1,4 @@
-import { Embedded, Entity, Property, Unique } from '@mikro-orm/core';
+import { Embedded, Entity, Property } from '@mikro-orm/core';
 import * as bcrypt from 'bcrypt';
 
 import { AbstractEntity } from '@domain/entities/abstract.entity';
@@ -12,7 +12,6 @@ const FAILED_LOGIN_LOCKOUT_TIME = 1000 * 60 * 60 * 24; // 1 Day
 @Entity()
 export class User extends AbstractEntity<User> {
     @Property({ unique: true })
-    @Unique()
     private _email: string;
 
     @Property({ hidden: true })
@@ -44,7 +43,7 @@ export class User extends AbstractEntity<User> {
 
     @Property({ columnType: 'varchar(50)', nullable: true })
     private _failedLoginIp?: string;
-    
+
     constructor(props: { email: string; password: string }) {
         super();
 

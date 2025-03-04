@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import { USER_LINKS } from '@api/dto/user.links';
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';

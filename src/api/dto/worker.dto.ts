@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import { generatePaginationLinks } from '@api/paging/generate-pagination-links';
 import { resolveLink } from '@api/paging/link-resolver';
 import { PagingParams } from '@api/paging/paging-params';

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import * as _cloneDeep from 'lodash.clonedeep';
 
 /**
