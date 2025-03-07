@@ -30,10 +30,10 @@ Google Cloud Project: airy-web-417014
 
 ### Preparation
 
-Make sure you use `node 20`, use something like [nvm](https://github.com/nvm-sh/nvm) to manage your node versions.
+Make sure you use `node 22`, use something like [nvm](https://github.com/nvm-sh/nvm) to manage your node versions.
 
 ```shell
-nvm use 20
+nvm use 22
 ```
 
 ### Installation
