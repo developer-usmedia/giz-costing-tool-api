@@ -39,11 +39,11 @@ const mapEntityToDTO = (entity: Entry): ExportCostsDTO => {
             productionAmount: entity.facility.productionAmount?.toFixed(2),
         },
         buyer: {
-            remunerationIncrease: buyerReport.remunerationIncrease.toFixed(2),
-            taxCosts: buyerReport.taxCosts.toFixed(2),
-            overheadCosts: buyerReport.overheadCosts.toFixed(2),
-            totalCosts: buyerReport.totalCosts.toFixed(2),
-            totalCostsPerUnit: buyerReport.totalCostsPerUnit.toFixed(2),
+            remunerationIncrease: buyerReport?.remunerationIncrease.toFixed(2),
+            taxCosts: buyerReport?.taxCosts.toFixed(2),
+            overheadCosts: buyerReport?.overheadCosts.toFixed(2),
+            totalCosts: buyerReport?.totalCosts.toFixed(2),
+            totalCostsPerUnit: buyerReport?.totalCostsPerUnit.toFixed(2),
             amount: entity.buyer.amount?.toFixed(2),
         },
     };
