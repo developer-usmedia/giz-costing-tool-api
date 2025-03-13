@@ -50,7 +50,7 @@ const mapEntityToDTO = (entity: User): UserDTO => {
         email: entity.email,
         emailVerified: entity.emailVerified,
         passwordCreatedAt: entity.passwordCreatedAt,
-        twoFactorEnabled: entity.twoFactor.enabled,
+        twoFactorEnabled: entity.twoFactor?.enabled,
         _links: {
             self: { href: resolveLink(USER_LINKS.user, { userId: entity.id }) },
         },

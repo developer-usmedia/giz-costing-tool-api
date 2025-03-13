@@ -1,4 +1,4 @@
-import { MikroORM } from '@mikro-orm/postgresql';
+import { MikroORM, RequestContext } from '@mikro-orm/postgresql';
 import { INestApplication, Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -70,6 +70,17 @@ const boostrap = async (): Promise<any> => {
     api.enableCors({ credentials: true, origin: determineCorsOrigin() });
     api.use(cookieParser());
     api.use(passport.initialize());
+    const orm = await MikroORM.init(mikroOrmOpts);
+
+    // this is to isolate the request context from the global context
+    // MikroORM will always use request specific (forked) entity manager if available to prevent concurrency issues.
+    // register requestcontext middleware as the last one, before request handles
+    api.use((_req, _res, next) => {
+        // calls `orm.em.fork()` and attaches it to the async context
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        RequestContext.create(orm.em, next);
+    });
+
     api.useGlobalPipes(new ValidationPipe());
 
     await runMigrations();
